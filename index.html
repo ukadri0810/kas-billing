@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WaterSports POS</title>
+  <!-- Load Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Dexie.js for offline IndexedDB storage -->
+  <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+</head>
+<body class="bg-gray-100 font-sans select-none touch-manipulation">
+
+  <div id="app" class="p-4 pb-48"></div>
+
+  <script>
+    // 1. Initialize Offline Database
+    const db = new Dexie('WaterSportsDB');
+    db.version(1).stores({
+      transactions: '++id, timestamp, totalAmount, paymentMethod, reference, jetskiId'
+    });
+
+    const MENU = [
+      { id: 'jetski', name: 'Jetski (Single)', price: 400 },
+      { id: 'banana', name: 'Banana Ride', price: 300 },
+      { id: 'bandwagon', name: 'Bandwagon', price: 400 },
+      { id: 'speedboat', name: 'Speed Boat', price: 1500 },
+    ];
+
+    // 2. Application State
+    let state = {
+      view: 'pos',
+      cart: {},
+      activeJetski: 1,
+      creditModalOpen: false,
+      stats: { cash: 0, online: 0, credit: 0, total: 0, list: [] }
+    };
+
+    function getCartTotal() {
+      return Object.entries(state.cart).reduce((sum, [id, qty]) => {
+        const item = MENU.find(m => m.id === id);
+        return sum + (item.price * qty);
+      }, 0);
+    }
+
+    // 3. Core Actions
+    window.handleTap = (id) => {
+      state.cart[id] = (state.cart[id] || 0) + 1;
+      render();
+    };
+
+    window.clearCart = () => {
+      state.cart = {};
+      render();
+    };
+
+    window.setJetski = (num) => {
+      state.activeJetski = num;
+      render();
+    };
+
+    window.setView = (viewName) => {
+      state.view = viewName;
+      if (viewName === 'pos') render();
+      if (viewName === 'dashboard') loadDashboard();
+    };
+
+    window.toggleCreditModal = (isOpen) => {
+      state.creditModalOpen = isOpen;
+      render();
+    };
+
+    window.processCheckout = async (method) => {
+      const total = getCartTotal();
+      if (total === 0) return;
+
+      const hasJetski = state.cart['jetski'] > 0;
+      let refText = '';
+      
+      if (method === 'CREDIT') {
+        refText = document.getElementById('creditInput').value;
+        if (!refText) { alert("Please enter a room or hotel name"); return; }
+      }
+
+      // Save to offline local database
+      await db.transactions.add({
+        timestamp: new Date().toISOString(),
+        totalAmount: total,
+        paymentMethod: method,
+        reference: refText,
+        jetskiId: hasJetski ? state.activeJetski : null,
+        items: JSON.stringify(state.cart)
+      });
+
+      // Reset and render
+      state.cart = {};
+      state.creditModalOpen = false;
+      if (hasJetski) {
+        state.activeJetski = state.activeJetski === 1 ? 2 : 1; // Auto-toggle jetski
+      }
+      render();
+    };
+
+    window.loadDashboard = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const allTx = await db.transactions.toArray();
+      const todayTx = allTx.filter(tx => tx.timestamp.startsWith(today));
+      
+      let s = { cash: 0, online: 0, credit: 0, total: 0, list: [] };
+      todayTx.forEach(tx => {
+        s.total += tx.totalAmount;
+        if (tx.paymentMethod === 'CASH') s.cash += tx.totalAmount;
+        if (tx.paymentMethod === 'ONLINE') s.online += tx.totalAmount;
+        if (tx.paymentMethod === 'CREDIT') { s.credit += tx.totalAmount; s.list.push(tx); }
+      });
+      
+      state.stats = s;
+      state.view = 'dashboard';
+      render();
+    };
+
+    // 4. UI Rendering Engine
+    function render() {
+      const app = document.getElementById('app');
+      
+      // Top Navigation
+      let html = `
+        <div class="flex justify-between mb-4">
+          <button onclick="setView('pos')" class="px-4 py-2 font-bold rounded ${state.view === 'pos' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'}">New Sale</button>
+          <button onclick="setView('dashboard')" class="px-4 py-2 font-bold rounded ${state.view === 'dashboard' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'}">End of Day</button>
+        </div>
+      `;
+
+      if (state.view === 'pos') {
+        const total = getCartTotal();
+        
+        // Jetski Toggle
+        html += `
+          <div class="mb-4 bg-white p-4 rounded shadow flex items-center justify-between">
+            <span class="font-bold text-lg">Active Jetski:</span>
+            <div class="flex gap-2">
+              <button onclick="setJetski(1)" class="px-6 py-2 text-xl font-bold rounded ${state.activeJetski === 1 ? 'bg-green-500 text-white' : 'bg-gray-200'}">1</button>
+              <button onclick="setJetski(2)" class="px-6 py-2 text-xl font-bold rounded ${state.activeJetski === 2 ? 'bg-green-500 text-white' : 'bg-gray-200'}">2</button>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4 mb-6">
+        `;
+
+        // Menu Grid
+        MENU.forEach(item => {
+          const qty = state.cart[item.id] || 0;
+          html += `
+            <button onclick="handleTap('${item.id}')" class="bg-white p-6 rounded shadow active:bg-blue-100 flex flex-col items-center">
+              <span class="text-xl font-bold text-gray-800 text-center">${item.name}</span>
+              <span class="text-gray-500">₹${item.price}</span>
+              ${qty > 0 ? `<span class="mt-2 bg-blue-600 text-white px-3 py-1 rounded-full font-bold">${qty} in cart</span>` : ''}
+            </button>
+          `;
+        });
+        html += `</div>`;
+
+        // Checkout Bar
+        html += `
+          <div class="fixed bottom-0 left-0 w-full bg-white p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] border-t z-10">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-2xl font-bold">Total:</span>
+              <span class="text-3xl font-bold text-green-600">₹${total}</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="processCheckout('CASH')" class="bg-green-500 text-white py-4 font-bold text-xl rounded active:bg-green-700">CASH</button>
+              <button onclick="processCheckout('ONLINE')" class="bg-blue-500 text-white py-4 font-bold text-xl rounded active:bg-blue-700">ONLINE</button>
+              <button onclick="toggleCreditModal(true)" class="bg-yellow-500 text-white py-4 font-bold text-xl rounded active:bg-yellow-700">CREDIT</button>
+            </div>
+            <button onclick="clearCart()" class="w-full mt-2 py-2 text-red-500 font-bold uppercase active:bg-red-100 rounded">Clear Items</button>
+          </div>
+        `;
+
+        // Credit Modal
+        if (state.creditModalOpen) {
+          html += `
+            <div class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+              <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <h2 class="text-2xl font-bold mb-4">Record Credit Location</h2>
+                <input id="creditInput" type="text" placeholder="e.g. Taj Room 402" class="w-full border-2 border-gray-300 p-4 rounded text-xl mb-4" autofocus>
+                <div class="flex gap-2">
+                  <button onclick="toggleCreditModal(false)" class="flex-1 p-4 bg-gray-200 font-bold rounded">Cancel</button>
+                  <button onclick="processCheckout('CREDIT')" class="flex-1 p-4 bg-yellow-500 text-white font-bold rounded">Save Credit</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+      } else if (state.view === 'dashboard') {
+        // EOD Dashboard
+        html += `
+          <div class="bg-white p-4 rounded shadow mb-6">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Today's Revenue</h2>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-100 p-4 rounded text-center">
+                <div class="text-sm text-gray-600 uppercase font-bold">Cash Box</div>
+                <div class="text-2xl font-bold text-green-600">₹${state.stats.cash}</div>
+              </div>
+              <div class="bg-gray-100 p-4 rounded text-center">
+                <div class="text-sm text-gray-600 uppercase font-bold">Online (UPI)</div>
+                <div class="text-2xl font-bold text-blue-600">₹${state.stats.online}</div>
+              </div>
+              <div class="bg-gray-100 p-4 rounded text-center col-span-2">
+                <div class="text-sm text-gray-600 uppercase font-bold">Pending Credits</div>
+                <div class="text-2xl font-bold text-yellow-600">₹${state.stats.credit}</div>
+              </div>
+            </div>
+            
+            <h3 class="text-xl font-bold mb-2">To Collect (Hotels/Rooms)</h3>
+            ${state.stats.list.length === 0 ? '<p class="text-gray-500">No pending credits today.</p>' : `
+              <ul class="divide-y border rounded">
+                ${state.stats.list.map(tx => `
+                  <li class="p-3 flex justify-between items-center">
+                    <span class="font-bold">${tx.reference}</span>
+                    <span class="text-red-500 font-bold">₹${tx.totalAmount}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            `}
+          </div>
+        `;
+      }
+
+      app.innerHTML = html;
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
