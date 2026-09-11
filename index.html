@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>WaterSports POS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
@@ -10,11 +10,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <style>
-    body { user-select: none; touch-action: manipulation; background-color: #F3F4F6; }
+    body { user-select: none; touch-action: manipulation; }
     .nav-active { color: #4F46E5; } /* Indigo 600 */
-    .nav-inactive { color: #9CA3AF; }
+    .nav-inactive { color: #94A3B8; } /* Slate 400 */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Support for mobile safe areas (notches/home bars) */
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
     
     .receipt-container {
       width: 260px; 
@@ -27,37 +29,53 @@
     }
   </style>
 </head>
-<body class="font-sans pb-24 h-screen flex flex-col overflow-hidden text-gray-800">
+<body class="bg-slate-50 font-sans h-screen w-screen flex flex-col overflow-hidden text-slate-800">
 
-  <div id="app" class="p-4 flex-1 overflow-y-auto"></div>
+  <!-- 1. Sleek Top Header -->
+  <header class="shrink-0 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-center shadow-sm z-20">
+    <img src="assets/kas.png" alt="KAS Logo" class="h-10 md:h-12 object-contain drop-shadow-sm">
+  </header>
 
-  <!-- Bottom Navigation Bar -->
-  <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-40 flex justify-between px-4 py-2 pb-safe">
-    <button onclick="setView('pos')" id="nav-pos" class="flex flex-col items-center p-2 nav-active w-16 transition-colors">
-      <i class="fa-solid fa-cash-register text-xl"></i>
-      <span class="text-[10px] mt-1 font-semibold">POS</span>
-    </button>
-    <button onclick="setView('history')" id="nav-history" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors">
-      <i class="fa-solid fa-clock-rotate-left text-xl"></i>
-      <span class="text-[10px] mt-1 font-semibold">History</span>
-    </button>
-    <button onclick="setView('expenses')" id="nav-expenses" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors">
-      <i class="fa-solid fa-receipt text-xl"></i>
-      <span class="text-[10px] mt-1 font-semibold">Expense</span>
-    </button>
-    <button onclick="setView('dashboard')" id="nav-dashboard" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors">
-      <i class="fa-solid fa-chart-pie text-xl"></i>
-      <span class="text-[10px] mt-1 font-semibold">EOD</span>
-    </button>
-    <button onclick="setView('settings')" id="nav-settings" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors">
-      <i class="fa-solid fa-gear text-xl"></i>
-      <span class="text-[10px] mt-1 font-semibold">Setup</span>
-    </button>
-  </div>
+  <!-- 2. Main Scrollable Content Area -->
+  <main id="app" class="flex-1 overflow-y-auto px-3 py-4 overscroll-contain w-full max-w-2xl mx-auto"></main>
+
+  <!-- 3. Docked Footer Container (Guarantees zero overlap!) -->
+  <footer class="shrink-0 flex flex-col bg-white border-t border-slate-200 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.1)] z-30 w-full">
+    
+    <!-- Dynamic POS Checkout Bar injects here -->
+    <div id="checkout-dock" class="w-full max-w-2xl mx-auto"></div>
+
+    <!-- Persistent Bottom Navigation -->
+    <nav class="flex justify-between items-center px-2 py-1.5 pb-safe bg-white w-full max-w-2xl mx-auto">
+      <button onclick="setView('pos')" id="nav-pos" class="flex flex-col items-center p-2 nav-active w-16 transition-colors rounded-xl active:bg-slate-100">
+        <i class="fa-solid fa-cash-register text-[22px]"></i>
+        <span class="text-[10px] mt-1 font-bold">POS</span>
+      </button>
+      <button onclick="setView('history')" id="nav-history" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors rounded-xl active:bg-slate-100">
+        <i class="fa-solid fa-clock-rotate-left text-[22px]"></i>
+        <span class="text-[10px] mt-1 font-bold">History</span>
+      </button>
+      <button onclick="setView('expenses')" id="nav-expenses" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors rounded-xl active:bg-slate-100">
+        <i class="fa-solid fa-receipt text-[22px]"></i>
+        <span class="text-[10px] mt-1 font-bold">Expense</span>
+      </button>
+      <button onclick="setView('dashboard')" id="nav-dashboard" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors rounded-xl active:bg-slate-100">
+        <i class="fa-solid fa-chart-pie text-[22px]"></i>
+        <span class="text-[10px] mt-1 font-bold">EOD</span>
+      </button>
+      <button onclick="setView('settings')" id="nav-settings" class="flex flex-col items-center p-2 nav-inactive w-16 transition-colors rounded-xl active:bg-slate-100">
+        <i class="fa-solid fa-gear text-[22px]"></i>
+        <span class="text-[10px] mt-1 font-bold">Setup</span>
+      </button>
+    </nav>
+  </footer>
+
+  <!-- 4. Modal Container -->
+  <div id="modals"></div>
 
   <script>
-    // 1. Initialize Database (Bumped to V5 for new rides)
-    const db = new Dexie('WaterSportsV5');
+    // 1. Initialize Database (Bumped to V6 for updated default rides)
+    const db = new Dexie('WaterSportsV6');
     db.version(1).stores({
       transactions: '++id, receiptId, timestamp, totalAmount, discountAmount, paymentMethod, reference, customerName, customerPhone, status',
       expenses: '++id, timestamp, description, amount',
@@ -73,12 +91,13 @@
       expenses: [],
       activeJetski: 1,
       towingMachine: 'JETSKI',
-      creditModalOpen: false,
       customerModalOpen: false,
+      creditModalOpen: false,
       discountModalOpen: false,
       previewTxId: null,
+      editingRideId: null, // Used for Editing Settings
       customer: { name: '', phone: '' },
-      discount: { type: 'none', value: 0 }, // none, fixed, percent
+      discount: { type: 'none', value: 0 }, 
       stats: { cash: 0, online: 0, credit: 0, expenseTotal: 0, netCash: 0, list: [] }
     };
 
@@ -86,6 +105,7 @@
     async function boot() {
       const count = await db.menu.count();
       if (count === 0) {
+        // New Requested Default Rides
         await db.menu.bulkAdd([
           { name: 'Jetski', price: 400, isTowable: false },
           { name: 'Speedboat', price: 250, isTowable: false },
@@ -130,21 +150,15 @@
       state.stats = s;
     }
 
-    // 4. Cart, Customer & Discount Logic
-    function getCartSubtotal() {
-      return Object.values(state.cart).reduce((sum, cartItem) => sum + (cartItem.item.price * cartItem.qty), 0);
-    }
-
+    // 4. Cart Logic
+    function getCartSubtotal() { return Object.values(state.cart).reduce((sum, c) => sum + (c.item.price * c.qty), 0); }
     function getDiscountAmount() {
       const sub = getCartSubtotal();
       if(state.discount.type === 'fixed') return state.discount.value;
-      if(state.discount.type === 'percent') return sub * (state.discount.value / 100);
+      if(state.discount.type === 'percent') return Math.round(sub * (state.discount.value / 100));
       return 0;
     }
-
-    function getCartTotal() {
-      return Math.max(0, getCartSubtotal() - getDiscountAmount());
-    }
+    function getCartTotal() { return Math.max(0, getCartSubtotal() - getDiscountAmount()); }
 
     window.handleTap = (menuId) => { 
       const item = state.menu.find(m => m.id === menuId);
@@ -160,43 +174,32 @@
       if (!state.cart[cartKey]) return;
       state.cart[cartKey].qty += delta;
       if (state.cart[cartKey].qty <= 0) delete state.cart[cartKey];
-      
-      // Reset discount if cart becomes empty
       if (Object.keys(state.cart).length === 0) state.discount = { type: 'none', value: 0 };
       render();
     };
 
     window.setJetski = (num) => { state.activeJetski = num; render(); };
     window.setTowingMachine = (machine) => { state.towingMachine = machine; render(); };
-    window.toggleCreditModal = (isOpen) => { state.creditModalOpen = isOpen; render(); };
+    
+    // Toggle Modals
     window.toggleCustomerModal = (isOpen) => { state.customerModalOpen = isOpen; render(); };
+    window.toggleCreditModal = (isOpen) => { state.creditModalOpen = isOpen; render(); };
     window.toggleDiscountModal = (isOpen) => { state.discountModalOpen = isOpen; render(); };
 
     window.saveCustomerInfo = () => {
       state.customer.name = document.getElementById('custName').value;
       state.customer.phone = document.getElementById('custPhone').value;
-      state.customerModalOpen = false;
-      render();
+      state.customerModalOpen = false; render();
     };
 
     window.applyDiscount = (type) => {
       const val = parseFloat(document.getElementById('discountInput').value) || 0;
-      if (val > 0) {
-        state.discount = { type: type, value: val };
-      } else {
-        state.discount = { type: 'none', value: 0 };
-      }
-      state.discountModalOpen = false;
-      render();
+      state.discount = val > 0 ? { type: type, value: val } : { type: 'none', value: 0 };
+      state.discountModalOpen = false; render();
     };
+    window.clearDiscount = () => { state.discount = { type: 'none', value: 0 }; state.discountModalOpen = false; render(); }
 
-    window.clearDiscount = () => {
-      state.discount = { type: 'none', value: 0 };
-      state.discountModalOpen = false;
-      render();
-    }
-
-    // 5. Processing & Transactions
+    // 5. Checkout
     window.processCheckout = async (method) => {
       const total = getCartTotal();
       const subtotal = getCartSubtotal();
@@ -205,11 +208,10 @@
       let refText = '';
       if (method === 'CREDIT') {
         refText = document.getElementById('creditInput').value;
-        if (!refText) { alert("Please enter a location"); return; }
+        if (!refText) { alert("Please enter a reference"); return; }
       }
 
       const receiptId = 'INV-' + Math.floor(10000 + Math.random() * 90000);
-
       await db.transactions.add({
         receiptId: receiptId,
         timestamp: new Date().toISOString(),
@@ -224,24 +226,18 @@
         status: 'COMPLETED'
       });
 
-      // Reset
-      state.cart = {};
-      state.customer = { name: '', phone: '' };
-      state.discount = { type: 'none', value: 0 };
-      state.creditModalOpen = false;
-      state.activeJetski = state.activeJetski === 1 ? 2 : 1; 
+      state.cart = {}; state.customer = { name: '', phone: '' }; state.discount = { type: 'none', value: 0 };
+      state.creditModalOpen = false; state.activeJetski = state.activeJetski === 1 ? 2 : 1; 
       render();
     };
 
     window.voidTransaction = async (id) => {
-      if (confirm("Are you sure you want to void this transaction?")) {
-        await db.transactions.update(id, { status: 'VOID' });
-        await loadHistoryData();
-        render();
+      if (confirm("Void this transaction?")) {
+        await db.transactions.update(id, { status: 'VOID' }); await loadHistoryData(); render();
       }
     };
 
-    // --- Settings & Expenses ---
+    // --- Settings / Expenses ---
     window.addExpense = async () => { 
       const desc = document.getElementById('expDesc').value;
       const amt = parseFloat(document.getElementById('expAmt').value);
@@ -250,96 +246,76 @@
       await loadExpenseData(); render();
     };
 
-    window.addMenuItem = async () => { 
+    window.addOrUpdateMenuItem = async () => { 
       const name = document.getElementById('menuName').value;
       const price = parseFloat(document.getElementById('menuPrice').value);
       const isTowable = document.getElementById('menuTowable').checked;
       if (!name || !price) return;
-      await db.menu.add({ name, price, isTowable });
+
+      if (state.editingRideId) {
+        await db.menu.update(state.editingRideId, { name, price, isTowable });
+        state.editingRideId = null;
+      } else {
+        await db.menu.add({ name, price, isTowable });
+      }
       await loadMenuData(); render();
     };
 
+    window.editMenuItem = (id) => { state.editingRideId = id; render(); };
+    window.cancelEditMenu = () => { state.editingRideId = null; render(); };
     window.deleteMenuItem = async (id) => { 
       if (confirm("Delete this ride?")) { await db.menu.delete(id); await loadMenuData(); render(); }
     };
 
+    // 6. PDF Generation (Unchanged, fully intact)
     window.openPreview = (txId) => { state.previewTxId = txId; render(); };
     window.closePreview = () => { state.previewTxId = null; render(); };
 
     function generateReceiptHTML(tx, isKOT = false) {
       const items = JSON.parse(tx.items);
-      let itemsHtml = Object.values(items).map(cartItem => `
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; line-height: 1.2;">
-          <div style="flex: 1; padding-right: 10px;">
-            <span style="font-weight: bold;">${cartItem.qty}x ${cartItem.item.name}</span>
-            ${cartItem.towedBy ? `<br><span style="font-size: 11px; color: #555;">(Towed by: ${cartItem.towedBy})</span>` : ''}
+      let itemsHtml = Object.values(items).map(c => `
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px; line-height:1.2;">
+          <div style="flex:1; padding-right:10px;">
+            <span style="font-weight:bold;">${c.qty}x ${c.item.name}</span>
+            ${c.towedBy ? `<br><span style="font-size:11px; color:#555;">(Towed by: ${c.towedBy})</span>` : ''}
           </div>
-          ${!isKOT ? `<div style="font-weight: bold; text-align: right; width: 60px;">₹${cartItem.item.price * cartItem.qty}</div>` : ''}
+          ${!isKOT ? `<div style="font-weight:bold; text-align:right; width:60px;">₹${c.item.price * c.qty}</div>` : ''}
         </div>
       `).join('');
 
       return `
         <div class="receipt-container" id="pdf-content">
-          <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 15px;">
-            <img src="assets/kas.png" style="max-height: 50px; margin: 0 auto 5px; display: block;" />
-            <h2 style="margin: 0; font-size: 20px; font-weight: 800;">${isKOT ? 'RIDE TICKET' : 'WATERSPORTS'}</h2>
-            <p style="margin: 4px 0 0; font-size: 12px;">ID: ${tx.receiptId}</p>
-            <p style="margin: 2px 0 0; font-size: 11px; color: #333;">${new Date(tx.timestamp).toLocaleString()}</p>
+          <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:10px; margin-bottom:15px;">
+            <img src="assets/kas.png" style="max-height:50px; margin:0 auto 5px; display:block;" />
+            <h2 style="margin:0; font-size:20px; font-weight:800;">${isKOT ? 'RIDE TICKET' : 'WATERSPORTS'}</h2>
+            <p style="margin:4px 0 0; font-size:12px;">ID: ${tx.receiptId}</p>
+            <p style="margin:2px 0 0; font-size:11px; color:#333;">${new Date(tx.timestamp).toLocaleString()}</p>
           </div>
-          
           ${(tx.customerName || tx.customerPhone) ? `
-            <div style="margin-bottom: 15px; font-size: 12px; border-bottom: 1px dotted #ccc; padding-bottom: 10px;">
+            <div style="margin-bottom:15px; font-size:12px; border-bottom:1px dotted #ccc; padding-bottom:10px;">
               ${tx.customerName ? `<div><strong>Name:</strong> ${tx.customerName}</div>` : ''}
               ${tx.customerPhone ? `<div><strong>Phone:</strong> ${tx.customerPhone}</div>` : ''}
-            </div>
-          ` : ''}
-
-          <div style="margin-bottom: 15px;">
-            ${itemsHtml}
-          </div>
-
+            </div>` : ''}
+          <div style="margin-bottom:15px;">${itemsHtml}</div>
           ${!isKOT ? `
-            ${tx.discountAmount > 0 ? `<div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;"><span>Discount</span><span>-₹${tx.discountAmount}</span></div>` : ''}
-            <div style="border-top: 2px dashed #000; padding-top: 10px; display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;">
-              <span>TOTAL (${tx.paymentMethod})</span>
-              <span>₹${tx.totalAmount}</span>
+            ${tx.discountAmount > 0 ? `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Discount</span><span>-₹${tx.discountAmount}</span></div>` : ''}
+            <div style="border-top:2px dashed #000; padding-top:10px; display:flex; justify-content:space-between; font-size:16px; font-weight:900;">
+              <span>TOTAL</span><span>₹${tx.totalAmount}</span>
             </div>
-          ` : `
-            <div style="border-top: 2px dashed #000; padding-top: 10px; text-align: center; font-size: 14px; font-weight: bold;">
-              TICKET CONFIRMED
-            </div>
-          `}
-          
-          ${tx.reference ? `<p style="text-align: center; font-size: 12px; margin-top: 15px;">Ref: ${tx.reference}</p>` : ''}
-          <div style="text-align: center; margin-top: 20px; font-size: 11px; color: #555;">
-            ${isKOT ? 'Hand this ticket to the operator' : 'Thank you for riding with us!'}
-          </div>
-        </div>
-      `;
+          ` : `<div style="border-top:2px dashed #000; padding-top:10px; text-align:center; font-size:14px; font-weight:bold;">TICKET CONFIRMED</div>`}
+          ${tx.reference ? `<p style="text-align:center; font-size:12px; margin-top:15px;">Ref: ${tx.reference}</p>` : ''}
+        </div>`;
     }
 
     window.triggerDownload = (isKOT) => {
       const tx = state.history.find(t => t.id === state.previewTxId);
       if (!tx) return;
-
-      const element = document.createElement('div');
-      element.innerHTML = generateReceiptHTML(tx, isKOT);
-      
-      element.style.position = 'absolute';
-      element.style.left = '-9999px';
-      document.body.appendChild(element);
-
-      const prefix = isKOT ? 'KOT' : 'Bill';
-      
-      html2pdf().set({
-        margin: [2, 0, 2, 0],
-        filename: `${prefix}_${tx.receiptId}.pdf`,
-        image: { type: 'jpeg', quality: 1.0 },
-        html2canvas: { scale: 3, useCORS: true, windowWidth: 260 },
+      const el = document.createElement('div'); el.innerHTML = generateReceiptHTML(tx, isKOT);
+      el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el);
+      html2pdf().set({ margin:[2,0,2,0], filename:`${isKOT ? 'KOT' : 'Bill'}_${tx.receiptId}.pdf`,
+        image: { type: 'jpeg', quality: 1.0 }, html2canvas: { scale: 3, useCORS: true, windowWidth: 260 },
         jsPDF: { unit: 'mm', format: [80, 200], orientation: 'portrait' }
-      }).from(element).save().then(() => {
-        document.body.removeChild(element);
-      });
+      }).from(el).save().then(() => document.body.removeChild(el));
     };
 
     window.setView = async (viewName) => {
@@ -349,312 +325,312 @@
         el.className = el.className.replace('nav-active', '').replace('nav-inactive', '');
         el.classList.add(state.view === v ? 'nav-active' : 'nav-inactive');
       });
-
       if (viewName === 'history') await loadHistoryData();
       if (viewName === 'expenses') await loadExpenseData();
       if (viewName === 'dashboard') await loadDashboardData();
-      if (viewName === 'settings') await loadMenuData();
-      
+      if (viewName === 'settings') { state.editingRideId = null; await loadMenuData(); }
       render();
     };
 
+    // 7. Core Render Loop
     function render() {
       const app = document.getElementById('app');
-      let html = '';
+      const checkoutDock = document.getElementById('checkout-dock');
+      const modals = document.getElementById('modals');
+      let appHtml = '', dockHtml = '', modalHtml = '';
 
-      // --- MAIN HEADER LOGO (Increased Size) ---
-      html += `
-        <div class="flex justify-center mb-6 mt-4">
-          <img src="assets/kas.png" alt="KAS Logo" class="h-20 md:h-24 object-contain drop-shadow-sm">
-        </div>
-      `;
-
-      // --- VIEW: POS ---
+      // --- POS VIEW ---
       if (state.view === 'pos') {
         const subtotal = getCartSubtotal();
-        const total = getCartTotal();
         const discountAmt = getDiscountAmount();
+        const total = getCartTotal();
         const cartItems = Object.entries(state.cart);
 
-        html += `
-          <!-- Top Toggles -->
-          <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
-              <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wide">Active Jetski</div>
-              <div class="flex gap-2">
-                <button onclick="setJetski(1)" class="flex-1 py-1.5 text-lg font-bold rounded-lg transition-all duration-200 active:scale-95 ${state.activeJetski === 1 ? 'bg-emerald-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}">1</button>
-                <button onclick="setJetski(2)" class="flex-1 py-1.5 text-lg font-bold rounded-lg transition-all duration-200 active:scale-95 ${state.activeJetski === 2 ? 'bg-emerald-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}">2</button>
+        // Top Content inside scrolling <main>
+        appHtml += `
+          <!-- Compact Settings Toggles -->
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+              <div class="text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide px-1">Active Jetski</div>
+              <div class="flex gap-1.5">
+                <button onclick="setJetski(1)" class="flex-1 py-1.5 text-base font-bold rounded-xl transition-all active:scale-95 ${state.activeJetski === 1 ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-slate-100 text-slate-500'}">1</button>
+                <button onclick="setJetski(2)" class="flex-1 py-1.5 text-base font-bold rounded-xl transition-all active:scale-95 ${state.activeJetski === 2 ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-slate-100 text-slate-500'}">2</button>
               </div>
             </div>
-            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
-              <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wide">Towing Machine</div>
-              <div class="flex gap-2">
-                <button onclick="setTowingMachine('JETSKI')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all duration-200 active:scale-95 ${state.towingMachine === 'JETSKI' ? 'bg-indigo-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}">Jetski</button>
-                <button onclick="setTowingMachine('SPEEDBOAT')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all duration-200 active:scale-95 ${state.towingMachine === 'SPEEDBOAT' ? 'bg-indigo-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}">Boat</button>
+            <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+              <div class="text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide px-1">Towing Machine</div>
+              <div class="flex gap-1.5">
+                <button onclick="setTowingMachine('JETSKI')" class="flex-1 py-1.5 text-[13px] font-bold rounded-xl transition-all active:scale-95 ${state.towingMachine === 'JETSKI' ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20' : 'bg-slate-100 text-slate-500'}">Jetski</button>
+                <button onclick="setTowingMachine('SPEEDBOAT')" class="flex-1 py-1.5 text-[13px] font-bold rounded-xl transition-all active:scale-95 ${state.towingMachine === 'SPEEDBOAT' ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20' : 'bg-slate-100 text-slate-500'}">Boat</button>
               </div>
             </div>
           </div>
           
-          <!-- Menu Grid -->
-          <div class="grid grid-cols-2 gap-3 mb-6">
+          <!-- Ultra-Compact Menu Grid -->
+          <div class="grid grid-cols-2 gap-2.5 mb-4">
             ${state.menu.map(item => `
-              <button onclick="handleTap(${item.id})" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 transition-all duration-200 active:scale-95 active:bg-indigo-50 flex flex-col items-center justify-center min-h-[90px]">
-                <span class="text-sm font-semibold text-gray-800 text-center leading-tight mb-1">${item.name}</span>
-                <span class="text-indigo-600 font-bold text-sm">₹${item.price}</span>
+              <button onclick="handleTap(${item.id})" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 transition-transform active:scale-95 active:bg-indigo-50 flex flex-col items-center justify-center min-h-[76px] relative overflow-hidden">
+                <span class="text-sm font-semibold text-slate-800 text-center leading-tight line-clamp-1">${item.name}</span>
+                <span class="mt-1 text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">₹${item.price}</span>
+                ${item.isTowable ? `<div class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 shadow-sm" title="Towable"></div>` : ''}
               </button>
             `).join('')}
           </div>
 
-          <!-- Live Cart Editor -->
+          <!-- Live Cart Box -->
           ${cartItems.length > 0 ? `
-            <div class="bg-white rounded-xl shadow-sm p-4 border-2 border-indigo-50">
-              <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide">Current Order</h3>
+            <div class="bg-white rounded-2xl shadow-sm p-3.5 border border-indigo-100 bg-indigo-50/30">
+              <div class="flex justify-between items-center border-b border-indigo-100/50 pb-2 mb-2">
+                <h3 class="text-[11px] font-bold text-indigo-400 uppercase tracking-wide">Current Order</h3>
               </div>
-              
               ${cartItems.map(([key, data]) => `
-                <div class="flex justify-between items-center mb-3">
-                  <div class="flex-1 leading-tight">
-                    <div class="font-semibold text-sm text-gray-800">${data.item.name}</div>
-                    ${data.towedBy ? `<div class="text-[10px] text-gray-400 mt-0.5">Towed: ${data.towedBy}</div>` : ''}
+                <div class="flex justify-between items-center mb-2 last:mb-0 bg-white p-2 rounded-xl border border-slate-100 shadow-sm">
+                  <div class="flex-1 leading-tight pr-2">
+                    <div class="font-semibold text-[13px] text-slate-800">${data.item.name}</div>
+                    ${data.towedBy ? `<div class="text-[10px] font-medium text-slate-400 mt-0.5">Towed: ${data.towedBy}</div>` : ''}
                   </div>
-                  <div class="flex items-center gap-4 bg-gray-50 rounded-lg p-1">
-                    <button onclick="updateQty('${key}', -1)" class="w-8 h-8 rounded-md bg-white shadow-sm text-gray-600 font-bold flex items-center justify-center text-xl active:scale-90">-</button>
-                    <span class="font-bold text-base w-4 text-center">${data.qty}</span>
-                    <button onclick="updateQty('${key}', 1)" class="w-8 h-8 rounded-md bg-white shadow-sm text-gray-600 font-bold flex items-center justify-center text-xl active:scale-90">+</button>
+                  <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-1 border border-slate-100">
+                    <button onclick="updateQty('${key}', -1)" class="w-7 h-7 rounded bg-white shadow-sm text-slate-600 font-bold flex items-center justify-center text-lg active:scale-90">-</button>
+                    <span class="font-bold text-sm w-3 text-center">${data.qty}</span>
+                    <button onclick="updateQty('${key}', 1)" class="w-7 h-7 rounded bg-white shadow-sm text-slate-600 font-bold flex items-center justify-center text-lg active:scale-90">+</button>
                   </div>
                 </div>
               `).join('')}
             </div>
           ` : ''}
+        `;
 
-          <!-- Spacer to fix scrolling issue over fixed bottom bar -->
-          <div class="h-64 w-full shrink-0"></div>
-
-          <!-- Checkout Bar -->
-          <div class="fixed bottom-[60px] left-0 w-full bg-white px-4 py-3 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] border-t border-gray-100 z-30">
-            
-            <div class="flex justify-between items-center mb-3">
+        // Bottom Dock Content (Always perfectly aligned above nav)
+        dockHtml = `
+          <div class="p-3 bg-white">
+            <!-- Row 1: Actions & Total -->
+            <div class="flex justify-between items-end mb-3">
               <div class="flex gap-2">
-                <!-- Customer Info -->
-                <button onclick="toggleCustomerModal(true)" class="flex items-center gap-1.5 text-[11px] bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 font-semibold text-gray-600 active:bg-gray-100 transition-colors">
-                  <i class="fa-solid fa-user text-gray-400"></i> 
-                  ${state.customer.name ? state.customer.name.substring(0,8) + '...' : 'Customer'}
+                <button onclick="toggleCustomerModal(true)" class="flex items-center gap-1.5 text-[11px] bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 font-bold text-slate-600 active:scale-95 transition-transform">
+                  <i class="fa-solid fa-user text-slate-400"></i> ${state.customer.name ? state.customer.name.substring(0,8)+'...' : 'Cust'}
                 </button>
-                <!-- Discount Button -->
-                <button onclick="toggleDiscountModal(true)" class="flex items-center gap-1.5 text-[11px] ${discountAmt > 0 ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-gray-50 border-gray-200 text-gray-600'} px-3 py-2 rounded-lg border font-semibold active:bg-gray-100 transition-colors">
-                  <i class="fa-solid fa-tag ${discountAmt > 0 ? 'text-indigo-500' : 'text-gray-400'}"></i> 
-                  ${discountAmt > 0 ? '-₹'+discountAmt.toFixed(0) : 'Discount'}
+                <button onclick="toggleDiscountModal(true)" class="flex items-center gap-1.5 text-[11px] ${discountAmt > 0 ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200 text-slate-600'} px-3 py-2 rounded-xl border font-bold active:scale-95 transition-transform">
+                  <i class="fa-solid fa-tag ${discountAmt > 0 ? 'text-indigo-500' : 'text-slate-400'}"></i> ${discountAmt > 0 ? '-₹'+discountAmt : 'Disc'}
                 </button>
               </div>
-              
               <div class="text-right">
-                ${discountAmt > 0 ? `<div class="text-[10px] text-gray-400 line-through">₹${subtotal}</div>` : ''}
+                ${discountAmt > 0 ? `<div class="text-[11px] font-bold text-slate-400 line-through">₹${subtotal}</div>` : ''}
                 <div class="flex items-baseline justify-end gap-1">
-                  <span class="text-xs font-bold text-gray-400 uppercase tracking-wide">Total</span>
-                  <span class="text-3xl font-black text-emerald-600 tracking-tight">₹${total}</span>
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total</span>
+                  <span class="text-3xl font-black text-emerald-600 tracking-tight leading-none">₹${total}</span>
                 </div>
               </div>
             </div>
-
+            <!-- Row 2: Payment Buttons -->
             <div class="grid grid-cols-3 gap-2">
-              <button onclick="processCheckout('CASH')" class="bg-emerald-500 text-white py-3.5 font-bold text-sm md:text-base rounded-xl shadow-md shadow-emerald-500/20 active:scale-95 transition-all">CASH</button>
-              <button onclick="processCheckout('ONLINE')" class="bg-indigo-500 text-white py-3.5 font-bold text-sm md:text-base rounded-xl shadow-md shadow-indigo-500/20 active:scale-95 transition-all">ONLINE</button>
-              <button onclick="toggleCreditModal(true)" class="bg-amber-500 text-white py-3.5 font-bold text-sm md:text-base rounded-xl shadow-md shadow-amber-500/20 active:scale-95 transition-all">CREDIT</button>
+              <button onclick="processCheckout('CASH')" class="bg-emerald-600 active:bg-emerald-700 text-white py-3 font-bold text-sm rounded-xl shadow-sm active:scale-[0.97] transition-all flex justify-center items-center gap-1"><i class="fa-solid fa-money-bill-wave"></i> CASH</button>
+              <button onclick="processCheckout('ONLINE')" class="bg-indigo-600 active:bg-indigo-700 text-white py-3 font-bold text-sm rounded-xl shadow-sm active:scale-[0.97] transition-all flex justify-center items-center gap-1"><i class="fa-solid fa-qrcode"></i> ONLINE</button>
+              <button onclick="toggleCreditModal(true)" class="bg-amber-500 active:bg-amber-600 text-white py-3 font-bold text-sm rounded-xl shadow-sm active:scale-[0.97] transition-all flex justify-center items-center gap-1"><i class="fa-solid fa-hotel"></i> CREDIT</button>
             </div>
           </div>
         `;
 
-        // Modals
+        // Modals for POS View
         if (state.customerModalOpen) {
-          html += `
-            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-              <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-                <h2 class="text-lg font-bold mb-4 text-gray-800">Customer Details</h2>
-                <input id="custName" type="text" placeholder="Name (Optional)" value="${state.customer.name}" class="w-full border border-gray-200 bg-gray-50 p-3.5 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <input id="custPhone" type="tel" placeholder="Phone (Optional)" value="${state.customer.phone}" class="w-full border border-gray-200 bg-gray-50 p-3.5 rounded-xl mb-5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          modalHtml += `
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+                <h2 class="text-lg font-bold mb-4 text-slate-800">Customer Details</h2>
+                <input id="custName" type="text" placeholder="Name (Optional)" value="${state.customer.name}" class="w-full border border-slate-200 bg-slate-50 p-3.5 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <input id="custPhone" type="tel" placeholder="Phone (Optional)" value="${state.customer.phone}" class="w-full border border-slate-200 bg-slate-50 p-3.5 rounded-xl mb-5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <div class="flex gap-3">
-                  <button onclick="toggleCustomerModal(false)" class="flex-1 p-3.5 bg-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-transform">Cancel</button>
-                  <button onclick="saveCustomerInfo()" class="flex-1 p-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md shadow-indigo-500/30 active:scale-95 transition-transform">Save Info</button>
+                  <button onclick="toggleCustomerModal(false)" class="flex-1 p-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-transform">Cancel</button>
+                  <button onclick="saveCustomerInfo()" class="flex-1 p-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md active:scale-95 transition-transform">Save Info</button>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         }
         if (state.creditModalOpen) {
-           html += `
-            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-              <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-                <h2 class="text-lg font-bold mb-4 text-gray-800">Credit Reference</h2>
-                <input id="creditInput" type="text" placeholder="Hotel Name or Room Number" class="w-full border border-gray-200 bg-gray-50 p-4 rounded-xl text-lg mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500" autofocus>
+           modalHtml += `
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+                <h2 class="text-lg font-bold mb-4 text-slate-800">Credit Reference</h2>
+                <input id="creditInput" type="text" placeholder="Hotel / Room / Name" class="w-full border border-slate-200 bg-slate-50 p-4 rounded-xl text-lg mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500" autofocus>
                 <div class="flex gap-3">
-                  <button onclick="toggleCreditModal(false)" class="flex-1 p-3.5 bg-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-transform">Cancel</button>
-                  <button onclick="processCheckout('CREDIT')" class="flex-1 p-3.5 bg-amber-500 text-white font-bold rounded-xl shadow-md shadow-amber-500/30 active:scale-95 transition-transform">Complete Sale</button>
+                  <button onclick="toggleCreditModal(false)" class="flex-1 p-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-transform">Cancel</button>
+                  <button onclick="processCheckout('CREDIT')" class="flex-1 p-3.5 bg-amber-500 text-white font-bold rounded-xl shadow-md active:scale-95 transition-transform">Complete</button>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         }
         if (state.discountModalOpen) {
-           html += `
-            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-              <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+           modalHtml += `
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold text-gray-800">Apply Discount</h2>
-                    <button onclick="clearDiscount()" class="text-red-500 text-sm font-bold bg-red-50 px-2 py-1 rounded">Clear</button>
+                    <h2 class="text-lg font-bold text-slate-800">Apply Discount</h2>
+                    <button onclick="clearDiscount()" class="text-rose-500 text-xs font-bold bg-rose-50 px-3 py-1.5 rounded-lg">Clear</button>
                 </div>
-                <input id="discountInput" type="number" placeholder="Enter Amount" class="w-full border border-gray-200 bg-gray-50 p-4 rounded-xl text-lg mb-5 focus:outline-none focus:ring-2 focus:ring-indigo-500" autofocus>
-                <div class="flex gap-3">
-                  <button onclick="toggleDiscountModal(false)" class="p-3.5 bg-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-transform">Cancel</button>
-                  <button onclick="applyDiscount('fixed')" class="flex-1 p-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md shadow-indigo-500/30 active:scale-95 transition-transform">₹ Flat</button>
-                  <button onclick="applyDiscount('percent')" class="flex-1 p-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md shadow-indigo-500/30 active:scale-95 transition-transform">% Off</button>
+                <input id="discountInput" type="number" placeholder="Enter Amount" class="w-full border border-slate-200 bg-slate-50 p-4 rounded-xl text-lg mb-5 focus:outline-none focus:ring-2 focus:ring-indigo-500" autofocus>
+                <div class="flex gap-2">
+                  <button onclick="toggleDiscountModal(false)" class="p-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-transform">Cancel</button>
+                  <button onclick="applyDiscount('fixed')" class="flex-1 p-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md active:scale-95 transition-transform">₹ Flat</button>
+                  <button onclick="applyDiscount('percent')" class="flex-1 p-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md active:scale-95 transition-transform">% Off</button>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         }
       } 
       
       // --- VIEW: HISTORY ---
       else if (state.view === 'history') {
-        html += `
-          <h2 class="text-2xl font-black text-gray-800 mb-4 tracking-tight">Today's Tickets</h2>
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            ${state.history.length === 0 ? '<p class="p-6 text-center text-gray-400 font-medium">No sales recorded today.</p>' : 
+        appHtml += `
+          <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">Today's Tickets</h2>
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            ${state.history.length === 0 ? '<p class="p-6 text-center text-slate-400 font-medium">No sales recorded today.</p>' : 
               state.history.map((tx, index) => {
                 const itemsStr = Object.values(JSON.parse(tx.items)).map(c => `${c.qty}x ${c.item.name}`).join(', ');
                 return `
-                <div class="p-4 border-b border-gray-50 last:border-0 ${tx.status === 'VOID' ? 'bg-red-50/50 opacity-75' : ''}">
+                <div class="p-4 border-b border-slate-50 last:border-0 ${tx.status === 'VOID' ? 'bg-rose-50/50 opacity-75' : ''}">
                   <div class="flex justify-between items-start mb-2">
                     <div class="flex-1">
-                      <div class="font-bold text-lg text-gray-800">₹${tx.totalAmount} <span class="text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-500 align-middle ml-1">${tx.paymentMethod}</span></div>
-                      <div class="text-xs text-gray-400 mt-0.5">${new Date(tx.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tx.reference ? '• Ref: ' + tx.reference : ''}</div>
+                      <div class="font-bold text-lg text-slate-800">₹${tx.totalAmount} <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-500 align-middle ml-1">${tx.paymentMethod}</span></div>
+                      <div class="text-xs text-slate-400 mt-0.5">${new Date(tx.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tx.reference ? '• Ref: ' + tx.reference : ''}</div>
                       ${tx.customerName ? `<div class="text-[11px] text-indigo-600 font-semibold mt-1.5"><i class="fa-solid fa-user mr-1"></i>${tx.customerName}</div>` : ''}
                     </div>
-                    ${tx.status === 'COMPLETED' && index === 0 ? `<button onclick="voidTransaction(${tx.id})" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-100 active:scale-95">Void</button>` : 
-                     tx.status === 'VOID' ? '<span class="text-red-500 font-bold text-xs bg-red-50 px-2 py-1 rounded">VOIDED</span>' : ''}
+                    ${tx.status === 'COMPLETED' && index === 0 ? `<button onclick="voidTransaction(${tx.id})" class="bg-rose-50 text-rose-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-rose-100 active:scale-95">Void</button>` : 
+                     tx.status === 'VOID' ? '<span class="text-rose-500 font-bold text-[10px] bg-rose-50 px-2 py-1 rounded">VOIDED</span>' : ''}
                   </div>
-                  <div class="text-sm text-gray-500 mb-3 leading-snug">${itemsStr}</div>
+                  <div class="text-[13px] font-medium text-slate-500 mb-3 leading-snug">${itemsStr}</div>
                   ${tx.status === 'COMPLETED' ? `
-                    <button onclick="openPreview(${tx.id})" class="w-full py-2.5 bg-gray-50 text-gray-700 hover:bg-gray-100 rounded-lg font-bold text-sm flex items-center justify-center gap-2 border border-gray-200 active:scale-95 transition-all">
+                    <button onclick="openPreview(${tx.id})" class="w-full py-2.5 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border border-slate-200 active:scale-[0.98] transition-all">
                       <i class="fa-solid fa-eye"></i> View Ticket
                     </button>
                   ` : ''}
                 </div>
               `}).join('')}
           </div>
-          <div class="h-24 w-full"></div>
         `;
-
         if (state.previewTxId) {
           const previewTx = state.history.find(t => t.id === state.previewTxId);
-          html += `
-            <div class="fixed inset-0 bg-gray-900/90 backdrop-blur-sm flex flex-col items-center justify-between p-4 z-[60] overflow-y-auto">
+          modalHtml += `
+            <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-between p-4 z-50 overflow-y-auto">
               <div class="w-full flex justify-between items-center mb-4 pt-4 text-white max-w-sm">
                 <span class="font-bold text-lg">Ticket Details</span>
-                <button onclick="closePreview()" class="w-10 h-10 bg-gray-800 rounded-full text-xl flex items-center justify-center active:scale-90">&times;</button>
+                <button onclick="closePreview()" class="w-10 h-10 bg-slate-800 rounded-full text-xl flex items-center justify-center active:scale-90">&times;</button>
               </div>
-              <div class="bg-white p-2 rounded-xl shadow-2xl w-full max-w-sm flex justify-center mb-6">
+              <div class="bg-white p-2 rounded-2xl shadow-2xl w-full max-w-sm flex justify-center mb-6">
                 ${generateReceiptHTML(previewTx, false)}
               </div>
               <div class="w-full max-w-sm flex flex-col gap-3 pb-8">
-                <button onclick="triggerDownload(true)" class="w-full py-3.5 bg-amber-500 text-amber-950 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
-                  <i class="fa-solid fa-ticket"></i> Download RIDE TICKET (KOT)
+                <button onclick="triggerDownload(true)" class="w-full py-3.5 bg-amber-500 text-amber-950 rounded-xl font-bold text-base shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-ticket"></i> KOT Download
                 </button>
-                <button onclick="triggerDownload(false)" class="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
-                  <i class="fa-solid fa-file-invoice-dollar"></i> Download FULL BILL
+                <button onclick="triggerDownload(false)" class="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold text-base shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-file-invoice-dollar"></i> FULL BILL Download
                 </button>
               </div>
-            </div>
-          `;
+            </div>`;
         }
       }
 
       // --- VIEW: SETTINGS ---
       else if (state.view === 'settings') {
-        html += `
-          <h2 class="text-2xl font-black text-gray-800 mb-4 tracking-tight">Menu Setup</h2>
-          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6">
-            <input id="menuName" type="text" placeholder="Ride Name" class="w-full border border-gray-200 bg-gray-50 p-3.5 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <input id="menuPrice" type="number" placeholder="Price (₹)" class="w-full border border-gray-200 bg-gray-50 p-3.5 rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <label class="flex items-center gap-3 mb-5 p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl">
-              <input type="checkbox" id="menuTowable" class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500">
-              <span class="text-sm font-semibold text-indigo-900">Towable item? (Requires boat/jetski)</span>
+        const editingItem = state.editingRideId ? state.menu.find(m => m.id === state.editingRideId) : null;
+        
+        appHtml += `
+          <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">Menu Setup</h2>
+          
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 relative overflow-hidden">
+            ${editingItem ? '<div class="absolute top-0 left-0 w-full h-1 bg-amber-400"></div>' : '<div class="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>'}
+            <h3 class="font-bold text-sm mb-4 text-slate-700">${editingItem ? 'Edit Ride Details' : 'Add New Ride'}</h3>
+            
+            <input id="menuName" type="text" placeholder="Ride Name" value="${editingItem ? editingItem.name : ''}" class="w-full border border-slate-200 bg-slate-50 p-3.5 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+            <input id="menuPrice" type="number" placeholder="Price (₹)" value="${editingItem ? editingItem.price : ''}" class="w-full border border-slate-200 bg-slate-50 p-3.5 rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold">
+            
+            <label class="flex items-center gap-3 mb-5 p-3.5 bg-indigo-50/50 border border-indigo-100 rounded-xl">
+              <input type="checkbox" id="menuTowable" ${editingItem && editingItem.isTowable ? 'checked' : ''} class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600">
+              <span class="text-sm font-bold text-indigo-900">Towable item? (Boat/Jetski)</span>
             </label>
-            <button onclick="addMenuItem()" class="w-full bg-gray-800 text-white py-3.5 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Add to Menu</button>
+            
+            <div class="flex gap-2">
+              ${editingItem ? `<button onclick="cancelEditMenu()" class="p-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-transform w-1/3">Cancel</button>` : ''}
+              <button onclick="addOrUpdateMenuItem()" class="flex-1 bg-slate-800 text-white py-3.5 rounded-xl font-bold shadow-md active:scale-95 transition-transform">
+                ${editingItem ? 'Update Ride' : 'Add to Menu'}
+              </button>
+            </div>
           </div>
-          <h3 class="font-bold text-gray-400 uppercase tracking-wide text-xs mb-3 ml-1">Current Active Menu</h3>
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+          <h3 class="font-bold text-slate-400 uppercase tracking-wide text-[11px] mb-2 mx-2">Active Rides List</h3>
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
             ${state.menu.map(item => `
-              <div class="p-4 border-b border-gray-50 last:border-0 flex justify-between items-center">
+              <div class="p-4 border-b border-slate-50 last:border-0 flex justify-between items-center ${state.editingRideId === item.id ? 'bg-amber-50/30' : ''}">
                 <div>
-                  <div class="font-bold text-gray-800">${item.name}</div>
-                  <div class="text-sm text-indigo-600 font-semibold mt-0.5">₹${item.price} ${item.isTowable ? '<span class="ml-2 text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded align-middle border border-indigo-100">TOWABLE</span>' : ''}</div>
+                  <div class="font-bold text-slate-800">${item.name}</div>
+                  <div class="text-sm text-indigo-600 font-bold mt-0.5">₹${item.price} ${item.isTowable ? '<span class="ml-2 text-[9px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded align-middle border border-indigo-100 tracking-wider">TOWABLE</span>' : ''}</div>
                 </div>
-                <button onclick="deleteMenuItem(${item.id})" class="text-red-400 p-3 bg-red-50 rounded-lg active:scale-90 transition-transform"><i class="fa-solid fa-trash"></i></button>
+                <div class="flex gap-1.5">
+                  <button onclick="editMenuItem(${item.id})" class="text-amber-500 p-2.5 bg-amber-50 rounded-lg active:scale-90 transition-transform"><i class="fa-solid fa-pen"></i></button>
+                  <button onclick="deleteMenuItem(${item.id})" class="text-rose-400 p-2.5 bg-rose-50 rounded-lg active:scale-90 transition-transform"><i class="fa-solid fa-trash"></i></button>
+                </div>
               </div>
             `).join('')}
           </div>
-          <div class="h-24 w-full"></div>
         `;
       }
       
       // --- VIEW: EXPENSES ---
       else if (state.view === 'expenses') {
-        html += `
-          <h2 class="text-2xl font-black text-gray-800 mb-4 tracking-tight">Log Petty Cash</h2>
-          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6">
-            <input id="expDesc" type="text" placeholder="Reason (e.g. Fuel, Ice)" class="w-full border border-gray-200 bg-gray-50 p-3.5 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <input id="expAmt" type="number" placeholder="Amount (₹)" class="w-full border border-gray-200 bg-gray-50 p-3.5 rounded-xl mb-5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <button onclick="addExpense()" class="w-full bg-gray-800 text-white py-3.5 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Record Expense</button>
+        appHtml += `
+          <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">Petty Cash Log</h2>
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 relative overflow-hidden">
+             <div class="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>
+            <input id="expDesc" type="text" placeholder="Reason (e.g. Fuel, Ice)" class="w-full border border-slate-200 bg-slate-50 p-3.5 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium">
+            <input id="expAmt" type="number" placeholder="Amount (₹)" class="w-full border border-slate-200 bg-slate-50 p-3.5 rounded-xl mb-5 focus:outline-none focus:ring-2 focus:ring-rose-500 font-bold">
+            <button onclick="addExpense()" class="w-full bg-slate-800 text-white py-3.5 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Record Expense</button>
           </div>
-          <h3 class="font-bold text-gray-400 uppercase tracking-wide text-xs mb-3 ml-1">Today's Expenses</h3>
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            ${state.expenses.length === 0 ? '<p class="p-6 text-center text-gray-400 font-medium">No expenses logged today.</p>' : 
+          <h3 class="font-bold text-slate-400 uppercase tracking-wide text-[11px] mb-2 mx-2">Today's Deductions</h3>
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            ${state.expenses.length === 0 ? '<p class="p-6 text-center text-slate-400 font-medium">No expenses logged today.</p>' : 
               state.expenses.map(ex => `
-                <div class="p-4 border-b border-gray-50 last:border-0 flex justify-between items-center">
-                  <span class="font-medium text-gray-700">${ex.description}</span>
-                  <span class="font-bold text-red-500 bg-red-50 px-3 py-1 rounded-lg">-₹${ex.amount}</span>
+                <div class="p-4 border-b border-slate-50 last:border-0 flex justify-between items-center">
+                  <span class="font-bold text-slate-700">${ex.description}</span>
+                  <span class="font-black text-rose-500 bg-rose-50 px-3 py-1 rounded-lg">-₹${ex.amount}</span>
                 </div>
               `).join('')}
           </div>
-          <div class="h-24 w-full"></div>
         `;
       }
 
       // --- VIEW: DASHBOARD ---
       else if (state.view === 'dashboard') {
-        html += `
-          <h2 class="text-2xl font-black text-gray-800 mb-4 tracking-tight">End of Day</h2>
-          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-4">
-            <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-50">
-              <span class="text-gray-500 font-medium">Total Cash In</span>
-              <span class="font-bold text-gray-800">₹${state.stats.cash}</span>
+        appHtml += `
+          <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">End of Day</h2>
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-4">
+            <div class="flex justify-between items-center mb-3 pb-3 border-b border-slate-50">
+              <span class="text-slate-500 font-bold">Total Cash In</span>
+              <span class="font-black text-slate-800 text-lg">₹${state.stats.cash}</span>
             </div>
-            <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-50">
-              <span class="text-gray-500 font-medium">Cash Expenses</span>
-              <span class="font-bold text-red-500">-₹${state.stats.expenseTotal}</span>
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-50">
+              <span class="text-slate-500 font-bold">Cash Expenses</span>
+              <span class="font-black text-rose-500 text-lg">-₹${state.stats.expenseTotal}</span>
             </div>
-            <div class="flex justify-between items-center mt-5 bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
-              <span class="font-bold text-emerald-900 text-sm">Net Cash Drawer</span>
-              <span class="font-black text-emerald-600 text-xl">₹${state.stats.netCash}</span>
+            <div class="flex justify-between items-center bg-emerald-50 border border-emerald-100 p-4 rounded-xl shadow-sm">
+              <span class="font-bold text-emerald-900 text-sm uppercase tracking-wide">Net Cash Drawer</span>
+              <span class="font-black text-emerald-600 text-2xl">₹${state.stats.netCash}</span>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-indigo-50 border border-indigo-100 p-5 rounded-xl text-center">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-indigo-50 border border-indigo-100 p-5 rounded-2xl text-center shadow-sm">
               <div class="text-[11px] text-indigo-500 font-bold uppercase tracking-wider mb-1">Online (UPI)</div>
               <div class="text-2xl font-black text-indigo-700">₹${state.stats.online}</div>
             </div>
-            <div class="bg-amber-50 border border-amber-100 p-5 rounded-xl text-center">
+            <div class="bg-amber-50 border border-amber-100 p-5 rounded-2xl text-center shadow-sm">
               <div class="text-[11px] text-amber-600 font-bold uppercase tracking-wider mb-1">Credits</div>
               <div class="text-2xl font-black text-amber-700">₹${state.stats.credit}</div>
             </div>
           </div>
-          <div class="h-24 w-full"></div>
         `;
       }
 
-      app.innerHTML = html;
+      app.innerHTML = appHtml;
+      checkoutDock.innerHTML = dockHtml;
+      modals.innerHTML = modalHtml;
     }
 
     boot();
