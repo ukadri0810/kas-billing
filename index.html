@@ -11,11 +11,10 @@
   
   <style>
     body { user-select: none; touch-action: manipulation; }
-    .nav-active { color: #4F46E5; } /* Indigo 600 */
-    .nav-inactive { color: #94A3B8; } /* Slate 400 */
+    .nav-active { color: #4F46E5; }
+    .nav-inactive { color: #94A3B8; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    /* Support for mobile safe areas (notches/home bars) */
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
     
     .receipt-container {
@@ -29,17 +28,12 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 font-sans h-screen w-screen flex flex-col overflow-hidden text-slate-800">
+<body class="bg-slate-50 font-sans h-[100dvh] w-screen flex flex-col overflow-hidden text-slate-800">
 
-  <!-- 1. Sleek Top Header -->
-  <header class="shrink-0 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-center shadow-sm z-20">
-    <img src="assets/kas.png" alt="KAS Logo" class="h-10 md:h-12 object-contain drop-shadow-sm">
-  </header>
+  <!-- Main Scrollable Content Area -->
+  <main id="app" class="flex-1 overflow-y-auto px-3 overscroll-contain w-full max-w-2xl mx-auto"></main>
 
-  <!-- 2. Main Scrollable Content Area -->
-  <main id="app" class="flex-1 overflow-y-auto px-3 py-4 overscroll-contain w-full max-w-2xl mx-auto"></main>
-
-  <!-- 3. Docked Footer Container (Guarantees zero overlap!) -->
+  <!-- Docked Footer Container -->
   <footer class="shrink-0 flex flex-col bg-white border-t border-slate-200 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.1)] z-30 w-full">
     
     <!-- Dynamic POS Checkout Bar injects here -->
@@ -70,11 +64,10 @@
     </nav>
   </footer>
 
-  <!-- 4. Modal Container -->
+  <!-- Modal Container -->
   <div id="modals"></div>
 
   <script>
-    // 1. Initialize Database (Bumped to V6 for updated default rides)
     const db = new Dexie('WaterSportsV6');
     db.version(1).stores({
       transactions: '++id, receiptId, timestamp, totalAmount, discountAmount, paymentMethod, reference, customerName, customerPhone, status',
@@ -82,7 +75,6 @@
       menu: '++id, name, price, isTowable'
     });
 
-    // 2. Application State
     let state = {
       view: 'pos',
       cart: {}, 
@@ -95,17 +87,15 @@
       creditModalOpen: false,
       discountModalOpen: false,
       previewTxId: null,
-      editingRideId: null, // Used for Editing Settings
+      editingRideId: null,
       customer: { name: '', phone: '' },
       discount: { type: 'none', value: 0 }, 
       stats: { cash: 0, online: 0, credit: 0, expenseTotal: 0, netCash: 0, list: [] }
     };
 
-    // 3. Boot Sequence
     async function boot() {
       const count = await db.menu.count();
       if (count === 0) {
-        // New Requested Default Rides
         await db.menu.bulkAdd([
           { name: 'Jetski', price: 400, isTowable: false },
           { name: 'Speedboat', price: 250, isTowable: false },
@@ -150,7 +140,6 @@
       state.stats = s;
     }
 
-    // 4. Cart Logic
     function getCartSubtotal() { return Object.values(state.cart).reduce((sum, c) => sum + (c.item.price * c.qty), 0); }
     function getDiscountAmount() {
       const sub = getCartSubtotal();
@@ -181,7 +170,6 @@
     window.setJetski = (num) => { state.activeJetski = num; render(); };
     window.setTowingMachine = (machine) => { state.towingMachine = machine; render(); };
     
-    // Toggle Modals
     window.toggleCustomerModal = (isOpen) => { state.customerModalOpen = isOpen; render(); };
     window.toggleCreditModal = (isOpen) => { state.creditModalOpen = isOpen; render(); };
     window.toggleDiscountModal = (isOpen) => { state.discountModalOpen = isOpen; render(); };
@@ -199,7 +187,6 @@
     };
     window.clearDiscount = () => { state.discount = { type: 'none', value: 0 }; state.discountModalOpen = false; render(); }
 
-    // 5. Checkout
     window.processCheckout = async (method) => {
       const total = getCartTotal();
       const subtotal = getCartSubtotal();
@@ -237,7 +224,6 @@
       }
     };
 
-    // --- Settings / Expenses ---
     window.addExpense = async () => { 
       const desc = document.getElementById('expDesc').value;
       const amt = parseFloat(document.getElementById('expAmt').value);
@@ -267,7 +253,6 @@
       if (confirm("Delete this ride?")) { await db.menu.delete(id); await loadMenuData(); render(); }
     };
 
-    // 6. PDF Generation (Unchanged, fully intact)
     window.openPreview = (txId) => { state.previewTxId = txId; render(); };
     window.closePreview = () => { state.previewTxId = null; render(); };
 
@@ -332,23 +317,26 @@
       render();
     };
 
-    // 7. Core Render Loop
     function render() {
       const app = document.getElementById('app');
       const checkoutDock = document.getElementById('checkout-dock');
       const modals = document.getElementById('modals');
-      let appHtml = '', dockHtml = '', modalHtml = '';
+      
+      // Inject Large Logo at the top of the scrollable content for all views
+      let appHtml = `
+        <div class="flex justify-center pt-8 pb-6 shrink-0">
+          <img src="assets/kas.png" alt="KAS Logo" class="h-24 md:h-28 object-contain drop-shadow-sm">
+        </div>
+      `;
+      let dockHtml = '', modalHtml = '';
 
-      // --- POS VIEW ---
       if (state.view === 'pos') {
         const subtotal = getCartSubtotal();
         const discountAmt = getDiscountAmount();
         const total = getCartTotal();
         const cartItems = Object.entries(state.cart);
 
-        // Top Content inside scrolling <main>
         appHtml += `
-          <!-- Compact Settings Toggles -->
           <div class="grid grid-cols-2 gap-3 mb-4">
             <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
               <div class="text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide px-1">Active Jetski</div>
@@ -366,7 +354,6 @@
             </div>
           </div>
           
-          <!-- Ultra-Compact Menu Grid -->
           <div class="grid grid-cols-2 gap-2.5 mb-4">
             ${state.menu.map(item => `
               <button onclick="handleTap(${item.id})" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 transition-transform active:scale-95 active:bg-indigo-50 flex flex-col items-center justify-center min-h-[76px] relative overflow-hidden">
@@ -377,9 +364,8 @@
             `).join('')}
           </div>
 
-          <!-- Live Cart Box -->
           ${cartItems.length > 0 ? `
-            <div class="bg-white rounded-2xl shadow-sm p-3.5 border border-indigo-100 bg-indigo-50/30">
+            <div class="bg-white rounded-2xl shadow-sm p-3.5 border border-indigo-100 bg-indigo-50/30 mb-4">
               <div class="flex justify-between items-center border-b border-indigo-100/50 pb-2 mb-2">
                 <h3 class="text-[11px] font-bold text-indigo-400 uppercase tracking-wide">Current Order</h3>
               </div>
@@ -397,13 +383,11 @@
                 </div>
               `).join('')}
             </div>
-          ` : ''}
+          ` : '<div class="h-4"></div>'}
         `;
 
-        // Bottom Dock Content (Always perfectly aligned above nav)
         dockHtml = `
           <div class="p-3 bg-white">
-            <!-- Row 1: Actions & Total -->
             <div class="flex justify-between items-end mb-3">
               <div class="flex gap-2">
                 <button onclick="toggleCustomerModal(true)" class="flex items-center gap-1.5 text-[11px] bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 font-bold text-slate-600 active:scale-95 transition-transform">
@@ -421,7 +405,6 @@
                 </div>
               </div>
             </div>
-            <!-- Row 2: Payment Buttons -->
             <div class="grid grid-cols-3 gap-2">
               <button onclick="processCheckout('CASH')" class="bg-emerald-600 active:bg-emerald-700 text-white py-3 font-bold text-sm rounded-xl shadow-sm active:scale-[0.97] transition-all flex justify-center items-center gap-1"><i class="fa-solid fa-money-bill-wave"></i> CASH</button>
               <button onclick="processCheckout('ONLINE')" class="bg-indigo-600 active:bg-indigo-700 text-white py-3 font-bold text-sm rounded-xl shadow-sm active:scale-[0.97] transition-all flex justify-center items-center gap-1"><i class="fa-solid fa-qrcode"></i> ONLINE</button>
@@ -430,7 +413,6 @@
           </div>
         `;
 
-        // Modals for POS View
         if (state.customerModalOpen) {
           modalHtml += `
             <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -477,11 +459,10 @@
         }
       } 
       
-      // --- VIEW: HISTORY ---
       else if (state.view === 'history') {
         appHtml += `
           <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">Today's Tickets</h2>
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
             ${state.history.length === 0 ? '<p class="p-6 text-center text-slate-400 font-medium">No sales recorded today.</p>' : 
               state.history.map((tx, index) => {
                 const itemsStr = Object.values(JSON.parse(tx.items)).map(c => `${c.qty}x ${c.item.name}`).join(', ');
@@ -529,10 +510,8 @@
         }
       }
 
-      // --- VIEW: SETTINGS ---
       else if (state.view === 'settings') {
         const editingItem = state.editingRideId ? state.menu.find(m => m.id === state.editingRideId) : null;
-        
         appHtml += `
           <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">Menu Setup</h2>
           
@@ -574,7 +553,6 @@
         `;
       }
       
-      // --- VIEW: EXPENSES ---
       else if (state.view === 'expenses') {
         appHtml += `
           <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">Petty Cash Log</h2>
@@ -585,7 +563,7 @@
             <button onclick="addExpense()" class="w-full bg-slate-800 text-white py-3.5 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Record Expense</button>
           </div>
           <h3 class="font-bold text-slate-400 uppercase tracking-wide text-[11px] mb-2 mx-2">Today's Deductions</h3>
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
             ${state.expenses.length === 0 ? '<p class="p-6 text-center text-slate-400 font-medium">No expenses logged today.</p>' : 
               state.expenses.map(ex => `
                 <div class="p-4 border-b border-slate-50 last:border-0 flex justify-between items-center">
@@ -597,7 +575,6 @@
         `;
       }
 
-      // --- VIEW: DASHBOARD ---
       else if (state.view === 'dashboard') {
         appHtml += `
           <h2 class="text-2xl font-black text-slate-800 mb-4 tracking-tight px-1">End of Day</h2>
@@ -615,7 +592,7 @@
               <span class="font-black text-emerald-600 text-2xl">₹${state.stats.netCash}</span>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-3 mb-6">
             <div class="bg-indigo-50 border border-indigo-100 p-5 rounded-2xl text-center shadow-sm">
               <div class="text-[11px] text-indigo-500 font-bold uppercase tracking-wider mb-1">Online (UPI)</div>
               <div class="text-2xl font-black text-indigo-700">₹${state.stats.online}</div>
