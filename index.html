@@ -1005,7 +1005,11 @@
         return match ? Math.max(highest, Number(match[1])) : highest;
       }, 0);
 
-      const safeNext = Math.max(1, Number(state.settings.nextInvoiceNumber || 1), state.highestInvoiceNumber + 1);
+      // Keep the configured starting number. Only move it forward when it would
+      // collide with an invoice that already exists. This lets the owner manually
+      // choose the next invoice number from Setup.
+      const configuredNext = Math.max(1, Number(state.settings.nextInvoiceNumber || 1));
+      const safeNext = Math.max(configuredNext, state.highestInvoiceNumber + 1);
       if (safeNext !== state.settings.nextInvoiceNumber) {
         state.settings.nextInvoiceNumber = safeNext;
         await saveAppSettings();
@@ -1448,14 +1452,23 @@
       }
 
       const highestExisting = state.highestInvoiceNumber;
-      const safeNext = Math.max(invoiceNumber, highestExisting + 1);
-      state.settings.nextInvoiceNumber = safeNext;
+
+      // The owner can manually choose the next invoice number. If the chosen
+      // number already exists (or is below the highest existing number), we
+      // cannot safely reuse it, so explain the valid range instead of silently
+      // changing the user's value.
+      if (invoiceNumber <= highestExisting) {
+        showInlineError(`Invoice number must be greater than INV-${highestExisting}.`);
+        return;
+      }
+
+      state.settings.nextInvoiceNumber = invoiceNumber;
       state.settings.jetskiNames = { 1: name1, 2: name2 };
 
       try {
         await saveAppSettings();
         render();
-        showInlineError(invoiceNumber <= highestExisting ? `Invoice adjusted to INV-${safeNext} to avoid duplicates.` : 'Settings saved.');
+        showInlineError(`Saved. Next bill will be INV-${invoiceNumber}.`);
       } catch (error) {
         console.error(error);
         showInlineError('Settings could not be saved.');
@@ -1516,17 +1529,31 @@
     function generateReceiptHTML(tx, isKOT = false) {
       const items = JSON.parse(tx.items || '{}');
 
-      const itemsHtml = Object.values(items).map(c => `
+      const rawLines = Object.values(items);
+
+      // CUSTOMER BILL: hide internal towing/machine allocation and merge the
+      // same ride across different machines. Example: 1 Sleeper on Jetski 1
+      // + 1 Sleeper on Jetski 2 + 1 Sleeper on Boat becomes simply 3x Sleeper.
+      const customerLines = Object.values(rawLines.reduce((groups, c) => {
+        const key = `${c.item.id || c.item.name}_${c.item.price}`;
+        if (!groups[key]) groups[key] = { item: c.item, qty: 0 };
+        groups[key].qty += Number(c.qty || 0);
+        return groups;
+      }, {}));
+
+      const displayLines = isKOT ? rawLines : customerLines;
+
+      const itemsHtml = displayLines.map(c => `
         <div style="display:flex;justify-content:space-between;gap:7px;margin-bottom:5px;font-size:11px;line-height:1.25;border-bottom:1px dashed #ccc;padding-bottom:4px;">
           <div style="flex:1;padding-right:4px;">
             <span style="font-weight:bold;">${escapeHTML(c.qty)}x ${escapeHTML(c.item.name)}</span>
-            ${c.towedBy ? `<br><span style="font-size:9px;">Tow: ${escapeHTML(getMachineLabel(c.towedBy))}</span>` : ''}
+            ${isKOT && c.towedBy ? `<br><span style="font-size:9px;">Tow: ${escapeHTML(getMachineLabel(c.towedBy))}</span>` : ''}
           </div>
           ${!isKOT ? `<div style="font-weight:bold;text-align:right;min-width:48px;">${money(c.item.price * c.qty)}</div>` : ''}
         </div>
       `).join('');
 
-      const subtotal = Object.values(items)
+      const subtotal = rawLines
         .reduce((sum, c) => sum + (c.item.price * c.qty), 0);
 
       return `
@@ -1542,7 +1569,7 @@
             <div class="receipt-subtitle">${isKOT ? 'RIDE KOT TICKET' : 'WATERSPORTS BILL'}</div>
             <div style="font-size:9px;margin-top:5px;font-weight:bold;">${escapeHTML(tx.receiptId)}</div>
             <div style="font-size:9px;">${escapeHTML(new Date(tx.timestamp).toLocaleString('en-IN'))}</div>
-            ${getTransactionMachines(tx).length ? `<div style="font-size:9px;margin-top:3px;font-weight:bold;">Machine: ${escapeHTML(getTransactionMachines(tx).map(getMachineLabel).join(' + '))}</div>` : ''}
+            ${isKOT && getTransactionMachines(tx).length ? `<div style="font-size:9px;margin-top:3px;font-weight:bold;">Machine: ${escapeHTML(getTransactionMachines(tx).map(getMachineLabel).join(' + '))}</div>` : ''}
           </div>
 
           ${(tx.customerName || tx.customerPhone) ? `
@@ -2103,7 +2130,7 @@
             class="form-input"
             style="font-weight:950;margin-bottom:7px;">
           <div class="settings-hint">
-            The next completed bill will use this number. Existing higher invoice numbers are automatically respected to prevent duplicates.
+            Example: enter <strong>5001</strong> → the next bill is <strong>INV-5001</strong>, then INV-5002, INV-5003…
           </div>
         </div>
 
@@ -2120,7 +2147,7 @@
             </div>
           </div>
           <div class="settings-hint">
-            These names appear on the POS machine selector, active-machine indicator, payment confirmation and future bills.
+            These names are used for internal machine tracking, history filters and KOT/business references. Customer bills do not show machine names.
           </div>
 
           <button onclick="savePOSSettings()" class="primary-btn" style="width:100%;margin-top:10px;">
