@@ -665,6 +665,105 @@
       margin-bottom: 8px;
     }
 
+    .history-filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .history-filter {
+      min-height: 38px;
+      border: 1px solid #d4dae0;
+      background: #fff;
+      color: #626c76;
+      border-radius: 7px;
+      font-size: 9px;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .history-filter.active {
+      background: #1769d1;
+      border-color: #1769d1;
+      color: #fff;
+    }
+
+    .machine-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 5px;
+    }
+
+    .machine-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 21px;
+      padding: 0 6px;
+      border-radius: 5px;
+      background: #eef5ff;
+      border: 1px solid #cfe0f7;
+      color: #1559a8;
+      font-size: 8px;
+      font-weight: 950;
+    }
+
+    .tow-transfer {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 7px;
+    }
+
+    .tow-transfer-label {
+      color: #7c858f;
+      font-size: 9px;
+      font-weight: 800;
+      margin-right: 2px;
+    }
+
+    .tow-transfer button {
+      min-height: 27px;
+      border: 1px solid #d2d8de;
+      background: #f5f6f7;
+      color: #5d6670;
+      border-radius: 5px;
+      padding: 0 7px;
+      font-size: 8px;
+      font-weight: 950;
+    }
+
+    .tow-transfer button.active {
+      background: #1769d1;
+      border-color: #1769d1;
+      color: #fff;
+    }
+
+    .expense-methods {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .expense-method {
+      min-height: 40px;
+      border: 1px solid #d2d8de;
+      background: #f5f6f7;
+      color: #5d6670;
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .expense-method.active {
+      background: #1769d1;
+      border-color: #1769d1;
+      color: #fff;
+    }
+
     .settings-machine-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -803,7 +902,9 @@
       history: [],
       expenses: [],
       activeJetski: 1,
-      towingMachine: 'JETSKI',
+      towingMachine: 'JETSKI1',
+      historyMachineFilter: 'ALL',
+      expensePaymentMethod: 'CASH',
       customerModalOpen: false,
       creditModalOpen: false,
       discountModalOpen: false,
@@ -826,7 +927,10 @@
         online: 0,
         credit: 0,
         expenseTotal: 0,
+        cashExpenseTotal: 0,
+        onlineExpenseTotal: 0,
         netCash: 0,
+        netOnline: 0,
         voidCount: 0,
         voidAmount: 0,
         list: []
@@ -965,7 +1069,10 @@
         online: 0,
         credit: 0,
         expenseTotal: 0,
+        cashExpenseTotal: 0,
+        onlineExpenseTotal: 0,
         netCash: 0,
+        netOnline: 0,
         voidCount: 0,
         voidAmount: 0,
         list: []
@@ -988,10 +1095,15 @@
       });
 
       state.expenses.forEach(ex => {
-        s.expenseTotal += Number(ex.amount || 0);
+        const amount = Number(ex.amount || 0);
+        const method = ex.paymentMethod || 'CASH';
+        s.expenseTotal += amount;
+        if (method === 'ONLINE') s.onlineExpenseTotal += amount;
+        else s.cashExpenseTotal += amount;
       });
 
-      s.netCash = s.cash - s.expenseTotal;
+      s.netCash = s.cash - s.cashExpenseTotal;
+      s.netOnline = s.online - s.onlineExpenseTotal;
       state.stats = s;
     }
 
@@ -1064,10 +1176,60 @@
       render();
     };
 
+    function normalizeMachineId(machine) {
+      if (machine === 'JETSKI') return 'JETSKI1';
+      return machine;
+    }
+
+    function getMachineLabel(machine) {
+      machine = normalizeMachineId(machine);
+      if (machine === 'JETSKI1') return machineName(1);
+      if (machine === 'JETSKI2') return machineName(2);
+      if (machine === 'SPEEDBOAT') return 'Speed Boat';
+      return machine || 'Unknown';
+    }
+
+    function getTransactionMachines(tx) {
+      if (Array.isArray(tx.machineUsage) && tx.machineUsage.length) return tx.machineUsage;
+
+      const machines = [];
+      if (tx.activeJetskiId) machines.push(`JETSKI${tx.activeJetskiId}`);
+      try {
+        Object.values(JSON.parse(tx.items || '{}')).forEach(c => {
+          if (c.towedBy) machines.push(normalizeMachineId(c.towedBy));
+        });
+      } catch {}
+      return [...new Set(machines)];
+    }
+
+    function transactionUsesMachine(tx, filter) {
+      if (filter === 'ALL') return true;
+      return getTransactionMachines(tx).includes(filter);
+    }
+
     window.setTowingMachine = machine => {
       if (state.checkoutLocked) return;
-      state.towingMachine = machine;
+      state.towingMachine = normalizeMachineId(machine);
       render();
+    };
+
+    window.transferTowable = (cartKey, targetMachine) => {
+      if (state.checkoutLocked || !state.cart[cartKey]) return;
+      const line = state.cart[cartKey];
+      if (!line.item.isTowable) return;
+
+      targetMachine = normalizeMachineId(targetMachine);
+      if (!['JETSKI1','JETSKI2','SPEEDBOAT'].includes(targetMachine)) return;
+      if (line.towedBy === targetMachine) return;
+
+      const newKey = `${line.item.id}_${targetMachine}`;
+      if (state.cart[newKey]) {
+        state.cart[newKey].qty += line.qty;
+      } else {
+        state.cart[newKey] = { ...line, towedBy: targetMachine };
+      }
+      delete state.cart[cartKey];
+      renderCartEditor();
     };
 
     window.toggleCustomerModal = isOpen => {
@@ -1143,7 +1305,9 @@
       const completedMachine = state.activeJetski;
       const completedMachineName = machineName(completedMachine);
       const discountAmount = getDiscountAmount();
-      const cartSnapshot = JSON.stringify(state.cart);
+      const normalizedCart = Object.fromEntries(Object.entries(state.cart).map(([key, line]) => [key, { ...line, towedBy: line.towedBy ? normalizeMachineId(line.towedBy) : null }]));
+      const cartSnapshot = JSON.stringify(normalizedCart);
+      const machineUsage = [...new Set([`JETSKI${completedMachine}`, ...Object.values(normalizedCart).map(c => c.towedBy).filter(Boolean)])];
       const timestamp = new Date().toISOString();
 
       try {
@@ -1177,6 +1341,7 @@
             items: cartSnapshot,
             activeJetskiId: completedMachine,
             activeJetskiName: completedMachineName,
+            machineUsage,
             status: 'COMPLETED'
           });
 
@@ -1241,6 +1406,11 @@
       render();
     };
 
+    window.setExpensePaymentMethod = method => {
+      state.expensePaymentMethod = method === 'ONLINE' ? 'ONLINE' : 'CASH';
+      render();
+    };
+
     window.addExpense = async () => {
       const desc = $('expDesc')?.value.trim() || '';
       const amt = parseFloat($('expAmt')?.value);
@@ -1250,7 +1420,8 @@
       await db.expenses.add({
         timestamp: new Date().toISOString(),
         description: desc,
-        amount: amt
+        amount: amt,
+        paymentMethod: state.expensePaymentMethod || 'CASH'
       });
 
       await loadExpenseData();
@@ -1349,7 +1520,7 @@
         <div style="display:flex;justify-content:space-between;gap:7px;margin-bottom:5px;font-size:11px;line-height:1.25;border-bottom:1px dashed #ccc;padding-bottom:4px;">
           <div style="flex:1;padding-right:4px;">
             <span style="font-weight:bold;">${escapeHTML(c.qty)}x ${escapeHTML(c.item.name)}</span>
-            ${c.towedBy ? `<br><span style="font-size:9px;">Tow: ${escapeHTML(c.towedBy)}</span>` : ''}
+            ${c.towedBy ? `<br><span style="font-size:9px;">Tow: ${escapeHTML(getMachineLabel(c.towedBy))}</span>` : ''}
           </div>
           ${!isKOT ? `<div style="font-weight:bold;text-align:right;min-width:48px;">${money(c.item.price * c.qty)}</div>` : ''}
         </div>
@@ -1371,7 +1542,7 @@
             <div class="receipt-subtitle">${isKOT ? 'RIDE KOT TICKET' : 'WATERSPORTS BILL'}</div>
             <div style="font-size:9px;margin-top:5px;font-weight:bold;">${escapeHTML(tx.receiptId)}</div>
             <div style="font-size:9px;">${escapeHTML(new Date(tx.timestamp).toLocaleString('en-IN'))}</div>
-            ${tx.activeJetskiName || tx.activeJetskiId ? `<div style="font-size:9px;margin-top:3px;font-weight:bold;">Machine: ${escapeHTML(tx.activeJetskiName || machineName(tx.activeJetskiId))}</div>` : ''}
+            ${getTransactionMachines(tx).length ? `<div style="font-size:9px;margin-top:3px;font-weight:bold;">Machine: ${escapeHTML(getTransactionMachines(tx).map(getMachineLabel).join(' + '))}</div>` : ''}
           </div>
 
           ${(tx.customerName || tx.customerPhone) ? `
@@ -1528,9 +1699,10 @@
           </div>
 
           <div class="control-group">
-            <span class="control-label">Tow</span>
+            <span class="control-label">Tow with</span>
             <div class="segmented">
-              <button onclick="setTowingMachine('JETSKI')" class="${state.towingMachine === 'JETSKI' ? 'active-tow' : ''}">Jetski</button>
+              <button onclick="setTowingMachine('JETSKI1')" class="${state.towingMachine === 'JETSKI1' ? 'active-tow' : ''}">${escapeHTML(machineName(1))}</button>
+              <button onclick="setTowingMachine('JETSKI2')" class="${state.towingMachine === 'JETSKI2' ? 'active-tow' : ''}">${escapeHTML(machineName(2))}</button>
               <button onclick="setTowingMachine('SPEEDBOAT')" class="${state.towingMachine === 'SPEEDBOAT' ? 'active-tow' : ''}">Boat</button>
             </div>
           </div>
@@ -1596,7 +1768,7 @@
       }
 
       const orderText = cartItems.map(([key, data]) => {
-        const tow = data.towedBy ? ` • ${data.towedBy === 'JETSKI' ? 'JS' : 'Boat'}` : '';
+        const tow = data.towedBy ? ` • ${getMachineLabel(data.towedBy)}` : '';
         return `${data.qty}× ${data.item.name}${tow}`;
       }).join('  |  ');
 
@@ -1674,8 +1846,16 @@
                   <div style="min-width:0;">
                     <div style="font-size:13px;font-weight:950;">${escapeHTML(data.item.name)}</div>
                     <div style="font-size:10px;color:#7c858f;font-weight:700;margin-top:2px;">
-                      ${data.towedBy ? `Tow: ${escapeHTML(data.towedBy)}` : 'Direct ride'}
+                      ${data.towedBy ? `Tow: ${escapeHTML(getMachineLabel(data.towedBy))}` : 'Direct ride'}
                     </div>
+                    ${data.towedBy ? `
+                      <div class="tow-transfer">
+                        <span class="tow-transfer-label">Move to:</span>
+                        <button onclick="transferTowable('${escapeHTML(key)}','JETSKI1')" class="${normalizeMachineId(data.towedBy) === 'JETSKI1' ? 'active' : ''}">${escapeHTML(machineName(1))}</button>
+                        <button onclick="transferTowable('${escapeHTML(key)}','JETSKI2')" class="${normalizeMachineId(data.towedBy) === 'JETSKI2' ? 'active' : ''}">${escapeHTML(machineName(2))}</button>
+                        <button onclick="transferTowable('${escapeHTML(key)}','SPEEDBOAT')" class="${normalizeMachineId(data.towedBy) === 'SPEEDBOAT' ? 'active' : ''}">Boat</button>
+                      </div>
+                    ` : ''}
                   </div>
 
                   <div style="display:flex;align-items:center;gap:7px;">
@@ -1699,75 +1879,61 @@
     window.closeCartEditor = () => render();
 
     function renderHistory() {
+      const filtered = state.history.filter(tx => transactionUsesMachine(tx, state.historyMachineFilter));
+      const visibleTotal = filtered.filter(t => t.status !== 'VOID').reduce((s,t) => s + Number(t.totalAmount || 0), 0);
+
       return `
         ${renderHeader()}
 
         <div class="screen-heading">
           <div>
             <h2>Today's Tickets</h2>
-            <p>${state.history.length} transaction${state.history.length === 1 ? '' : 's'}</p>
+            <p>${filtered.length} shown • ${state.history.length} total</p>
           </div>
-          <div style="font-size:18px;font-weight:950;color:#14763b;">
-            ${money(state.history.filter(t => t.status !== 'VOID').reduce((s,t) => s + Number(t.totalAmount || 0), 0))}
-          </div>
+          <div style="font-size:18px;font-weight:950;color:#14763b;">${money(visibleTotal)}</div>
+        </div>
+
+        <div class="history-filters">
+          <button onclick="setHistoryMachineFilter('ALL')" class="history-filter ${state.historyMachineFilter === 'ALL' ? 'active' : ''}">ALL</button>
+          <button onclick="setHistoryMachineFilter('JETSKI1')" class="history-filter ${state.historyMachineFilter === 'JETSKI1' ? 'active' : ''}">${escapeHTML(machineName(1))}</button>
+          <button onclick="setHistoryMachineFilter('JETSKI2')" class="history-filter ${state.historyMachineFilter === 'JETSKI2' ? 'active' : ''}">${escapeHTML(machineName(2))}</button>
+          <button onclick="setHistoryMachineFilter('SPEEDBOAT')" class="history-filter ${state.historyMachineFilter === 'SPEEDBOAT' ? 'active' : ''}">SPEED BOAT</button>
         </div>
 
         <div class="surface" style="overflow:hidden;margin-bottom:16px;">
-          ${state.history.length === 0
-            ? `<div style="padding:28px 15px;text-align:center;color:#7e8791;font-size:12px;font-weight:700;">No sales recorded today.</div>`
-            : state.history.map((tx, index) => {
+          ${filtered.length === 0
+            ? `<div style="padding:28px 15px;text-align:center;color:#7e8791;font-size:12px;font-weight:700;">No tickets for this machine today.</div>`
+            : filtered.map((tx, index) => {
                 let itemsStr = '';
-
                 try {
-                  itemsStr = Object.values(JSON.parse(tx.items || '{}'))
-                    .map(c => `${c.qty}× ${c.item.name}`)
-                    .join(' • ');
-                } catch {
-                  itemsStr = 'Items unavailable';
-                }
+                  itemsStr = Object.values(JSON.parse(tx.items || '{}')).map(c => `${c.qty}× ${c.item.name}`).join(' • ');
+                } catch { itemsStr = 'Items unavailable'; }
 
+                const machines = getTransactionMachines(tx);
                 return `
                   <div style="padding:11px;border-bottom:1px solid #e4e7ea;${tx.status === 'VOID' ? 'background:#fff5f5;opacity:.78;' : ''}">
                     <div style="display:flex;justify-content:space-between;gap:10px;align-items:start;">
                       <div style="min-width:0;flex:1;">
                         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
                           <strong style="font-size:16px;">${money(tx.totalAmount)}</strong>
-                          <span style="font-size:8px;font-weight:900;padding:4px 6px;border-radius:5px;background:#f0f1f3;color:#5c6570;border:1px solid #dfe2e5;">
-                            ${escapeHTML(tx.paymentMethod)}
-                          </span>
+                          <span style="font-size:8px;font-weight:900;padding:4px 6px;border-radius:5px;background:#f0f1f3;color:#5c6570;border:1px solid #dfe2e5;">${escapeHTML(tx.paymentMethod)}</span>
                           ${tx.status === 'VOID' ? `<span style="font-size:8px;font-weight:900;color:#b42318;background:#fee4e2;padding:4px 6px;border-radius:5px;">VOID</span>` : ''}
                         </div>
-
                         <div style="font-size:9px;color:#858d96;font-weight:700;margin-top:3px;">
                           ${escapeHTML(tx.receiptId)} • ${escapeHTML(new Date(tx.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}))}
                         </div>
-
-                        <div style="font-size:10px;color:#3f4852;font-weight:800;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                          ${escapeHTML(itemsStr)}
+                        <div style="font-size:10px;color:#3f4852;font-weight:800;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHTML(itemsStr)}</div>
+                        <div class="machine-tags">
+                          ${machines.map(m => `<span class="machine-tag"><i class="fa-solid fa-person-running" style="margin-right:4px;"></i>${escapeHTML(getMachineLabel(m))}</span>`).join('')}
                         </div>
-
-                        ${tx.customerName ? `
-                          <div style="font-size:9px;color:#1769d1;font-weight:800;margin-top:3px;">
-                            <i class="fa-solid fa-user"></i> ${escapeHTML(tx.customerName)}
-                          </div>
-                        ` : ''}
+                        ${tx.customerName ? `<div style="font-size:9px;color:#1769d1;font-weight:800;margin-top:3px;"><i class="fa-solid fa-user"></i> ${escapeHTML(tx.customerName)}</div>` : ''}
                       </div>
-
-                      ${tx.status === 'COMPLETED' && index === 0 ? `
-                        <button onclick="voidTransaction(${tx.id})" class="danger-btn" style="min-height:32px;padding:0 9px;font-size:9px;">
-                          VOID
-                        </button>
-                      ` : ''}
+                      ${tx.status === 'COMPLETED' && index === 0 ? `<button onclick="voidTransaction(${tx.id})" class="danger-btn" style="min-height:32px;padding:0 9px;font-size:9px;">VOID</button>` : ''}
                     </div>
-
                     ${tx.status === 'COMPLETED' ? `
                       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-                        <button onclick="openPreview(${tx.id}, false)" class="neutral-btn" style="min-height:34px;">
-                          <i class="fa-solid fa-file-invoice"></i> Bill
-                        </button>
-                        <button onclick="openPreview(${tx.id}, true)" class="neutral-btn" style="min-height:34px;">
-                          <i class="fa-solid fa-ticket"></i> KOT
-                        </button>
+                        <button onclick="openPreview(${tx.id}, false)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-file-invoice"></i> Bill</button>
+                        <button onclick="openPreview(${tx.id}, true)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-ticket"></i> KOT</button>
                       </div>
                     ` : ''}
                   </div>
@@ -1777,38 +1943,64 @@
       `;
     }
 
+    window.setHistoryMachineFilter = filter => {
+      state.historyMachineFilter = ['ALL','JETSKI1','JETSKI2','SPEEDBOAT'].includes(filter) ? filter : 'ALL';
+      render();
+    };
+
     function renderExpenses() {
+      const cashExpense = state.expenses.filter(ex => (ex.paymentMethod || 'CASH') === 'CASH').reduce((s, ex) => s + Number(ex.amount || 0), 0);
+      const onlineExpense = state.expenses.filter(ex => ex.paymentMethod === 'ONLINE').reduce((s, ex) => s + Number(ex.amount || 0), 0);
       return `
         ${renderHeader()}
 
         <div class="screen-heading">
           <div>
             <h2>Expenses</h2>
-            <p>Cash deductions for today</p>
+            <p>Record cash or UPI expenses</p>
           </div>
         </div>
 
         <div class="surface" style="padding:12px;margin-bottom:12px;">
           <input id="expDesc" type="text" placeholder="Expense reason (e.g. Fuel)" class="form-input" style="margin-bottom:7px;">
           <input id="expAmt" type="number" inputmode="decimal" placeholder="Amount (₹)" class="form-input" style="margin-bottom:8px;font-weight:900;">
-          <button onclick="addExpense()" class="danger-btn" style="width:100%;">
-            Deduct Cash
-          </button>
+
+          <div class="expense-methods">
+            <button onclick="setExpensePaymentMethod('CASH')" class="expense-method ${state.expensePaymentMethod === 'CASH' ? 'active' : ''}"><i class="fa-solid fa-money-bill-wave"></i> CASH</button>
+            <button onclick="setExpensePaymentMethod('ONLINE')" class="expense-method ${state.expensePaymentMethod === 'ONLINE' ? 'active' : ''}"><i class="fa-solid fa-qrcode"></i> UPI</button>
+          </div>
+
+          <button onclick="addExpense()" class="danger-btn" style="width:100%;">Add ${state.expensePaymentMethod === 'ONLINE' ? 'UPI' : 'Cash'} Expense</button>
         </div>
 
-        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#727b85;margin:13px 2px 7px;">
-          Today's Deductions
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+          <div class="surface" style="padding:10px;text-align:center;">
+            <div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#68717c;">Cash Expenses</div>
+            <div style="font-size:18px;font-weight:950;color:#c5261b;margin-top:3px;">${money(cashExpense)}</div>
+          </div>
+          <div class="surface" style="padding:10px;text-align:center;">
+            <div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#1769d1;">UPI Expenses</div>
+            <div style="font-size:18px;font-weight:950;color:#1769d1;margin-top:3px;">${money(onlineExpense)}</div>
+          </div>
         </div>
+
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#727b85;margin:13px 2px 7px;">Today's Deductions</div>
 
         <div class="surface" style="overflow:hidden;margin-bottom:16px;">
           ${state.expenses.length === 0
             ? `<div style="padding:26px;text-align:center;color:#818993;font-size:11px;font-weight:700;">No expenses logged.</div>`
-            : state.expenses.map(ex => `
-                <div style="padding:11px;border-bottom:1px solid #e4e7ea;display:flex;justify-content:space-between;align-items:center;gap:10px;">
-                  <span style="font-size:12px;font-weight:850;">${escapeHTML(ex.description)}</span>
-                  <span style="font-size:11px;font-weight:950;color:#c5261b;">-${money(ex.amount)}</span>
-                </div>
-              `).join('')}
+            : state.expenses.map(ex => {
+                const method = ex.paymentMethod || 'CASH';
+                return `
+                  <div style="padding:11px;border-bottom:1px solid #e4e7ea;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                    <div style="min-width:0;">
+                      <span style="display:block;font-size:12px;font-weight:850;">${escapeHTML(ex.description)}</span>
+                      <span style="display:block;margin-top:3px;font-size:8px;color:#7c858f;font-weight:800;">${escapeHTML(method === 'ONLINE' ? 'UPI' : 'CASH')} • ${escapeHTML(new Date(ex.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}))}</span>
+                    </div>
+                    <span style="font-size:11px;font-weight:950;color:#c5261b;">-${money(ex.amount)}</span>
+                  </div>
+                `;
+              }).join('')}
         </div>
       `;
     }
@@ -1836,7 +2028,7 @@
 
           <div style="display:flex;justify-content:space-between;margin-bottom:11px;font-size:12px;font-weight:800;">
             <span style="color:#68717c;">Expenses</span>
-            <span style="color:#c5261b;">-${money(state.stats.expenseTotal)}</span>
+            <span style="color:#c5261b;">-${money(state.stats.cashExpenseTotal)}</span>
           </div>
 
           <div style="display:flex;justify-content:space-between;align-items:center;background:#eaf7ef;border:1px solid #c5e7d0;border-radius:8px;padding:10px;">
@@ -1854,6 +2046,11 @@
           <div class="surface" style="padding:13px;text-align:center;">
             <div style="font-size:9px;font-weight:900;text-transform:uppercase;color:#68717c;">Sales Value</div>
             <div style="font-size:21px;font-weight:950;margin-top:3px;">${money(state.stats.cash + state.stats.online)}</div>
+          </div>
+
+          <div class="surface" style="padding:13px;text-align:center;grid-column:1 / -1;">
+            <div style="font-size:9px;font-weight:900;text-transform:uppercase;color:#1769d1;">Net UPI after UPI expenses</div>
+            <div style="font-size:21px;font-weight:950;color:#1769d1;margin-top:3px;">${money(state.stats.netOnline)}</div>
           </div>
         </div>
 
