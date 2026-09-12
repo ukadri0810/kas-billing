@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f8fa">
+  <meta name="theme-color" content="#F3F4F6">
   <title>KAS POS — Karde Adventure Sports</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +18,17 @@
       --kas-yellow: #f0b900;
       --page-bg: #f5f7f9;
       --footer-height: 72px;
+
+      /* Outdoor High Contrast palette */
+      --outdoor-blue: #0B57D0;
+      --outdoor-green: #08783E;
+      --outdoor-orange: #B86000;
+      --outdoor-red: #C62828;
+      --outdoor-text: #111827;
+      --outdoor-muted: #4B5563;
+      --outdoor-border: #B8C2CF;
+      --outdoor-bg: #F3F4F6;
+      --outdoor-card: #FFFFFF;
     }
 
     * { box-sizing: border-box; }
@@ -1082,10 +1093,265 @@
       .open-bills-button { padding: 0 8px; font-size: 9px; }
     }
 
+
+    /* =========================================================
+       V5 — OUTDOOR HIGH CONTRAST
+       Built for direct sunlight / glare. Default: ON.
+       ========================================================= */
+    body.outdoor-high-contrast {
+      background: var(--outdoor-bg);
+      color: var(--outdoor-text);
+      font-family: Inter, "Segoe UI", Arial, ui-sans-serif, system-ui, sans-serif;
+      font-weight: 500;
+    }
+
+    body.outdoor-high-contrast .app-shell { padding-left: 13px; padding-right: 13px; }
+
+    body.outdoor-high-contrast .compact-header {
+      min-height: 64px;
+      border-bottom: 2px solid var(--outdoor-border);
+    }
+    body.outdoor-high-contrast .brand-title strong {
+      color: var(--outdoor-text);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    body.outdoor-high-contrast .brand-title span {
+      color: var(--outdoor-muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+    body.outdoor-high-contrast .active-machine-pill {
+      background: #E8F5EE;
+      border: 2px solid #63A981;
+      color: #075C32;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    body.outdoor-high-contrast .status-dot { background: var(--outdoor-green); width: 8px; height: 8px; }
+
+    body.outdoor-high-contrast .surface,
+    body.outdoor-high-contrast .sale-mode-card,
+    body.outdoor-high-contrast .open-bill-card,
+    body.outdoor-high-contrast .modal-card {
+      background: var(--outdoor-card);
+      border-color: var(--outdoor-border);
+      box-shadow: 0 1px 3px rgba(17,24,39,.10);
+    }
+
+    body.outdoor-high-contrast .screen-heading { border-bottom: 2px solid var(--outdoor-border); }
+    body.outdoor-high-contrast .screen-heading h2 { color: var(--outdoor-text); font-size: 21px; font-weight: 800; }
+    body.outdoor-high-contrast .screen-heading p { color: var(--outdoor-muted); font-size: 11px; font-weight: 600; }
+    body.outdoor-high-contrast .section-title,
+    body.outdoor-high-contrast .settings-section-title,
+    body.outdoor-high-contrast .setup-label { color: #374151; font-weight: 800; }
+    body.outdoor-high-contrast .section-title { font-size: 12px; }
+    body.outdoor-high-contrast .section-hint { color: var(--outdoor-muted); font-size: 11px; font-weight: 700; }
+
+    body.outdoor-high-contrast .outdoor-pos-hint { background:#EEF4FF !important; border:2px solid #8EAFE3 !important; }
+    body.outdoor-high-contrast .outdoor-pos-hint > div { color:#27364A !important; font-size:10px !important; }
+    body.outdoor-high-contrast .ride-grid { gap: 9px; }
+    body.outdoor-high-contrast .ride-button {
+      min-height: 112px;
+      background: #fff;
+      border: 2px solid var(--outdoor-border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(17,24,39,.08);
+    }
+    body.outdoor-high-contrast .ride-button.selected {
+      background: #EEF4FF;
+      border-color: var(--outdoor-blue);
+      box-shadow: inset 0 0 0 1px var(--outdoor-blue), 0 1px 3px rgba(17,24,39,.08);
+    }
+    body.outdoor-high-contrast .ride-button:active { background: #E4EEFF; border-color: var(--outdoor-blue); }
+    body.outdoor-high-contrast .ride-name { color: var(--outdoor-text); font-size: 16px; font-weight: 800; }
+    body.outdoor-high-contrast .ride-price { color: var(--outdoor-blue); font-size: 15px; font-weight: 800; }
+    body.outdoor-high-contrast .tow-icon { color: #374151; font-size: 12px; }
+    body.outdoor-high-contrast .ride-qty-control { background: var(--outdoor-blue); box-shadow: none; }
+    body.outdoor-high-contrast .qty-mini { color: var(--outdoor-blue); font-weight: 900; }
+    body.outdoor-high-contrast .qty-number { font-size: 13px; font-weight: 900; }
+    body.outdoor-high-contrast .empty-order { color: var(--outdoor-muted); border: 2px dashed var(--outdoor-border); background: #fff; font-size: 12px; }
+
+    body.outdoor-high-contrast #pos-footer {
+      background: #fff;
+      border-top: 2px solid #9EAABA;
+      box-shadow: 0 -5px 16px rgba(17,24,39,.14);
+    }
+    body.outdoor-high-contrast .checkout-panel { border-bottom: 2px solid #D1D5DB; }
+    body.outdoor-high-contrast .order-count { background: #E5E7EB; color: #1F2937; border-color: #9CA3AF; font-size: 11px; font-weight: 800; }
+    body.outdoor-high-contrast .order-items-text { color: #1F2937; font-size: 12px; font-weight: 700; }
+    body.outdoor-high-contrast .total-label { color: #374151; font-size: 9px; font-weight: 800; }
+    body.outdoor-high-contrast .total-value { color: var(--outdoor-green); font-size: 27px; font-weight: 900; }
+
+    body.outdoor-high-contrast .more-button,
+    body.outdoor-high-contrast .secondary-action,
+    body.outdoor-high-contrast .neutral-btn {
+      background: #F3F4F6;
+      border: 2px solid #AEB8C5;
+      color: #1F2937;
+      font-weight: 800;
+    }
+    body.outdoor-high-contrast .secondary-action.has-value {
+      background: #E8F0FF;
+      border-color: var(--outdoor-blue);
+      color: #083B91;
+    }
+    body.outdoor-high-contrast .primary-btn {
+      background: var(--outdoor-blue);
+      border-color: var(--outdoor-blue);
+      color: #fff;
+      font-weight: 800;
+    }
+    body.outdoor-high-contrast .danger-btn {
+      background: var(--outdoor-red);
+      border-color: var(--outdoor-red);
+      color: #fff;
+      font-weight: 800;
+    }
+    body.outdoor-high-contrast .primary-btn,
+    body.outdoor-high-contrast .danger-btn,
+    body.outdoor-high-contrast .neutral-btn { min-height: 46px; font-size: 13px; }
+
+    body.outdoor-high-contrast .payment-grid { gap: 8px; }
+    body.outdoor-high-contrast .pay-button {
+      min-height: 62px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: .01em;
+      box-shadow: none;
+    }
+    body.outdoor-high-contrast .pay-button i { font-size: 17px; }
+    body.outdoor-high-contrast .pay-cash { background: var(--outdoor-green); color: #fff; }
+    body.outdoor-high-contrast .pay-online { background: #174EA6; color: #fff; }
+    body.outdoor-high-contrast .pay-credit { background: var(--outdoor-orange); color: #fff; }
+
+    body.outdoor-high-contrast .bottom-nav { background: #fff; }
+    body.outdoor-high-contrast .nav-button {
+      min-height: 62px;
+      color: #4B5563;
+      background: #fff;
+      border-top-width: 4px;
+    }
+    body.outdoor-high-contrast .nav-button i { font-size: 18px; }
+    body.outdoor-high-contrast .nav-button span { font-size: 10px; font-weight: 800; }
+    body.outdoor-high-contrast .nav-button.active {
+      color: var(--outdoor-blue);
+      border-top-color: var(--outdoor-blue);
+      background: #EEF4FF;
+    }
+
+    body.outdoor-high-contrast .form-input {
+      min-height: 48px;
+      border: 2px solid #AEB8C5;
+      color: var(--outdoor-text);
+      font-size: 15px;
+      font-weight: 600;
+      background: #fff;
+    }
+    body.outdoor-high-contrast .form-input::placeholder { color: #626B78; opacity: 1; }
+    body.outdoor-high-contrast .form-input:focus { border-color: var(--outdoor-blue); box-shadow: 0 0 0 3px rgba(11,87,208,.18); }
+
+    body.outdoor-high-contrast .history-filter {
+      min-height: 42px;
+      border: 2px solid #AEB8C5;
+      color: #374151;
+      font-size: 10px;
+      font-weight: 800;
+      background: #fff;
+    }
+    body.outdoor-high-contrast .history-filter.active { background: var(--outdoor-blue); border-color: var(--outdoor-blue); color: #fff; }
+    body.outdoor-high-contrast .machine-tag { background: #E8F0FF; border-color: #8EAFE3; color: #083B91; font-size: 9px; }
+
+    body.outdoor-high-contrast .open-bills-button {
+      min-height: 50px;
+      border: 2px solid var(--outdoor-blue);
+      background: #EEF4FF;
+      color: #083B91;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    body.outdoor-high-contrast .open-bills-badge { background: var(--outdoor-blue); font-size: 10px; }
+    body.outdoor-high-contrast .sale-mode-card { min-height: 50px; border-width: 2px; }
+    body.outdoor-high-contrast .sale-mode-card.open { background: #EEF4FF; border-color: var(--outdoor-blue); }
+    body.outdoor-high-contrast .sale-mode-card.open .sale-mode-icon { background: var(--outdoor-blue); }
+    body.outdoor-high-contrast .sale-mode-copy strong { color: var(--outdoor-text); font-size: 13px; font-weight: 800; }
+    body.outdoor-high-contrast .sale-mode-copy span { color: var(--outdoor-muted); font-size: 9px; font-weight: 700; }
+    body.outdoor-high-contrast .open-bill-save {
+      min-height: 48px;
+      border: 2px solid var(--outdoor-blue);
+      background: #E8F0FF;
+      color: #083B91;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    body.outdoor-high-contrast .open-bill-save.active { background: var(--outdoor-blue); border-color: var(--outdoor-blue); color: #fff; }
+    body.outdoor-high-contrast .token-choice { min-height: 48px; border: 2px solid #AEB8C5; color: #1F2937; font-size: 14px; font-weight: 900; }
+    body.outdoor-high-contrast .token-choice.selected { background: var(--outdoor-blue); border-color: var(--outdoor-blue); box-shadow: none; }
+    body.outdoor-high-contrast .open-bill-card { border-width: 2px; }
+    body.outdoor-high-contrast .open-bill-card.current { background: #EEF4FF; border-color: var(--outdoor-blue); }
+    body.outdoor-high-contrast .token-number { color: var(--outdoor-blue); font-size: 30px; font-weight: 900; }
+    body.outdoor-high-contrast .token-kicker { color: #374151; font-size: 9px; font-weight: 800; }
+    body.outdoor-high-contrast .open-bill-meta { color: var(--outdoor-muted); font-size: 10px; font-weight: 700; }
+
+    body.outdoor-high-contrast .machine-choice-grid button {
+      min-height: 82px;
+      border: 2px solid #AEB8C5;
+      background: #fff;
+      color: var(--outdoor-text);
+    }
+    body.outdoor-high-contrast .machine-choice-grid button i { color: var(--outdoor-blue); }
+    body.outdoor-high-contrast .machine-choice-grid button strong { font-size: 13px; font-weight: 800; }
+
+    /* Upgrade common hard-coded V3/V4 inline colours while high contrast is ON. */
+    body.outdoor-high-contrast [style*="color:#1769d1"],
+    body.outdoor-high-contrast [style*="color: #1769d1"] { color: var(--outdoor-blue) !important; }
+    body.outdoor-high-contrast [style*="background:#1769d1"],
+    body.outdoor-high-contrast [style*="background: #1769d1"] { background: var(--outdoor-blue) !important; }
+    body.outdoor-high-contrast [style*="color:#1559a8"] { color: #083B91 !important; }
+    body.outdoor-high-contrast [style*="color:#14763b"],
+    body.outdoor-high-contrast [style*="color:#159447"] { color: var(--outdoor-green) !important; }
+    body.outdoor-high-contrast [style*="background:#159447"],
+    body.outdoor-high-contrast [style*="background:#159f4c"] { background: var(--outdoor-green) !important; }
+    body.outdoor-high-contrast [style*="color:#c5261b"],
+    body.outdoor-high-contrast [style*="color:#b42318"] { color: var(--outdoor-red) !important; }
+    body.outdoor-high-contrast [style*="background:#d92d20"] { background: var(--outdoor-red) !important; }
+    body.outdoor-high-contrast [style*="color:#7b8490"],
+    body.outdoor-high-contrast [style*="color:#7e8791"],
+    body.outdoor-high-contrast [style*="color:#7f8790"],
+    body.outdoor-high-contrast [style*="color:#818993"],
+    body.outdoor-high-contrast [style*="color:#858d96"] { color: var(--outdoor-muted) !important; }
+    body.outdoor-high-contrast [style*="background:#f4f8ff"],
+    body.outdoor-high-contrast [style*="background:#f7f9fc"] { background: #EEF4FF !important; }
+
+    body.outdoor-high-contrast .success-toast { background: #111827; font-size: 12px; font-weight: 800; }
+    body.outdoor-high-contrast .success-toast i { color: #43D17B; }
+
+    .display-setting-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 2px solid #AEB8C5;
+      border-radius: 9px;
+      padding: 11px;
+      background: #fff;
+    }
+    .display-setting-copy { min-width: 0; }
+    .display-setting-copy strong { display:block; font-size:13px; font-weight:800; color:#111827; }
+    .display-setting-copy span { display:block; margin-top:4px; font-size:10px; line-height:1.4; font-weight:600; color:#4B5563; }
+    .display-toggle { width: 23px; height: 23px; flex: 0 0 23px; accent-color: #0B57D0; }
+
+    @media (max-width: 380px) {
+      body.outdoor-high-contrast .ride-button { min-height: 116px; }
+      body.outdoor-high-contrast .pay-button { min-height: 60px; font-size: 13px; }
+      body.outdoor-high-contrast .token-number { font-size: 28px; }
+    }
+
   </style>
 </head>
 
-<body>
+<body class="outdoor-high-contrast">
   <main id="app" class="app-shell"></main>
 
   <footer id="pos-footer">
@@ -1153,7 +1419,8 @@
       receiptCustomWidth: 80,
       receiptFontScale: 'normal',
       showReceiptLogo: true,
-      autoPrint: 'ask'
+      autoPrint: 'ask',
+      outdoorHighContrast: true
     };
 
     let state = {
@@ -1315,14 +1582,32 @@
           receiptCustomWidth: Math.min(120, Math.max(40, Number(saved?.receiptCustomWidth || 80))),
           receiptFontScale: font,
           showReceiptLogo: saved?.showReceiptLogo !== false,
-          autoPrint
+          autoPrint,
+          // Existing installations default to Outdoor High Contrast unless the owner explicitly turns it off.
+          outdoorHighContrast: saved?.outdoorHighContrast !== false
         };
       } catch (error) {
         console.warn('Could not load POS settings', error);
         state.settings = { ...structuredClone(DEFAULT_SETTINGS), invoiceFY: currentFY };
       }
       state.settingsLoaded = true;
+      applyDisplaySettings();
       await saveAppSettings();
+    }
+
+    function applyDisplaySettings() {
+      const enabled = state.settings?.outdoorHighContrast !== false;
+      document.body.classList.toggle('outdoor-high-contrast', enabled);
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) themeMeta.setAttribute('content', enabled ? '#F3F4F6' : '#f7f8fa');
+    }
+
+    async function saveDisplaySettings() {
+      state.settings.outdoorHighContrast = Boolean($('outdoorHighContrast')?.checked);
+      await saveAppSettings();
+      applyDisplaySettings();
+      render();
+      showInlineError(state.settings.outdoorHighContrast ? 'Outdoor High Contrast enabled.' : 'Standard light theme enabled.');
     }
 
     async function saveAppSettings() {
@@ -2169,7 +2454,8 @@
     function renderSettings() {
       const editingItem = state.editingRideId ? state.menu.find(m => m.id === state.editingRideId) : null;
       const fy = getFinancialYear();
-      return `${renderHeader()}<div class="screen-heading"><div><h2>Setup</h2><p>Billing, machines, printing, backup and ride menu</p></div></div>
+      return `${renderHeader()}<div class="screen-heading"><div><h2>Setup</h2><p>Display, billing, machines, printing, backup and ride menu</p></div></div>
+        <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Display</div><label class="display-setting-card"><div class="display-setting-copy"><strong><i class="fa-solid fa-sun" style="margin-right:6px;color:#B86000;"></i>Outdoor High Contrast</strong><span>Recommended for direct sunlight. Uses darker text, stronger borders, larger controls and saturated action colours.</span></div><input id="outdoorHighContrast" class="display-toggle" type="checkbox" ${state.settings.outdoorHighContrast !== false ? 'checked' : ''}></label><div class="settings-hint">Colour meaning: Green = Cash / success • Blue = UPI / selection • Orange = Credit / attention • Red = void / danger.</div><button onclick="saveDisplaySettings()" class="primary-btn" style="width:100%;margin-top:10px;"><i class="fa-solid fa-display"></i> Save Display Setting</button></div>
         <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Billing</div><div style="background:#f4f8ff;border:1px solid #cfe0f7;border-radius:7px;padding:9px;margin-bottom:9px;"><div style="font-size:9px;color:#68717c;font-weight:850;">CURRENT FINANCIAL YEAR</div><div style="font-size:16px;font-weight:950;color:#1769d1;margin-top:2px;">FY ${fy}</div><div style="font-size:9px;color:#68717c;margin-top:2px;">Invoice format: INV/${fy}/00001</div></div><label class="setup-label">Next invoice sequence</label><input id="nextInvoiceNumber" type="number" min="1" step="1" inputmode="numeric" value="${Number(state.settings.nextInvoiceNumber || 1)}" class="form-input" style="font-weight:950;margin-bottom:8px;"><div class="settings-machine-row"><div><label class="setup-label">Jetski 1 name</label><input id="jetskiName1" type="text" maxlength="24" value="${escapeHTML(machineName(1))}" class="form-input" style="font-weight:900;"></div><div><label class="setup-label">Jetski 2 name</label><input id="jetskiName2" type="text" maxlength="24" value="${escapeHTML(machineName(2))}" class="form-input" style="font-weight:900;"></div></div><div class="settings-hint">Sequence resets automatically when the financial year changes on 1 April. Existing bills keep their original numbers.</div><button onclick="saveBillingSettings()" class="primary-btn" style="width:100%;margin-top:10px;"><i class="fa-solid fa-floppy-disk"></i> Save Billing Settings</button></div>
         <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Thermal Printer</div><label class="setup-label">Paper width</label><select id="receiptPaperPreset" class="form-input" onchange="document.getElementById('customWidthRow').style.display=this.value==='custom'?'block':'none'" style="margin-bottom:8px;"><option value="58" ${state.settings.receiptPaperPreset === '58' ? 'selected' : ''}>58 mm</option><option value="80" ${state.settings.receiptPaperPreset === '80' ? 'selected' : ''}>80 mm</option><option value="112" ${state.settings.receiptPaperPreset === '112' ? 'selected' : ''}>112 mm</option><option value="custom" ${state.settings.receiptPaperPreset === 'custom' ? 'selected' : ''}>Custom width</option></select><div id="customWidthRow" style="display:${state.settings.receiptPaperPreset === 'custom' ? 'block' : 'none'};margin-bottom:8px;"><label class="setup-label">Custom width (40–120 mm)</label><input id="receiptCustomWidth" type="number" min="40" max="120" value="${Number(state.settings.receiptCustomWidth || 80)}" class="form-input"></div><label class="setup-label">Print font</label><select id="receiptFontScale" class="form-input" style="margin-bottom:8px;"><option value="small" ${state.settings.receiptFontScale === 'small' ? 'selected' : ''}>Small</option><option value="normal" ${state.settings.receiptFontScale === 'normal' ? 'selected' : ''}>Normal</option><option value="large" ${state.settings.receiptFontScale === 'large' ? 'selected' : ''}>Large</option></select><label class="setup-label">After payment</label><select id="autoPrint" class="form-input" style="margin-bottom:8px;"><option value="off" ${state.settings.autoPrint === 'off' ? 'selected' : ''}>Do not show print prompt</option><option value="ask" ${state.settings.autoPrint === 'ask' ? 'selected' : ''}>Show Print / KOT prompt</option><option value="auto" ${state.settings.autoPrint === 'auto' ? 'selected' : ''}>Automatically open print dialog</option></select><label style="display:flex;align-items:center;gap:9px;background:#f5f6f7;border:1px solid #e0e3e6;border-radius:7px;padding:10px;"><input id="showReceiptLogo" type="checkbox" ${state.settings.showReceiptLogo ? 'checked' : ''} style="width:19px;height:19px;accent-color:#1769d1;"><span style="font-size:11px;font-weight:850;">Show KAS logo on receipts</span></label><div class="settings-hint">Use your operating system's installed USB/LAN/Bluetooth thermal printer. The print layout uses the selected roll width.</div><button onclick="savePrinterSettings()" class="primary-btn" style="width:100%;margin-top:10px;"><i class="fa-solid fa-print"></i> Save Printer Settings</button></div>
         <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Backup & Restore</div><div class="settings-hint" style="margin-top:0;margin-bottom:9px;">This POS stores data locally in the browser. Export regular backups so bills and expenses can be restored if browser data is cleared or the device changes.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button onclick="exportBackup()" class="neutral-btn"><i class="fa-solid fa-download"></i> Export Backup</button><button onclick="openBackupImport()" class="neutral-btn"><i class="fa-solid fa-upload"></i> Restore Backup</button></div><input id="backupFile" type="file" accept="application/json,.json" style="display:none;" onchange="importBackup(this)"></div>
@@ -2631,9 +2917,9 @@
       const cartQty = getCartQty();
       return `${renderHeader()}
         ${renderOpenBillToolbar()}
-        <div class="surface" style="padding:9px 11px;margin-bottom:10px;display:flex;align-items:center;gap:8px;background:#f7f9fc;">
-          <i class="fa-solid fa-circle-info" style="color:#1769d1;"></i>
-          <div style="font-size:9px;line-height:1.35;color:#596674;font-weight:750;">For Jetski/towed rides, choose the machine being used. You can change or split it later from <strong>Order</strong>.</div>
+        <div class="surface outdoor-pos-hint" style="padding:10px 11px;margin-bottom:10px;display:flex;align-items:center;gap:8px;background:#f7f9fc;">
+          <i class="fa-solid fa-circle-info" style="color:#1769d1;font-size:14px;"></i>
+          <div style="font-size:10px;line-height:1.4;color:#596674;font-weight:700;">For Jetski/towed rides, choose the machine being used. You can change or split it later from <strong>Order</strong>.</div>
         </div>
         <div class="section-title-row"><span class="section-title">Select ride</span><span class="section-hint">${cartQty ? `${cartQty} selected` : 'Tap to add'}</span></div>
         <section class="ride-grid">${state.menu.map(item => {
