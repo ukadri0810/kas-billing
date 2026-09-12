@@ -1348,6 +1348,141 @@
       body.outdoor-high-contrast .token-number { font-size: 28px; }
     }
 
+
+
+    /* V6.1 — Group Rate editor: explicit, touch-friendly editable controls */
+    .checkout-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .checkout-actions .secondary-action {
+      width: 100%;
+      min-height: 40px;
+      margin-left: 0 !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .group-rate-badge {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #0B57D0;
+      background: #E8F1FF;
+      color: #0B57D0;
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 9px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .group-rate-list {
+      display: grid;
+      gap: 9px;
+      margin: 12px 0;
+    }
+
+    .group-rate-row {
+      border: 2px solid #B8C2CF;
+      border-radius: 10px;
+      padding: 11px;
+      background: #fff;
+    }
+
+    .group-rate-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .group-rate-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #111827;
+    }
+
+    .group-rate-meta {
+      margin-top: 3px;
+      font-size: 11px;
+      font-weight: 750;
+      color: #4B5563;
+    }
+
+    .group-rate-input-wrap {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(120px,145px);
+      align-items: center;
+      gap: 9px;
+    }
+
+    .group-rate-input-wrap label {
+      font-size: 12px;
+      font-weight: 850;
+      color: #374151;
+    }
+
+    .group-rate-input {
+      width: 100%;
+      min-height: 50px;
+      border: 2px solid #64748B !important;
+      border-radius: 8px;
+      padding: 0 11px;
+      font-size: 20px !important;
+      font-weight: 900 !important;
+      color: #111827 !important;
+      background: #FFFFFF !important;
+      text-align: right;
+      outline: none;
+      pointer-events: auto !important;
+      touch-action: auto !important;
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      position: relative;
+      z-index: 2;
+    }
+
+    .group-rate-input:focus {
+      border-color: #0B57D0 !important;
+      box-shadow: 0 0 0 4px rgba(11,87,208,.15) !important;
+    }
+
+    .group-rate-edit-hint {
+      margin-top: 5px;
+      font-size: 9px;
+      font-weight: 750;
+      color: #475569;
+      text-align: right;
+    }
+
+    .group-rate-summary {
+      border: 2px solid #9CB8E2;
+      background: #F3F7FD;
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin: 11px 0;
+    }
+
+    .group-rate-summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .group-rate-summary-line:last-child { margin-bottom: 0; }
+    .group-rate-saving { color: #08783E; font-weight: 900; }
+
+    @media (max-width: 380px) {
+      .group-rate-input-wrap { grid-template-columns: 1fr; }
+      .group-rate-input { text-align: left; }
+      .group-rate-edit-hint { text-align: left; }
+    }
   </style>
 </head>
 
@@ -1442,6 +1577,7 @@
       creditModalOpen: false,
       discountModalOpen: false,
       groupRateModalOpen: false,
+      groupRateDrafts: {},
       machinePickerItemId: null,
       successTxId: null,
       moreOpen: false,
@@ -1875,42 +2011,68 @@
     window.toggleCustomerModal = isOpen => { state.customerModalOpen = isOpen; render(); };
     window.toggleCreditModal = isOpen => { state.creditModalOpen = isOpen; render(); };
     window.toggleDiscountModal = isOpen => { state.discountModalOpen = isOpen; render(); };
-    window.toggleGroupRateModal = isOpen => { state.groupRateModalOpen = isOpen; render(); };
+    window.toggleGroupRateModal = isOpen => {
+      state.groupRateModalOpen = !!isOpen;
+      if (isOpen) {
+        state.groupRateDrafts = {};
+        getCartItemGroups().forEach(group => {
+          state.groupRateDrafts[String(group.item.id)] = String(
+            Number.isFinite(Number(group.rate)) ? Number(group.rate) : Math.max(0, Number(group.item?.price || 0))
+          );
+        });
+      }
+      render();
+    };
     window.toggleMore = () => { state.moreOpen = !state.moreOpen; render(); };
+
+    function readGroupRateDraft(itemId, fallback) {
+      const key = String(itemId);
+      const raw = state.groupRateDrafts?.[key];
+      if (raw === undefined || raw === null || String(raw).trim() === '') return fallback;
+      const n = Number(String(raw).replace(/,/g, '').trim());
+      return Number.isFinite(n) && n >= 0 ? n : fallback;
+    }
+
+    window.updateGroupRateDraft = (itemId, value) => {
+      state.groupRateDrafts[String(itemId)] = value;
+      updateGroupRatePreview();
+    };
 
     window.updateGroupRatePreview = () => {
       let regular = 0;
       let packageTotal = 0;
       getCartItemGroups().forEach(group => {
         const standard = Math.max(0, Number(group.item?.price || 0));
-        const input = $(`groupRate_${group.item.id}`);
-        const typed = input ? Number(input.value) : group.rate;
-        const rate = Number.isFinite(typed) && typed >= 0 ? typed : group.rate;
+        const rate = readGroupRateDraft(group.item.id, group.rate ?? standard);
         regular += standard * Number(group.qty || 0);
         packageTotal += rate * Number(group.qty || 0);
       });
-      const saving = Math.max(0, regular - packageTotal);
+      const saving = regular - packageTotal;
       if ($('groupRateRegularTotal')) $('groupRateRegularTotal').textContent = money(regular);
       if ($('groupRatePackageTotal')) $('groupRatePackageTotal').textContent = money(packageTotal);
-      if ($('groupRateSaving')) $('groupRateSaving').textContent = money(saving);
+      if ($('groupRateSaving')) $('groupRateSaving').textContent = saving >= 0 ? money(saving) : `-${money(Math.abs(saving))}`;
+      if ($('groupRateSavingLabel')) $('groupRateSavingLabel').textContent = saving >= 0 ? 'Customer saving' : 'Above regular total';
     };
 
     window.applyGroupRates = () => {
       const groups = getCartItemGroups();
       if (!groups.length) return;
       const rates = new Map();
+
       for (const group of groups) {
         const standard = Math.max(0, Number(group.item?.price || 0));
-        const input = $(`groupRate_${group.item.id}`);
-        const value = Number(input?.value);
+        const raw = String(state.groupRateDrafts?.[String(group.item.id)] ?? '').replace(/,/g, '').trim();
+        if (raw === '') {
+          showInlineError(`Enter the agreed rate for ${group.item?.name || 'ride'}.`);
+          return;
+        }
+        const value = Number(raw);
         if (!Number.isFinite(value) || value < 0) {
           showInlineError(`Enter a valid rate for ${group.item?.name || 'ride'}.`);
           return;
         }
-        if (value > standard) {
-          showInlineError(`${group.item?.name || 'Ride'} rate cannot exceed regular ${money(standard)}.`);
-          return;
-        }
+        // Group Rate is intended for negotiated pricing. We allow any non-negative
+        // amount the owner/operator agrees to; this avoids hard-coding a discount cap.
         rates.set(Number(group.item.id), value);
       }
 
@@ -1922,15 +2084,17 @@
       });
 
       state.groupRateModalOpen = false;
+      state.groupRateDrafts = {};
       scheduleOpenBillAutosave?.();
       render();
-      const saving = getGroupRateSavings();
-      showInlineError(saving > 0 ? `Group Rate applied. Saving ${money(saving)}.` : 'Regular rates restored.');
+      const saving = getCartRegularSubtotal() - getCartSubtotal();
+      showInlineError(saving > 0 ? `Group Rate applied. Saving ${money(saving)}.` : 'Group Rate updated.');
     };
 
     window.clearGroupRates = () => {
       Object.values(state.cart).forEach(line => delete line.sellingPrice);
       state.groupRateModalOpen = false;
+      state.groupRateDrafts = {};
       scheduleOpenBillAutosave?.();
       render();
       showInlineError('Group Rate cleared. Regular prices restored.');
@@ -2752,12 +2916,13 @@
           <div class="group-rate-list">${groups.map(group => {
             const standard = Math.max(0, Number(group.item?.price || 0));
             const current = Number.isFinite(Number(group.rate)) ? Number(group.rate) : standard;
-            return `<div class="group-rate-row"><div class="group-rate-row-head"><div><div class="group-rate-name">${escapeHTML(group.item?.name || 'Ride')}</div><div class="group-rate-meta">${Number(group.qty || 0)} ride${Number(group.qty || 0) === 1 ? '' : 's'} • Regular ${money(standard)} each</div></div>${Math.abs(current-standard) > .0001 ? `<span class="group-rate-badge">SPECIAL RATE</span>` : ''}</div><div class="group-rate-input-wrap"><span>Agreed rate ₹</span><input id="groupRate_${escapeHTML(group.item.id)}" class="group-rate-input" type="number" min="0" max="${standard}" step="1" inputmode="decimal" value="${current}" onfocus="this.select()" oninput="updateGroupRatePreview()"></div></div>`;
+            const draft = state.groupRateDrafts?.[String(group.item.id)] ?? String(current);
+            return `<div class="group-rate-row"><div class="group-rate-row-head"><div><div class="group-rate-name">${escapeHTML(group.item?.name || 'Ride')}</div><div class="group-rate-meta">${Number(group.qty || 0)} ride${Number(group.qty || 0) === 1 ? '' : 's'} • Regular ${money(standard)} each</div></div>${Math.abs(current-standard) > .0001 ? `<span class="group-rate-badge">SPECIAL RATE</span>` : ''}</div><div class="group-rate-input-wrap"><label for="groupRate_${escapeHTML(group.item.id)}">Agreed rate per ride (₹)</label><div><input id="groupRate_${escapeHTML(group.item.id)}" class="group-rate-input" type="text" inputmode="decimal" autocomplete="off" value="${escapeHTML(draft)}" onfocus="this.select()" onclick="this.select()" oninput="updateGroupRateDraft('${escapeHTML(group.item.id)}', this.value)"><div class="group-rate-edit-hint">Tap the amount and type the agreed rate</div></div></div></div>`;
           }).join('')}</div>
           <div class="group-rate-summary">
             <div class="group-rate-summary-line"><span>Regular total</span><strong id="groupRateRegularTotal">${money(regular)}</strong></div>
             <div class="group-rate-summary-line"><span>Group Rate total</span><strong id="groupRatePackageTotal">${money(packageTotal)}</strong></div>
-            <div class="group-rate-summary-line group-rate-saving"><span>Customer saving</span><strong id="groupRateSaving">${money(Math.max(0, regular-packageTotal))}</strong></div>
+            <div class="group-rate-summary-line group-rate-saving"><span id="groupRateSavingLabel">Customer saving</span><strong id="groupRateSaving">${regular >= packageTotal ? money(regular-packageTotal) : `-${money(packageTotal-regular)}`}</strong></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:7px;"><button onclick="clearGroupRates()" class="neutral-btn">Regular Rates</button><button onclick="applyGroupRates()" class="primary-btn"><i class="fa-solid fa-tags"></i> Apply Group Rate</button></div>
         </div></div>`;
