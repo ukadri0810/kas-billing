@@ -842,6 +842,246 @@
       .secondary-action { padding: 0 7px; }
       .pay-button { font-size: 11px; }
     }
+    /* V3 usability/reporting/thermal-print additions */
+    .period-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
+      margin-bottom: 9px;
+    }
+
+    .compact-filter-input {
+      min-height: 40px;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .setup-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 900;
+      color: #4f5862;
+      margin-bottom: 6px;
+    }
+
+    .machine-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .machine-choice-grid button {
+      min-height: 76px;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      background: #f7f9fc;
+      color: #273444;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+
+    .machine-choice-grid button i {
+      color: #1769d1;
+      font-size: 20px;
+    }
+
+    .machine-choice-grid button strong {
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    @media (max-width: 430px) {
+      .period-tabs { gap: 4px; }
+      .period-tabs .history-filter { font-size: 8px; padding: 0 3px; }
+    }
+
+
+    /* V4: simple reusable-token open bills */
+    .open-bill-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sale-mode-card {
+      min-height: 46px;
+      border: 1px solid #d7dce2;
+      border-radius: 9px;
+      background: #fff;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .sale-mode-card.open {
+      background: #eef7ff;
+      border-color: #b8d5f5;
+    }
+
+    .sale-mode-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #edf1f5;
+      color: #65717e;
+    }
+
+    .sale-mode-card.open .sale-mode-icon {
+      background: #1769d1;
+      color: #fff;
+    }
+
+    .sale-mode-copy { min-width: 0; line-height: 1.1; }
+    .sale-mode-copy strong { display:block; font-size:12px; font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sale-mode-copy span { display:block; margin-top:3px; font-size:8px; font-weight:800; color:#7b8490; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .open-bills-button {
+      min-height: 46px;
+      border: 1px solid #c9d8ea;
+      border-radius: 9px;
+      background: #f4f8ff;
+      color: #1559a8;
+      padding: 0 11px;
+      font-size: 10px;
+      font-weight: 950;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .open-bills-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      margin-left: 4px;
+      border-radius: 999px;
+      background: #1769d1;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 950;
+    }
+
+    .open-bill-save {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #b8d4f6;
+      border-radius: 8px;
+      background: #edf5ff;
+      color: #1559a8;
+      font-size: 11px;
+      font-weight: 950;
+      cursor: pointer;
+      margin-bottom: 7px;
+    }
+
+    .open-bill-save.active {
+      background: #1769d1;
+      border-color: #1769d1;
+      color: #fff;
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 9px 0 12px;
+    }
+
+    .token-choice {
+      min-height: 44px;
+      border: 1px solid #d4dae0;
+      border-radius: 8px;
+      background: #fff;
+      color: #384451;
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .token-choice.selected {
+      background: #1769d1;
+      border-color: #1769d1;
+      color: #fff;
+      box-shadow: 0 0 0 2px rgba(23,105,209,.12);
+    }
+
+    .token-choice.used {
+      background: #f1f2f4;
+      color: #b0b6bd;
+      border-color: #e2e5e8;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    .open-bill-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .open-bill-card {
+      border: 1px solid #d4dbe3;
+      border-radius: 10px;
+      background: #fff;
+      padding: 11px;
+      text-align: left;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .open-bill-card.current {
+      background: #eef7ff;
+      border-color: #86b6eb;
+    }
+
+    .token-number {
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 950;
+      color: #1769d1;
+      letter-spacing: .03em;
+    }
+
+    .token-kicker {
+      font-size: 8px;
+      font-weight: 950;
+      color: #7b8490;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 4px;
+    }
+
+    .open-bill-meta {
+      font-size: 9px;
+      font-weight: 800;
+      color: #66717d;
+      margin-top: 5px;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 380px) {
+      .token-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .open-bill-list { grid-template-columns: 1fr; }
+      .open-bills-button { padding: 0 8px; font-size: 9px; }
+    }
+
   </style>
 </head>
 
@@ -887,7 +1127,6 @@
       menu: '++id, name, price, isTowable'
     });
 
-    // V2 adds persistent POS configuration without changing existing sales/menu data.
     db.version(2).stores({
       transactions: '++id, receiptId, timestamp, totalAmount, discountAmount, paymentMethod, reference, customerName, customerPhone, status',
       expenses: '++id, timestamp, description, amount',
@@ -895,26 +1134,52 @@
       settings: 'key'
     });
 
+    // V4 keeps only currently-open customer tabs in this store. A token is
+    // reusable after checkout, so the open record is deleted atomically when paid.
+    db.version(3).stores({
+      transactions: '++id, receiptId, timestamp, totalAmount, discountAmount, paymentMethod, reference, customerName, customerPhone, status',
+      expenses: '++id, timestamp, description, amount',
+      menu: '++id, name, price, isTowable',
+      settings: 'key',
+      openBills: '++id,&tokenNumber,updatedAt,createdAt'
+    });
+
+    const DEFAULT_SETTINGS = {
+      invoiceFormatVersion: 3,
+      invoiceFY: '',
+      nextInvoiceNumber: 1,
+      jetskiNames: { 1: 'Jetski 1', 2: 'Jetski 2' },
+      receiptPaperPreset: '80',
+      receiptCustomWidth: 80,
+      receiptFontScale: 'normal',
+      showReceiptLogo: true,
+      autoPrint: 'ask'
+    };
+
     let state = {
       view: 'pos',
       cart: {},
       menu: [],
       history: [],
       expenses: [],
-      activeJetski: 1,
-      towingMachine: 'JETSKI1',
       historyMachineFilter: 'ALL',
+      historyPaymentFilter: 'ALL',
+      historySearch: '',
+      historyPeriod: 'today',
+      historyAnchor: new Date(),
+      expenseAnchor: new Date(),
+      reportPeriod: 'day',
+      reportAnchor: new Date(),
       expensePaymentMethod: 'CASH',
       customerModalOpen: false,
       creditModalOpen: false,
       discountModalOpen: false,
+      machinePickerItemId: null,
+      successTxId: null,
       moreOpen: false,
       checkoutLocked: false,
       toastTimer: null,
-      settings: {
-        nextInvoiceNumber: 1001,
-        jetskiNames: { 1: 'Jetski 1', 2: 'Jetski 2' }
-      },
+      settings: structuredClone(DEFAULT_SETTINGS),
       settingsLoaded: false,
       highestInvoiceNumber: 0,
       previewTxId: null,
@@ -922,22 +1187,29 @@
       editingRideId: null,
       customer: { name: '', phone: '' },
       discount: { type: 'none', value: 0 },
-      stats: {
+      stats: emptyStats()
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function emptyStats() {
+      return {
         cash: 0,
         online: 0,
         credit: 0,
+        grossSales: 0,
         expenseTotal: 0,
         cashExpenseTotal: 0,
         onlineExpenseTotal: 0,
         netCash: 0,
         netOnline: 0,
+        netCollected: 0,
+        completedCount: 0,
         voidCount: 0,
         voidAmount: 0,
         list: []
-      }
-    };
-
-    const $ = id => document.getElementById(id);
+      };
+    }
 
     function escapeHTML(value) {
       return String(value ?? '')
@@ -949,7 +1221,7 @@
     }
 
     function money(value) {
-      return '₹' + Number(value || 0).toLocaleString('en-IN');
+      return '₹' + Number(value || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
     }
 
     function localDateKey(date = new Date()) {
@@ -959,71 +1231,203 @@
       return `${y}-${m}-${d}`;
     }
 
-    async function loadAppSettings() {
-      const defaults = {
-        nextInvoiceNumber: 1001,
-        jetskiNames: { 1: 'Jetski 1', 2: 'Jetski 2' }
-      };
-
-      try {
-        const saved = await db.settings.get('pos');
-        const next = Number(saved?.nextInvoiceNumber);
-        state.settings = {
-          nextInvoiceNumber: Number.isInteger(next) && next > 0 ? next : defaults.nextInvoiceNumber,
-          jetskiNames: {
-            1: String(saved?.jetskiNames?.[1] || defaults.jetskiNames[1]).trim() || defaults.jetskiNames[1],
-            2: String(saved?.jetskiNames?.[2] || defaults.jetskiNames[2]).trim() || defaults.jetskiNames[2]
-          }
-        };
-      } catch (error) {
-        console.warn('Could not load POS settings', error);
-        state.settings = defaults;
-      }
-
-      state.settingsLoaded = true;
+    function parseLocalDate(value) {
+      if (!value) return new Date();
+      const [y, m, d] = String(value).split('-').map(Number);
+      return new Date(y, (m || 1) - 1, d || 1, 12, 0, 0, 0);
     }
 
-    async function saveAppSettings() {
-      await db.settings.put({
-        key: 'pos',
-        nextInvoiceNumber: state.settings.nextInvoiceNumber,
-        jetskiNames: {
-          1: state.settings.jetskiNames[1],
-          2: state.settings.jetskiNames[2]
-        }
-      });
+    function startOfDay(date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function getFinancialYear(date = new Date()) {
+      const d = new Date(date);
+      const y = d.getFullYear();
+      const startYear = d.getMonth() >= 3 ? y : y - 1;
+      return `${String(startYear).slice(-2)}-${String(startYear + 1).slice(-2)}`;
+    }
+
+    function financialYearStart(fy) {
+      const first = Number(String(fy).split('-')[0]);
+      const fullYear = first >= 70 ? 1900 + first : 2000 + first;
+      return new Date(fullYear, 3, 1, 0, 0, 0, 0);
+    }
+
+    function formatInvoiceId(fy, sequence) {
+      return `INV/${fy}/${String(sequence).padStart(5, '0')}`;
+    }
+
+    function receiptSequence(receiptId, fy) {
+      const escaped = String(fy).replace('-', '\\-');
+      const match = String(receiptId || '').match(new RegExp(`^INV/${escaped}/(\\d+)$`, 'i'));
+      return match ? Number(match[1]) : 0;
     }
 
     function machineName(num) {
       return state.settings.jetskiNames[num] || `Jetski ${num}`;
     }
 
-    async function loadInvoiceSequence() {
-      const all = await db.transactions.toArray();
-      state.highestInvoiceNumber = all.reduce((highest, tx) => {
-        const match = String(tx.receiptId || '').match(/(?:INV-)?(\d+)$/i);
-        return match ? Math.max(highest, Number(match[1])) : highest;
-      }, 0);
-
-      // Keep the configured starting number. Only move it forward when it would
-      // collide with an invoice that already exists. This lets the owner manually
-      // choose the next invoice number from Setup.
-      const configuredNext = Math.max(1, Number(state.settings.nextInvoiceNumber || 1));
-      const safeNext = Math.max(configuredNext, state.highestInvoiceNumber + 1);
-      if (safeNext !== state.settings.nextInvoiceNumber) {
-        state.settings.nextInvoiceNumber = safeNext;
-        await saveAppSettings();
-      }
+    function getMachineLabel(machine) {
+      if (machine === 'JETSKI') machine = 'JETSKI1';
+      if (machine === 'JETSKI1') return machineName(1);
+      if (machine === 'JETSKI2') return machineName(2);
+      if (machine === 'SPEEDBOAT') return 'Speed Boat';
+      return machine || 'Unassigned';
     }
 
-    function getNextInvoiceNumber() {
-      return Math.max(1, Number(state.settings.nextInvoiceNumber || 1), state.highestInvoiceNumber + 1);
+    function isJetskiRide(item) {
+      return /jet\s*ski/i.test(item?.name || '');
+    }
+
+    function isSpeedboatRide(item) {
+      return /speed\s*boat|speedboat/i.test(item?.name || '');
+    }
+
+    async function loadAppSettings() {
+      const currentFY = getFinancialYear();
+      try {
+        const saved = await db.settings.get('pos');
+        const isNewFormat = Number(saved?.invoiceFormatVersion || 0) >= 3;
+        const savedFY = isNewFormat ? String(saved?.invoiceFY || '') : '';
+        const next = Number(saved?.nextInvoiceNumber);
+        const preset = ['58', '80', '112', 'custom'].includes(String(saved?.receiptPaperPreset)) ? String(saved.receiptPaperPreset) : '80';
+        const font = ['small', 'normal', 'large'].includes(String(saved?.receiptFontScale)) ? String(saved.receiptFontScale) : 'normal';
+        const autoPrint = ['off', 'ask', 'auto'].includes(String(saved?.autoPrint)) ? String(saved.autoPrint) : 'ask';
+
+        state.settings = {
+          ...DEFAULT_SETTINGS,
+          invoiceFY: currentFY,
+          nextInvoiceNumber: isNewFormat && savedFY === currentFY && Number.isInteger(next) && next > 0 ? next : 1,
+          jetskiNames: {
+            1: String(saved?.jetskiNames?.[1] || DEFAULT_SETTINGS.jetskiNames[1]).trim() || DEFAULT_SETTINGS.jetskiNames[1],
+            2: String(saved?.jetskiNames?.[2] || DEFAULT_SETTINGS.jetskiNames[2]).trim() || DEFAULT_SETTINGS.jetskiNames[2]
+          },
+          receiptPaperPreset: preset,
+          receiptCustomWidth: Math.min(120, Math.max(40, Number(saved?.receiptCustomWidth || 80))),
+          receiptFontScale: font,
+          showReceiptLogo: saved?.showReceiptLogo !== false,
+          autoPrint
+        };
+      } catch (error) {
+        console.warn('Could not load POS settings', error);
+        state.settings = { ...structuredClone(DEFAULT_SETTINGS), invoiceFY: currentFY };
+      }
+      state.settingsLoaded = true;
+      await saveAppSettings();
+    }
+
+    async function saveAppSettings() {
+      await db.settings.put({ key: 'pos', ...state.settings });
+    }
+
+    async function loadInvoiceSequence() {
+      const fy = getFinancialYear();
+      if (state.settings.invoiceFY !== fy) {
+        state.settings.invoiceFY = fy;
+        state.settings.nextInvoiceNumber = 1;
+      }
+      const all = await db.transactions.toArray();
+      state.highestInvoiceNumber = all.reduce((highest, tx) => Math.max(highest, receiptSequence(tx.receiptId, fy)), 0);
+      state.settings.nextInvoiceNumber = Math.max(1, Number(state.settings.nextInvoiceNumber || 1), state.highestInvoiceNumber + 1);
+      await saveAppSettings();
+    }
+
+    function periodBounds(period, anchor = new Date(), explicitFY = null) {
+      const a = new Date(anchor);
+      if (period === 'today' || period === 'day') {
+        const start = startOfDay(a);
+        return { start, end: addDays(start, 1) };
+      }
+      if (period === 'yesterday') {
+        const start = addDays(startOfDay(new Date()), -1);
+        return { start, end: addDays(start, 1) };
+      }
+      if (period === 'month') {
+        const start = new Date(a.getFullYear(), a.getMonth(), 1);
+        const end = new Date(a.getFullYear(), a.getMonth() + 1, 1);
+        return { start, end };
+      }
+      if (period === 'fy') {
+        const fy = explicitFY || getFinancialYear(a);
+        const start = financialYearStart(fy);
+        const end = new Date(start.getFullYear() + 1, 3, 1);
+        return { start, end };
+      }
+      const start = startOfDay(a);
+      return { start, end: addDays(start, 1) };
+    }
+
+    async function queryByPeriod(table, period, anchor, explicitFY = null) {
+      const { start, end } = periodBounds(period, anchor, explicitFY);
+      return table.where('timestamp').between(start.toISOString(), end.toISOString(), true, false).reverse().toArray();
+    }
+
+    async function loadMenuData() {
+      state.menu = await db.menu.toArray();
+    }
+
+    async function loadHistoryData() {
+      state.history = await queryByPeriod(db.transactions, state.historyPeriod, state.historyAnchor);
+    }
+
+    async function loadExpenseData() {
+      state.expenses = await queryByPeriod(db.expenses, 'day', state.expenseAnchor);
+    }
+
+    async function refreshDailyData() {
+      if (state.view === 'history') await loadHistoryData();
+      if (state.view === 'expenses') await loadExpenseData();
+      await loadDashboardData();
+    }
+
+    async function loadDashboardData() {
+      const txs = await queryByPeriod(db.transactions, state.reportPeriod, state.reportAnchor);
+      const exps = await queryByPeriod(db.expenses, state.reportPeriod, state.reportAnchor);
+      const s = emptyStats();
+
+      txs.forEach(tx => {
+        if (tx.status === 'VOID') {
+          s.voidCount++;
+          s.voidAmount += Number(tx.totalAmount || 0);
+          return;
+        }
+        s.completedCount++;
+        const amount = Number(tx.totalAmount || 0);
+        if (tx.paymentMethod === 'CASH') s.cash += amount;
+        if (tx.paymentMethod === 'ONLINE') s.online += amount;
+        if (tx.paymentMethod === 'CREDIT') {
+          s.credit += amount;
+          s.list.push(tx);
+        }
+      });
+
+      exps.forEach(ex => {
+        const amount = Number(ex.amount || 0);
+        const method = ex.paymentMethod || 'CASH';
+        s.expenseTotal += amount;
+        if (method === 'ONLINE') s.onlineExpenseTotal += amount;
+        else s.cashExpenseTotal += amount;
+      });
+
+      s.grossSales = s.cash + s.online + s.credit;
+      s.netCash = s.cash - s.cashExpenseTotal;
+      s.netOnline = s.online - s.onlineExpenseTotal;
+      s.netCollected = s.cash + s.online - s.expenseTotal;
+      state.stats = s;
     }
 
     async function boot() {
       await loadAppSettings();
       const count = await db.menu.count();
-
       if (count === 0) {
         await db.menu.bulkAdd([
           { name: 'Jetski', price: 400, isTowable: false },
@@ -1035,99 +1439,21 @@
           { name: 'Double banana', price: 200, isTowable: true }
         ]);
       }
-
       await loadMenuData();
-      await loadHistoryData();
       await loadInvoiceSequence();
+      await loadHistoryData();
+      await loadExpenseData();
       render();
     }
 
-    async function loadMenuData() {
-      state.menu = await db.menu.toArray();
-    }
-
-    async function loadHistoryData() {
-      const today = localDateKey();
-      const all = await db.transactions.toArray();
-
-      state.history = all
-        .filter(tx => localDateKey(new Date(tx.timestamp)) === today)
-        .reverse();
-    }
-
-    async function loadExpenseData() {
-      const today = localDateKey();
-      const all = await db.expenses.toArray();
-
-      state.expenses = all
-        .filter(ex => localDateKey(new Date(ex.timestamp)) === today)
-        .reverse();
-    }
-
-    async function loadDashboardData() {
-      await loadHistoryData();
-      await loadExpenseData();
-
-      const s = {
-        cash: 0,
-        online: 0,
-        credit: 0,
-        expenseTotal: 0,
-        cashExpenseTotal: 0,
-        onlineExpenseTotal: 0,
-        netCash: 0,
-        netOnline: 0,
-        voidCount: 0,
-        voidAmount: 0,
-        list: []
-      };
-
-      state.history.forEach(tx => {
-        if (tx.status === 'VOID') {
-          s.voidCount++;
-          s.voidAmount += Number(tx.totalAmount || 0);
-          return;
-        }
-
-        if (tx.paymentMethod === 'CASH') s.cash += Number(tx.totalAmount || 0);
-        if (tx.paymentMethod === 'ONLINE') s.online += Number(tx.totalAmount || 0);
-
-        if (tx.paymentMethod === 'CREDIT') {
-          s.credit += Number(tx.totalAmount || 0);
-          s.list.push(tx);
-        }
-      });
-
-      state.expenses.forEach(ex => {
-        const amount = Number(ex.amount || 0);
-        const method = ex.paymentMethod || 'CASH';
-        s.expenseTotal += amount;
-        if (method === 'ONLINE') s.onlineExpenseTotal += amount;
-        else s.cashExpenseTotal += amount;
-      });
-
-      s.netCash = s.cash - s.cashExpenseTotal;
-      s.netOnline = s.online - s.onlineExpenseTotal;
-      state.stats = s;
-    }
-
     function getCartSubtotal() {
-      return Object.values(state.cart)
-        .reduce((sum, c) => sum + (Number(c.item.price) * Number(c.qty)), 0);
+      return Object.values(state.cart).reduce((sum, c) => sum + Number(c.item.price || 0) * Number(c.qty || 0), 0);
     }
 
     function getDiscountAmount() {
       const sub = getCartSubtotal();
-
-      if (state.discount.type === 'fixed') {
-        return Math.min(sub, Math.max(0, Number(state.discount.value || 0)));
-      }
-
-      if (state.discount.type === 'percent') {
-        const percent = Math.min(100, Math.max(0, Number(state.discount.value || 0)));
-        return Math.round(sub * (percent / 100));
-      }
-
+      if (state.discount.type === 'fixed') return Math.min(sub, Math.max(0, Number(state.discount.value || 0)));
+      if (state.discount.type === 'percent') return Math.round(sub * (Math.min(100, Math.max(0, Number(state.discount.value || 0))) / 100));
       return 0;
     }
 
@@ -1136,142 +1462,92 @@
     }
 
     function getCartQty() {
-      return Object.values(state.cart)
-        .reduce((sum, c) => sum + Number(c.qty || 0), 0);
+      return Object.values(state.cart).reduce((sum, c) => sum + Number(c.qty || 0), 0);
+    }
+
+    function lineMachine(line) {
+      return line.towedBy || line.machineId || null;
+    }
+
+    function addCartLine(item, machineId = null) {
+      const normalizedMachine = machineId === 'JETSKI' ? 'JETSKI1' : machineId;
+      const towedBy = item.isTowable ? normalizedMachine : null;
+      const cartKey = `${item.id}_${normalizedMachine || 'NONE'}_${item.isTowable ? 'TOW' : 'DIRECT'}`;
+      if (state.cart[cartKey]) {
+        state.cart[cartKey].qty += 1;
+      } else {
+        state.cart[cartKey] = { item, qty: 1, machineId: normalizedMachine, towedBy };
+      }
+      render();
     }
 
     window.handleTap = menuId => {
       if (state.checkoutLocked) return;
-
       const item = state.menu.find(m => m.id === menuId);
       if (!item) return;
 
-      const towedBy = item.isTowable ? state.towingMachine : null;
-      const cartKey = towedBy
-        ? `${menuId}_${towedBy}`
-        : `${menuId}_none`;
-
-      if (state.cart[cartKey]) {
-        state.cart[cartKey].qty += 1;
-      } else {
-        state.cart[cartKey] = { item, qty: 1, towedBy };
+      if (item.isTowable || isJetskiRide(item)) {
+        state.machinePickerItemId = item.id;
+        render();
+        return;
       }
+      if (isSpeedboatRide(item)) {
+        addCartLine(item, 'SPEEDBOAT');
+        return;
+      }
+      addCartLine(item, null);
+    };
 
+    window.chooseRideMachine = machine => {
+      const item = state.menu.find(m => m.id === state.machinePickerItemId);
+      if (!item) return;
+      const allowed = item.isTowable ? ['JETSKI1', 'JETSKI2', 'SPEEDBOAT'] : ['JETSKI1', 'JETSKI2'];
+      if (!allowed.includes(machine)) return;
+      state.machinePickerItemId = null;
+      addCartLine(item, machine);
+    };
+
+    window.closeMachinePicker = () => {
+      state.machinePickerItemId = null;
       render();
     };
 
     window.updateQty = (cartKey, delta) => {
       if (state.checkoutLocked || !state.cart[cartKey]) return;
-
       state.cart[cartKey].qty += delta;
-
       if (state.cart[cartKey].qty <= 0) delete state.cart[cartKey];
-
-      if (Object.keys(state.cart).length === 0) {
-        state.discount = { type: 'none', value: 0 };
-      }
-
+      if (Object.keys(state.cart).length === 0) state.discount = { type: 'none', value: 0 };
       render();
     };
 
-    window.setJetski = num => {
-      if (state.checkoutLocked) return;
-      state.activeJetski = num;
-      render();
-    };
-
-    function normalizeMachineId(machine) {
-      if (machine === 'JETSKI') return 'JETSKI1';
-      return machine;
-    }
-
-    function getMachineLabel(machine) {
-      machine = normalizeMachineId(machine);
-      if (machine === 'JETSKI1') return machineName(1);
-      if (machine === 'JETSKI2') return machineName(2);
-      if (machine === 'SPEEDBOAT') return 'Speed Boat';
-      return machine || 'Unknown';
-    }
-
-    function getTransactionMachines(tx) {
-      if (Array.isArray(tx.machineUsage) && tx.machineUsage.length) return tx.machineUsage;
-
-      const machines = [];
-      if (tx.activeJetskiId) machines.push(`JETSKI${tx.activeJetskiId}`);
-      try {
-        Object.values(JSON.parse(tx.items || '{}')).forEach(c => {
-          if (c.towedBy) machines.push(normalizeMachineId(c.towedBy));
-        });
-      } catch {}
-      return [...new Set(machines)];
-    }
-
-    function transactionUsesMachine(tx, filter) {
-      if (filter === 'ALL') return true;
-      return getTransactionMachines(tx).includes(filter);
-    }
-
-    window.setTowingMachine = machine => {
-      if (state.checkoutLocked) return;
-      state.towingMachine = normalizeMachineId(machine);
-      render();
-    };
-
-    window.transferTowable = (cartKey, targetMachine) => {
+    window.transferMachine = (cartKey, targetMachine) => {
       if (state.checkoutLocked || !state.cart[cartKey]) return;
       const line = state.cart[cartKey];
-      if (!line.item.isTowable) return;
+      const allowed = line.item.isTowable ? ['JETSKI1', 'JETSKI2', 'SPEEDBOAT'] : (isJetskiRide(line.item) ? ['JETSKI1', 'JETSKI2'] : []);
+      if (!allowed.includes(targetMachine) || lineMachine(line) === targetMachine) return;
 
-      targetMachine = normalizeMachineId(targetMachine);
-      if (!['JETSKI1','JETSKI2','SPEEDBOAT'].includes(targetMachine)) return;
-      if (line.towedBy === targetMachine) return;
-
-      const newKey = `${line.item.id}_${targetMachine}`;
-      if (state.cart[newKey]) {
-        state.cart[newKey].qty += line.qty;
-      } else {
-        state.cart[newKey] = { ...line, towedBy: targetMachine };
-      }
+      const newKey = `${line.item.id}_${targetMachine}_${line.item.isTowable ? 'TOW' : 'DIRECT'}`;
+      const moved = { ...line, machineId: targetMachine, towedBy: line.item.isTowable ? targetMachine : null };
+      if (state.cart[newKey]) state.cart[newKey].qty += moved.qty;
+      else state.cart[newKey] = moved;
       delete state.cart[cartKey];
       renderCartEditor();
     };
 
-    window.toggleCustomerModal = isOpen => {
-      state.customerModalOpen = isOpen;
-      render();
-    };
-
-    window.toggleCreditModal = isOpen => {
-      state.creditModalOpen = isOpen;
-      render();
-    };
-
-    window.toggleDiscountModal = isOpen => {
-      state.discountModalOpen = isOpen;
-      render();
-    };
+    window.toggleCustomerModal = isOpen => { state.customerModalOpen = isOpen; render(); };
+    window.toggleCreditModal = isOpen => { state.creditModalOpen = isOpen; render(); };
+    window.toggleDiscountModal = isOpen => { state.discountModalOpen = isOpen; render(); };
+    window.toggleMore = () => { state.moreOpen = !state.moreOpen; render(); };
 
     window.saveCustomerInfo = () => {
-      const name = $('custName')?.value.trim() || '';
-      const phone = $('custPhone')?.value.trim() || '';
-
-      state.customer = { name, phone };
+      state.customer = { name: $('custName')?.value.trim() || '', phone: $('custPhone')?.value.trim() || '' };
       state.customerModalOpen = false;
       render();
     };
 
     window.applyDiscount = type => {
       const val = parseFloat($('discountInput')?.value) || 0;
-
-      if (val <= 0) {
-        state.discount = { type: 'none', value: 0 };
-      } else {
-        state.discount = {
-          type,
-          value: type === 'percent' ? Math.min(100, val) : val
-        };
-      }
-
+      state.discount = val <= 0 ? { type: 'none', value: 0 } : { type, value: type === 'percent' ? Math.min(100, val) : val };
       state.discountModalOpen = false;
       render();
     };
@@ -1282,14 +1558,25 @@
       render();
     };
 
-    window.toggleMore = () => {
-      state.moreOpen = !state.moreOpen;
-      render();
-    };
+    function getTransactionMachines(tx) {
+      if (Array.isArray(tx.machineUsage) && tx.machineUsage.length) return tx.machineUsage;
+      const machines = [];
+      if (tx.activeJetskiId) machines.push(`JETSKI${tx.activeJetskiId}`);
+      try {
+        Object.values(JSON.parse(tx.items || '{}')).forEach(c => {
+          const m = c.towedBy || c.machineId;
+          if (m) machines.push(m === 'JETSKI' ? 'JETSKI1' : m);
+        });
+      } catch {}
+      return [...new Set(machines)];
+    }
+
+    function transactionUsesMachine(tx, filter) {
+      return filter === 'ALL' || getTransactionMachines(tx).includes(filter);
+    }
 
     window.processCheckout = async method => {
       if (state.checkoutLocked) return;
-
       const total = getCartTotal();
       const subtotal = getCartSubtotal();
       if (subtotal <= 0) return;
@@ -1305,36 +1592,30 @@
 
       state.checkoutLocked = true;
       render();
-
-      const completedMachine = state.activeJetski;
-      const completedMachineName = machineName(completedMachine);
       const discountAmount = getDiscountAmount();
-      const normalizedCart = Object.fromEntries(Object.entries(state.cart).map(([key, line]) => [key, { ...line, towedBy: line.towedBy ? normalizeMachineId(line.towedBy) : null }]));
-      const cartSnapshot = JSON.stringify(normalizedCart);
-      const machineUsage = [...new Set([`JETSKI${completedMachine}`, ...Object.values(normalizedCart).map(c => c.towedBy).filter(Boolean)])];
+      const cartSnapshot = JSON.stringify(state.cart);
+      const machineUsage = [...new Set(Object.values(state.cart).map(lineMachine).filter(Boolean))];
       const timestamp = new Date().toISOString();
+      const fy = getFinancialYear(new Date(timestamp));
 
       try {
         let invoiceNumber = 0;
         let receiptId = '';
+        let txId = null;
 
-        // Allocate the invoice number and save the sale atomically.
-        // This prevents duplicate invoice numbers even if two tabs are open.
         await db.transaction('rw', db.transactions, db.settings, async () => {
           const allTransactions = await db.transactions.toArray();
-          const highestStored = allTransactions.reduce((highest, tx) => {
-            const match = String(tx.receiptId || '').match(/(?:INV-)?(\d+)$/i);
-            return match ? Math.max(highest, Number(match[1])) : highest;
-          }, 0);
-
+          const highestStored = allTransactions.reduce((highest, tx) => Math.max(highest, receiptSequence(tx.receiptId, fy)), 0);
           const savedSettings = await db.settings.get('pos');
-          const configuredNext = Number(savedSettings?.nextInvoiceNumber || state.settings.nextInvoiceNumber || 1001);
-
+          const sameFY = Number(savedSettings?.invoiceFormatVersion || 0) >= 3 && savedSettings?.invoiceFY === fy;
+          const configuredNext = sameFY ? Number(savedSettings?.nextInvoiceNumber || 1) : 1;
           invoiceNumber = Math.max(1, configuredNext, highestStored + 1);
-          receiptId = 'INV-' + invoiceNumber;
+          receiptId = formatInvoiceId(fy, invoiceNumber);
 
-          await db.transactions.add({
+          txId = await db.transactions.add({
             receiptId,
+            financialYear: fy,
+            invoiceSequence: invoiceNumber,
             timestamp,
             totalAmount: total,
             discountAmount,
@@ -1343,36 +1624,36 @@
             customerName: state.customer.name,
             customerPhone: state.customer.phone,
             items: cartSnapshot,
-            activeJetskiId: completedMachine,
-            activeJetskiName: completedMachineName,
             machineUsage,
             status: 'COMPLETED'
           });
 
           await db.settings.put({
             key: 'pos',
-            nextInvoiceNumber: invoiceNumber + 1,
-            jetskiNames: {
-              1: state.settings.jetskiNames[1],
-              2: state.settings.jetskiNames[2]
-            }
+            ...state.settings,
+            invoiceFormatVersion: 3,
+            invoiceFY: fy,
+            nextInvoiceNumber: invoiceNumber + 1
           });
         });
 
         state.highestInvoiceNumber = Math.max(state.highestInvoiceNumber, invoiceNumber);
+        state.settings.invoiceFY = fy;
         state.settings.nextInvoiceNumber = invoiceNumber + 1;
-
         state.cart = {};
         state.customer = { name: '', phone: '' };
         state.discount = { type: 'none', value: 0 };
         state.creditModalOpen = false;
         state.moreOpen = false;
-        state.activeJetski = state.activeJetski === 1 ? 2 : 1;
-
-        await loadHistoryData();
         state.checkoutLocked = false;
+        state.successTxId = txId;
+        await refreshDailyData();
         render();
-        showPaymentSuccess(total, receiptId, completedMachineName, method);
+        showPaymentSuccess(total, receiptId, method);
+
+        if (state.settings.autoPrint === 'auto') {
+          setTimeout(() => printReceiptById(txId, false), 200);
+        }
       } catch (error) {
         console.error(error);
         state.checkoutLocked = false;
@@ -1386,27 +1667,21 @@
       if (!root) return;
       root.innerHTML = `<div class="success-toast" style="background:#8b1e16;"><i class="fa-solid fa-circle-exclamation" style="color:#ffd2cd;"></i><span>${escapeHTML(message)}</span></div>`;
       clearTimeout(state.toastTimer);
-      state.toastTimer = setTimeout(() => { if ($('toast-root')) $('toast-root').innerHTML = ''; }, 2200);
+      state.toastTimer = setTimeout(() => { if ($('toast-root')) $('toast-root').innerHTML = ''; }, 2400);
     }
 
-    function showPaymentSuccess(total, receiptId, machineNameText, method) {
+    function showPaymentSuccess(total, receiptId, method) {
       const root = $('toast-root');
       if (!root) return;
-      root.innerHTML = `
-        <div class="success-toast">
-          <i class="fa-solid fa-circle-check"></i>
-          <span>${money(total)} ${escapeHTML(method)} • ${escapeHTML(machineNameText)}</span>
-        </div>
-      `;
+      root.innerHTML = `<div class="success-toast"><i class="fa-solid fa-circle-check"></i><span>${escapeHTML(receiptId)} • ${money(total)} ${escapeHTML(method)}</span></div>`;
       clearTimeout(state.toastTimer);
-      state.toastTimer = setTimeout(() => { if ($('toast-root')) $('toast-root').innerHTML = ''; }, 1200);
+      state.toastTimer = setTimeout(() => { if ($('toast-root')) $('toast-root').innerHTML = ''; }, 1600);
     }
 
     window.voidTransaction = async id => {
-      if (!confirm('Are you sure you want to VOID this ticket?')) return;
-
-      await db.transactions.update(id, { status: 'VOID' });
-      await loadHistoryData();
+      if (!confirm('VOID this ticket? It will remain in history and reports as voided.')) return;
+      await db.transactions.update(id, { status: 'VOID', voidedAt: new Date().toISOString() });
+      await refreshDailyData();
       render();
     };
 
@@ -1418,102 +1693,195 @@
     window.addExpense = async () => {
       const desc = $('expDesc')?.value.trim() || '';
       const amt = parseFloat($('expAmt')?.value);
-
-      if (!desc || !amt || amt <= 0) return;
-
+      if (!desc || !amt || amt <= 0) {
+        showInlineError('Enter an expense reason and valid amount.');
+        return;
+      }
       await db.expenses.add({
         timestamp: new Date().toISOString(),
         description: desc,
         amount: amt,
         paymentMethod: state.expensePaymentMethod || 'CASH'
       });
+      state.expenseAnchor = new Date();
+      await refreshDailyData();
+      render();
+      showInlineError('Expense saved.');
+    };
 
+    window.setExpenseDate = async value => {
+      state.expenseAnchor = parseLocalDate(value);
       await loadExpenseData();
       render();
     };
 
-    window.savePOSSettings = async () => {
-      const invoiceInput = $('nextInvoiceNumber');
-      const js1Input = $('jetskiName1');
-      const js2Input = $('jetskiName2');
-
-      const invoiceNumber = parseInt(invoiceInput?.value || '', 10);
-      const name1 = js1Input?.value.trim() || '';
-      const name2 = js2Input?.value.trim() || '';
-
-      if (!Number.isInteger(invoiceNumber) || invoiceNumber < 1) {
-        showInlineError('Enter a valid invoice number.');
-        return;
-      }
-
-      if (!name1 || !name2) {
-        showInlineError('Both Jetski names are required.');
-        return;
-      }
-
-      const highestExisting = state.highestInvoiceNumber;
-
-      // The owner can manually choose the next invoice number. If the chosen
-      // number already exists (or is below the highest existing number), we
-      // cannot safely reuse it, so explain the valid range instead of silently
-      // changing the user's value.
-      if (invoiceNumber <= highestExisting) {
-        showInlineError(`Invoice number must be greater than INV-${highestExisting}.`);
-        return;
-      }
-
-      state.settings.nextInvoiceNumber = invoiceNumber;
+    window.saveBillingSettings = async () => {
+      const next = parseInt($('nextInvoiceNumber')?.value || '', 10);
+      const name1 = $('jetskiName1')?.value.trim() || '';
+      const name2 = $('jetskiName2')?.value.trim() || '';
+      if (!Number.isInteger(next) || next < 1) return showInlineError('Enter a valid next invoice sequence.');
+      if (!name1 || !name2) return showInlineError('Both Jetski names are required.');
+      if (next <= state.highestInvoiceNumber) return showInlineError(`Next sequence must be greater than ${String(state.highestInvoiceNumber).padStart(5, '0')}.`);
+      state.settings.nextInvoiceNumber = next;
+      state.settings.invoiceFY = getFinancialYear();
       state.settings.jetskiNames = { 1: name1, 2: name2 };
-
-      try {
-        await saveAppSettings();
-        render();
-        showInlineError(`Saved. Next bill will be INV-${invoiceNumber}.`);
-      } catch (error) {
-        console.error(error);
-        showInlineError('Settings could not be saved.');
-      }
+      await saveAppSettings();
+      render();
+      showInlineError(`Saved. Next bill: ${formatInvoiceId(state.settings.invoiceFY, next)}`);
     };
+
+    window.savePrinterSettings = async () => {
+      const preset = $('receiptPaperPreset')?.value || '80';
+      const custom = parseFloat($('receiptCustomWidth')?.value || '80');
+      const font = $('receiptFontScale')?.value || 'normal';
+      const autoPrint = $('autoPrint')?.value || 'ask';
+      state.settings.receiptPaperPreset = ['58', '80', '112', 'custom'].includes(preset) ? preset : '80';
+      state.settings.receiptCustomWidth = Math.min(120, Math.max(40, custom || 80));
+      state.settings.receiptFontScale = ['small', 'normal', 'large'].includes(font) ? font : 'normal';
+      state.settings.showReceiptLogo = Boolean($('showReceiptLogo')?.checked);
+      state.settings.autoPrint = ['off', 'ask', 'auto'].includes(autoPrint) ? autoPrint : 'ask';
+      await saveAppSettings();
+      render();
+      showInlineError('Thermal printer settings saved.');
+    };
+
+    function receiptWidthMM() {
+      return state.settings.receiptPaperPreset === 'custom'
+        ? Number(state.settings.receiptCustomWidth || 80)
+        : Number(state.settings.receiptPaperPreset || 80);
+    }
+
+    function receiptScale() {
+      return state.settings.receiptFontScale === 'small' ? 0.9 : state.settings.receiptFontScale === 'large' ? 1.12 : 1;
+    }
 
     window.addOrUpdateMenuItem = async () => {
       const name = $('menuName')?.value.trim() || '';
       const price = parseFloat($('menuPrice')?.value);
       const isTowable = $('menuTowable')?.checked || false;
-
-      if (!name || !price || price <= 0) return;
-
+      if (!name || !price || price <= 0) return showInlineError('Enter a ride name and valid price.');
       if (state.editingRideId) {
-        await db.menu.update(state.editingRideId, {
-          name,
-          price,
-          isTowable
-        });
+        await db.menu.update(state.editingRideId, { name, price, isTowable });
         state.editingRideId = null;
       } else {
         await db.menu.add({ name, price, isTowable });
       }
-
       await loadMenuData();
       render();
     };
 
-    window.editMenuItem = id => {
-      state.editingRideId = id;
-      render();
-    };
-
-    window.cancelEditMenu = () => {
-      state.editingRideId = null;
-      render();
-    };
-
+    window.editMenuItem = id => { state.editingRideId = id; render(); };
+    window.cancelEditMenu = () => { state.editingRideId = null; render(); };
     window.deleteMenuItem = async id => {
-      if (!confirm('Are you sure you want to delete this item?')) return;
-
+      if (!confirm('Delete this ride from the menu? Existing bills will not be changed.')) return;
       await db.menu.delete(id);
       await loadMenuData();
       render();
     };
+
+    window.setHistoryPeriod = async period => {
+      state.historyPeriod = ['today', 'yesterday', 'month', 'fy', 'custom'].includes(period) ? period : 'today';
+      if (period === 'today' || period === 'month' || period === 'fy') state.historyAnchor = new Date();
+      if (period === 'yesterday') state.historyAnchor = addDays(new Date(), -1);
+      await loadHistoryData();
+      render();
+    };
+
+    window.setHistoryAnchor = async value => {
+      if (state.historyPeriod === 'month') {
+        const [y, m] = String(value).split('-').map(Number);
+        state.historyAnchor = new Date(y, (m || 1) - 1, 1, 12);
+      } else {
+        state.historyAnchor = parseLocalDate(value);
+      }
+      await loadHistoryData();
+      render();
+    };
+
+    window.setHistoryFY = async fy => {
+      state.historyAnchor = financialYearStart(fy);
+      await loadHistoryData();
+      render();
+    };
+
+    window.setHistoryMachineFilter = filter => {
+      state.historyMachineFilter = ['ALL', 'JETSKI1', 'JETSKI2', 'SPEEDBOAT'].includes(filter) ? filter : 'ALL';
+      render();
+    };
+
+    window.setHistoryPaymentFilter = filter => {
+      state.historyPaymentFilter = ['ALL', 'CASH', 'ONLINE', 'CREDIT', 'VOID'].includes(filter) ? filter : 'ALL';
+      render();
+    };
+
+    window.applyHistorySearch = () => {
+      state.historySearch = $('historySearch')?.value.trim() || '';
+      render();
+    };
+
+    window.clearHistorySearch = () => {
+      state.historySearch = '';
+      render();
+    };
+
+    window.setReportPeriod = async period => {
+      state.reportPeriod = ['day', 'month', 'fy'].includes(period) ? period : 'day';
+      state.reportAnchor = new Date();
+      await loadDashboardData();
+      render();
+    };
+
+    window.setReportAnchor = async value => {
+      if (state.reportPeriod === 'month') {
+        const [y, m] = String(value).split('-').map(Number);
+        state.reportAnchor = new Date(y, (m || 1) - 1, 1, 12);
+      } else if (state.reportPeriod === 'fy') {
+        state.reportAnchor = financialYearStart(value);
+      } else {
+        state.reportAnchor = parseLocalDate(value);
+      }
+      await loadDashboardData();
+      render();
+    };
+
+    function periodLabel(period, anchor) {
+      if (period === 'today') return 'Today';
+      if (period === 'yesterday') return 'Yesterday';
+      if (period === 'month') return new Date(anchor).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+      if (period === 'fy') return `FY ${getFinancialYear(anchor)}`;
+      if (period === 'custom' || period === 'day') return new Date(anchor).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      return '';
+    }
+
+    function fyOptions(selectedFY) {
+      const currentStart = financialYearStart(getFinancialYear()).getFullYear();
+      const options = [];
+      for (let i = 0; i < 6; i++) {
+        const y = currentStart - i;
+        const fy = `${String(y).slice(-2)}-${String(y + 1).slice(-2)}`;
+        options.push(`<option value="${fy}" ${selectedFY === fy ? 'selected' : ''}>FY ${fy}</option>`);
+      }
+      return options.join('');
+    }
+
+    function historyDateControl() {
+      if (state.historyPeriod === 'custom') return `<input type="date" class="form-input compact-filter-input" value="${localDateKey(state.historyAnchor)}" onchange="setHistoryAnchor(this.value)">`;
+      if (state.historyPeriod === 'month') {
+        const value = `${state.historyAnchor.getFullYear()}-${String(state.historyAnchor.getMonth() + 1).padStart(2, '0')}`;
+        return `<input type="month" class="form-input compact-filter-input" value="${value}" onchange="setHistoryAnchor(this.value)">`;
+      }
+      if (state.historyPeriod === 'fy') return `<select class="form-input compact-filter-input" onchange="setHistoryFY(this.value)">${fyOptions(getFinancialYear(state.historyAnchor))}</select>`;
+      return '';
+    }
+
+    function reportDateControl() {
+      if (state.reportPeriod === 'day') return `<input type="date" class="form-input compact-filter-input" value="${localDateKey(state.reportAnchor)}" onchange="setReportAnchor(this.value)">`;
+      if (state.reportPeriod === 'month') {
+        const value = `${state.reportAnchor.getFullYear()}-${String(state.reportAnchor.getMonth() + 1).padStart(2, '0')}`;
+        return `<input type="month" class="form-input compact-filter-input" value="${value}" onchange="setReportAnchor(this.value)">`;
+      }
+      return `<select class="form-input compact-filter-input" onchange="setReportAnchor(this.value)">${fyOptions(getFinancialYear(state.reportAnchor))}</select>`;
+    }
 
     window.openPreview = (txId, isKOT = false) => {
       state.previewTxId = txId;
@@ -1521,864 +1889,906 @@
       render();
     };
 
-    window.closePreview = () => {
-      state.previewTxId = null;
-      render();
-    };
+    window.closePreview = () => { state.previewTxId = null; render(); };
+    window.closeSuccess = () => { state.successTxId = null; render(); };
 
-    function generateReceiptHTML(tx, isKOT = false) {
-      const items = JSON.parse(tx.items || '{}');
+    async function getTxById(id) {
+      return db.transactions.get(Number(id));
+    }
 
+    function generateReceiptHTML(tx, isKOT = false, forPrint = false) {
+      let items = {};
+      try { items = JSON.parse(tx.items || '{}'); } catch {}
       const rawLines = Object.values(items);
-
-      // CUSTOMER BILL: hide internal towing/machine allocation and merge the
-      // same ride across different machines. Example: 1 Sleeper on Jetski 1
-      // + 1 Sleeper on Jetski 2 + 1 Sleeper on Boat becomes simply 3x Sleeper.
       const customerLines = Object.values(rawLines.reduce((groups, c) => {
-        const key = `${c.item.id || c.item.name}_${c.item.price}`;
+        const key = `${c.item?.id || c.item?.name}_${c.item?.price}`;
         if (!groups[key]) groups[key] = { item: c.item, qty: 0 };
         groups[key].qty += Number(c.qty || 0);
         return groups;
       }, {}));
-
       const displayLines = isKOT ? rawLines : customerLines;
+      const scale = receiptScale();
+      const width = receiptWidthMM();
+      const pxWidth = Math.round(width * 3.78);
+      const logo = state.settings.showReceiptLogo ? `<img src="assets/kas.png" class="receipt-logo" alt="Karde Adventure Sports" style="display:block;width:${Math.round(150 * scale)}px;max-width:90%;max-height:${Math.round(58 * scale)}px;height:auto;object-fit:contain;margin:0 auto 5px;">` : '';
 
-      const itemsHtml = displayLines.map(c => `
-        <div style="display:flex;justify-content:space-between;gap:7px;margin-bottom:5px;font-size:11px;line-height:1.25;border-bottom:1px dashed #ccc;padding-bottom:4px;">
-          <div style="flex:1;padding-right:4px;">
-            <span style="font-weight:bold;">${escapeHTML(c.qty)}x ${escapeHTML(c.item.name)}</span>
-            ${isKOT && c.towedBy ? `<br><span style="font-size:9px;">Tow: ${escapeHTML(getMachineLabel(c.towedBy))}</span>` : ''}
-          </div>
-          ${!isKOT ? `<div style="font-weight:bold;text-align:right;min-width:48px;">${money(c.item.price * c.qty)}</div>` : ''}
+      const itemsHtml = displayLines.map(c => {
+        const assigned = c.towedBy || c.machineId;
+        return `<div style="display:flex;justify-content:space-between;gap:7px;margin-bottom:5px;font-size:${11 * scale}px;line-height:1.25;border-bottom:1px dashed #ccc;padding-bottom:4px;">
+          <div style="flex:1;padding-right:4px;"><span style="font-weight:bold;">${escapeHTML(c.qty)}x ${escapeHTML(c.item?.name || 'Item')}</span>${isKOT && assigned ? `<br><span style="font-size:${9 * scale}px;">${c.towedBy ? 'Tow' : 'Machine'}: ${escapeHTML(getMachineLabel(assigned))}</span>` : ''}</div>
+          ${!isKOT ? `<div style="font-weight:bold;text-align:right;min-width:48px;">${money(Number(c.item?.price || 0) * Number(c.qty || 0))}</div>` : ''}
+        </div>`;
+      }).join('');
+
+      const subtotal = rawLines.reduce((sum, c) => sum + Number(c.item?.price || 0) * Number(c.qty || 0), 0);
+      return `<div class="receipt-container" id="printable-receipt" style="width:${forPrint ? width + 'mm' : Math.min(pxWidth, 420) + 'px'};max-width:100%;margin:0 auto;background:#fff;padding:${Math.max(8, 12 * scale)}px;font-family:'Courier New',Courier,monospace;color:#000;box-sizing:border-box;">
+        <div style="text-align:center;padding-bottom:8px;border-bottom:2px solid #000;">
+          ${logo}
+          <div style="font-size:${11 * scale}px;font-weight:900;line-height:1.2;text-transform:uppercase;">Karde Adventure Sports</div>
+          <div style="font-size:${8 * scale}px;margin-top:2px;letter-spacing:.04em;">${isKOT ? 'RIDE KOT TICKET' : 'WATERSPORTS BILL'}</div>
+          <div style="font-size:${9 * scale}px;margin-top:5px;font-weight:bold;">${escapeHTML(tx.receiptId)}</div>
+          <div style="font-size:${9 * scale}px;">${escapeHTML(new Date(tx.timestamp).toLocaleString('en-IN'))}</div>
+          ${isKOT && getTransactionMachines(tx).length ? `<div style="font-size:${9 * scale}px;margin-top:3px;font-weight:bold;">Machine: ${escapeHTML(getTransactionMachines(tx).map(getMachineLabel).join(' + '))}</div>` : ''}
         </div>
-      `).join('');
-
-      const subtotal = rawLines
-        .reduce((sum, c) => sum + (c.item.price * c.qty), 0);
-
-      return `
-        <div class="receipt-container" id="printable-receipt">
-          <div style="text-align:center;padding-bottom:8px;border-bottom:2px solid #000;">
-            <img
-              src="assets/kas.png"
-              class="receipt-logo"
-              alt="Karde Adventure Sports"
-              loading="eager"
-            >
-            <div class="receipt-business">Karde Adventure Sports</div>
-            <div class="receipt-subtitle">${isKOT ? 'RIDE KOT TICKET' : 'WATERSPORTS BILL'}</div>
-            <div style="font-size:9px;margin-top:5px;font-weight:bold;">${escapeHTML(tx.receiptId)}</div>
-            <div style="font-size:9px;">${escapeHTML(new Date(tx.timestamp).toLocaleString('en-IN'))}</div>
-            ${isKOT && getTransactionMachines(tx).length ? `<div style="font-size:9px;margin-top:3px;font-weight:bold;">Machine: ${escapeHTML(getTransactionMachines(tx).map(getMachineLabel).join(' + '))}</div>` : ''}
-          </div>
-
-          ${(tx.customerName || tx.customerPhone) ? `
-            <div style="margin:8px 0;font-size:10px;border-bottom:1px dotted #000;padding-bottom:6px;">
-              ${tx.customerName ? `<div><strong>Customer:</strong> ${escapeHTML(tx.customerName)}</div>` : ''}
-              ${tx.customerPhone ? `<div><strong>Phone:</strong> ${escapeHTML(tx.customerPhone)}</div>` : ''}
-            </div>
-          ` : ''}
-
-          <div style="margin-top:9px;">${itemsHtml}</div>
-
-          ${!isKOT ? `
-            <div class="receipt-divider"></div>
-
-            <div class="receipt-row">
-              <span>Subtotal</span>
-              <span>${money(subtotal)}</span>
-            </div>
-
-            ${Number(tx.discountAmount) > 0 ? `
-              <div class="receipt-row">
-                <span>Discount</span>
-                <span>-${money(tx.discountAmount)}</span>
-              </div>
-            ` : ''}
-
-            <div style="border-top:2px solid #000;border-bottom:2px solid #000;padding:6px 0;margin-top:5px;display:flex;justify-content:space-between;font-size:15px;font-weight:bold;">
-              <span>TOTAL</span>
-              <span>${money(tx.totalAmount)}</span>
-            </div>
-
-            <div style="font-size:9px;text-align:right;margin-top:5px;font-weight:bold;">
-              Payment: ${escapeHTML(tx.paymentMethod)}
-            </div>
-          ` : `
-            <div style="border-top:2px solid #000;padding-top:6px;text-align:center;font-size:11px;font-weight:bold;">
-              OPERATOR COPY
-            </div>
-          `}
-
-          ${tx.reference ? `
-            <div style="text-align:center;font-size:9px;margin-top:8px;padding:4px;border:1px dashed #000;">
-              Ref: ${escapeHTML(tx.reference)}
-            </div>
-          ` : ''}
-
-          <div style="border-top:1px dashed #000;margin-top:10px;padding-top:7px;text-align:center;font-size:9px;">
-            Thank you for visiting<br>
-            <strong>Karde Adventure Sports</strong>
-          </div>
-        </div>
-      `;
+        ${(tx.customerName || tx.customerPhone) ? `<div style="margin:8px 0;font-size:${10 * scale}px;border-bottom:1px dotted #000;padding-bottom:6px;">${tx.customerName ? `<div><strong>Customer:</strong> ${escapeHTML(tx.customerName)}</div>` : ''}${tx.customerPhone ? `<div><strong>Phone:</strong> ${escapeHTML(tx.customerPhone)}</div>` : ''}</div>` : ''}
+        <div style="margin-top:9px;">${itemsHtml}</div>
+        ${!isKOT ? `<div style="border-top:1px dashed #000;margin:8px 0;"></div>
+          <div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Subtotal</span><span>${money(subtotal)}</span></div>
+          ${Number(tx.discountAmount) > 0 ? `<div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Discount</span><span>-${money(tx.discountAmount)}</span></div>` : ''}
+          <div style="border-top:2px solid #000;border-bottom:2px solid #000;padding:6px 0;margin-top:5px;display:flex;justify-content:space-between;font-size:${15 * scale}px;font-weight:bold;"><span>TOTAL</span><span>${money(tx.totalAmount)}</span></div>
+          <div style="font-size:${9 * scale}px;text-align:right;margin-top:5px;font-weight:bold;">Payment: ${escapeHTML(tx.paymentMethod)}</div>` : `<div style="border-top:2px solid #000;padding-top:6px;text-align:center;font-size:${11 * scale}px;font-weight:bold;">OPERATOR COPY</div>`}
+        ${tx.reference ? `<div style="text-align:center;font-size:${9 * scale}px;margin-top:8px;padding:4px;border:1px dashed #000;">Ref: ${escapeHTML(tx.reference)}</div>` : ''}
+        <div style="border-top:1px dashed #000;margin-top:10px;padding-top:7px;text-align:center;font-size:${9 * scale}px;">Thank you for visiting<br><strong>Karde Adventure Sports</strong></div>
+      </div>`;
     }
 
     window.triggerDownload = async isKOT => {
-      const element = $('printable-receipt');
-      if (!element) return;
-
-      const tx = state.history.find(t => t.id === state.previewTxId);
-      const prefix = isKOT ? 'KOT' : 'Bill';
+      const tx = await getTxById(state.previewTxId);
+      if (!tx) return;
+      const holder = document.createElement('div');
+      holder.style.position = 'fixed';
+      holder.style.left = '-9999px';
+      holder.innerHTML = generateReceiptHTML(tx, isKOT, true);
+      document.body.appendChild(holder);
+      const element = holder.querySelector('#printable-receipt');
       const logo = element.querySelector('.receipt-logo');
-
       try {
-        if (logo && !logo.complete) {
-          await new Promise(resolve => {
-            logo.addEventListener('load', resolve, { once: true });
-            logo.addEventListener('error', resolve, { once: true });
-          });
-        }
-
+        if (logo && !logo.complete) await new Promise(resolve => { logo.onload = resolve; logo.onerror = resolve; });
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
+        const width = receiptWidthMM();
+        const estimatedHeight = Math.max(80, Math.ceil(element.scrollHeight * 0.264583 + 8));
+        const safeId = String(tx.receiptId || 'Receipt').replace(/[\\/:*?"<>|]/g, '-');
         await html2pdf().set({
           margin: [2, 0, 2, 0],
-          filename: `${prefix}_${tx ? tx.receiptId : 'Receipt'}.pdf`,
+          filename: `${isKOT ? 'KOT' : 'Bill'}_${safeId}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: {
-            scale: 3,
-            useCORS: true,
-            allowTaint: false,
-            logging: false
-          },
-          jsPDF: {
-            unit: 'mm',
-            format: [80, 180],
-            orientation: 'portrait'
-          }
+          html2canvas: { scale: 3, useCORS: true, allowTaint: false, logging: false },
+          jsPDF: { unit: 'mm', format: [width, estimatedHeight], orientation: 'portrait' }
         }).from(element).save();
       } catch (error) {
         console.error(error);
-        showInlineError('Could not generate the bill PDF.');
+        showInlineError('Could not generate the receipt PDF.');
+      } finally {
+        holder.remove();
       }
     };
 
-    window.printViaBluetooth = () => {
-      alert('Bluetooth printer integration can be connected here in the next version.');
+    window.printReceiptById = async (txId, isKOT = false) => {
+      const tx = await getTxById(txId);
+      if (!tx) return showInlineError('Bill not found.');
+      const width = receiptWidthMM();
+      const html = generateReceiptHTML(tx, isKOT, true);
+      const frame = document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.width = '0';
+      frame.style.height = '0';
+      frame.style.border = '0';
+      frame.style.right = '0';
+      frame.style.bottom = '0';
+      document.body.appendChild(frame);
+      const doc = frame.contentWindow.document;
+      doc.open();
+      doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHTML(tx.receiptId)}</title><style>@page{size:${width}mm auto;margin:0}html,body{margin:0;padding:0;background:#fff}*{box-sizing:border-box}img{max-width:100%}</style></head><body>${html}</body></html>`);
+      doc.close();
+      frame.onload = () => setTimeout(() => {
+        try { frame.contentWindow.focus(); frame.contentWindow.print(); }
+        finally { setTimeout(() => frame.remove(), 1200); }
+      }, 250);
+    };
+
+    window.printCurrentPreview = () => printReceiptById(state.previewTxId, state.isKOTPreview);
+
+    window.exportBackup = async () => {
+      const backup = {
+        exportedAt: new Date().toISOString(),
+        app: 'KAS POS',
+        version: 3,
+        transactions: await db.transactions.toArray(),
+        expenses: await db.expenses.toArray(),
+        menu: await db.menu.toArray(),
+        settings: await db.settings.toArray()
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `KAS_POS_Backup_${localDateKey()}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    window.openBackupImport = () => $('backupFile')?.click();
+
+    window.importBackup = async input => {
+      const file = input?.files?.[0];
+      if (!file) return;
+      if (!confirm('Restore this backup? Current local POS data will be replaced.')) { input.value = ''; return; }
+      try {
+        const data = JSON.parse(await file.text());
+        if (!Array.isArray(data.transactions) || !Array.isArray(data.expenses) || !Array.isArray(data.menu)) throw new Error('Invalid backup');
+        await db.transaction('rw', db.transactions, db.expenses, db.menu, db.settings, async () => {
+          await Promise.all([db.transactions.clear(), db.expenses.clear(), db.menu.clear(), db.settings.clear()]);
+          if (data.transactions.length) await db.transactions.bulkAdd(data.transactions);
+          if (data.expenses.length) await db.expenses.bulkAdd(data.expenses);
+          if (data.menu.length) await db.menu.bulkAdd(data.menu);
+          if (Array.isArray(data.settings) && data.settings.length) await db.settings.bulkPut(data.settings);
+        });
+        await loadAppSettings();
+        await loadInvoiceSequence();
+        await loadMenuData();
+        await loadHistoryData();
+        await loadExpenseData();
+        render();
+        showInlineError('Backup restored successfully.');
+      } catch (error) {
+        console.error(error);
+        showInlineError('Invalid or unreadable backup file.');
+      } finally {
+        input.value = '';
+      }
     };
 
     window.setView = async viewName => {
       state.view = viewName;
       state.moreOpen = false;
-
-      ['pos', 'history', 'expenses', 'dashboard', 'settings'].forEach(v => {
-        const el = $('nav-' + v);
-        if (!el) return;
-        el.classList.toggle('active', state.view === v);
-      });
-
+      ['pos', 'history', 'expenses', 'dashboard', 'settings'].forEach(v => $('nav-' + v)?.classList.toggle('active', v === viewName));
       if (viewName === 'history') await loadHistoryData();
       if (viewName === 'expenses') await loadExpenseData();
       if (viewName === 'dashboard') await loadDashboardData();
-
-      if (viewName === 'settings') {
-        state.editingRideId = null;
-        await loadMenuData();
-      }
-
+      if (viewName === 'settings') { state.editingRideId = null; await loadMenuData(); }
       window.scrollTo({ top: 0, behavior: 'instant' });
       render();
     };
 
     function renderHeader() {
-      return `
-        <header class="compact-header">
-          <div class="brand-mini">
-            <img src="assets/kas.png" alt="KAS">
-            <div class="brand-title">
-              <strong>Karde Adventure Sports</strong>
-              <span>Water Sports POS</span>
-            </div>
-          </div>
-
-          <div class="active-machine-pill">
-            <span class="status-dot"></span>
-            ${escapeHTML(machineName(state.activeJetski))}
-          </div>
-        </header>
-      `;
+      return `<header class="compact-header">
+        <div class="brand-mini"><img src="assets/kas.png" alt="KAS"><div class="brand-title"><strong>Karde Adventure Sports</strong><span>Water Sports POS</span></div></div>
+        <div class="active-machine-pill"><span class="status-dot"></span>FY ${escapeHTML(getFinancialYear())}</div>
+      </header>`;
     }
 
     function renderPOS() {
       const cartQty = getCartQty();
-
-      return `
-        ${renderHeader()}
-
-        <section class="control-strip">
-          <div class="control-group">
-            <span class="control-label">Machine</span>
-            <div class="segmented">
-              <button onclick="setJetski(1)" class="${state.activeJetski === 1 ? 'active-machine' : ''}">${escapeHTML(machineName(1))}</button>
-              <button onclick="setJetski(2)" class="${state.activeJetski === 2 ? 'active-machine' : ''}">${escapeHTML(machineName(2))}</button>
-            </div>
-          </div>
-
-          <div class="control-group">
-            <span class="control-label">Tow with</span>
-            <div class="segmented">
-              <button onclick="setTowingMachine('JETSKI1')" class="${state.towingMachine === 'JETSKI1' ? 'active-tow' : ''}">${escapeHTML(machineName(1))}</button>
-              <button onclick="setTowingMachine('JETSKI2')" class="${state.towingMachine === 'JETSKI2' ? 'active-tow' : ''}">${escapeHTML(machineName(2))}</button>
-              <button onclick="setTowingMachine('SPEEDBOAT')" class="${state.towingMachine === 'SPEEDBOAT' ? 'active-tow' : ''}">Boat</button>
-            </div>
-          </div>
-        </section>
-
-        <div class="section-title-row">
-          <span class="section-title">Select ride</span>
-          <span class="section-hint">${cartQty ? `${cartQty} selected` : 'Tap to add'}</span>
+      return `${renderHeader()}
+        <div class="surface" style="padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:9px;background:#f4f8ff;border-color:#cfe0f7;">
+          <i class="fa-solid fa-circle-info" style="color:#1769d1;"></i>
+          <div style="font-size:10px;line-height:1.35;color:#4b5c70;font-weight:750;"><strong>Machine assignment is now per ride.</strong> Tap a Jetski/towed ride and choose the exact machine. Speedboat is assigned automatically.</div>
         </div>
-
-        <section class="ride-grid">
-          ${state.menu.map(item => {
-            const matchingKeys = Object.keys(state.cart).filter(key => state.cart[key].item.id === item.id);
-            const qty = matchingKeys.reduce((sum, key) => sum + state.cart[key].qty, 0);
-            const selected = qty > 0;
-            const primaryKey = matchingKeys[0] || (item.isTowable ? `${item.id}_${state.towingMachine}` : `${item.id}_none`);
-
-            return `
-              <div class="ride-button ${selected ? 'selected' : ''}"
-                role="button" tabindex="0"
-                onclick="handleTap(${item.id})"
-                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleTap(${item.id})}">
-
-                ${item.isTowable ? `<span class="tow-icon"><i class="fa-solid fa-link"></i></span>` : ''}
-                <span class="ride-name">${escapeHTML(item.name)}</span>
-                <span class="ride-price">${money(item.price)}</span>
-
-                ${selected ? `
-                  <span class="ride-qty-control" aria-label="Quantity controls for ${escapeHTML(item.name)}" onclick="event.stopPropagation();">
-                    <button class="qty-mini" aria-label="Decrease ${escapeHTML(item.name)}" onclick="event.stopPropagation();updateQty('${escapeHTML(primaryKey)}',-1)">−</button>
-                    <span class="qty-number">${qty}</span>
-                    <button class="qty-mini" aria-label="Increase ${escapeHTML(item.name)}" onclick="event.stopPropagation();updateQty('${escapeHTML(primaryKey)}',1)">+</button>
-                  </span>
-                ` : ''}
-              </div>
-            `;
-          }).join('')}
-        </section>
-
-        ${cartQty === 0 ? `<div class="empty-order">Select a ride to start billing.</div>` : ''}
-      `;
+        <div class="section-title-row"><span class="section-title">Select ride</span><span class="section-hint">${cartQty ? `${cartQty} selected` : 'Tap to add'}</span></div>
+        <section class="ride-grid">${state.menu.map(item => {
+          const matchingKeys = Object.keys(state.cart).filter(key => state.cart[key].item.id === item.id);
+          const qty = matchingKeys.reduce((sum, key) => sum + state.cart[key].qty, 0);
+          const selected = qty > 0;
+          const singleKey = matchingKeys.length === 1 ? matchingKeys[0] : null;
+          const machineHint = item.isTowable ? 'Choose tow machine' : (isJetskiRide(item) ? 'Choose Jetski' : (isSpeedboatRide(item) ? 'Speed Boat' : 'Direct ride'));
+          return `<div class="ride-button ${selected ? 'selected' : ''}" role="button" tabindex="0" onclick="handleTap(${item.id})">
+            ${item.isTowable ? `<span class="tow-icon"><i class="fa-solid fa-link"></i></span>` : ''}
+            <span class="ride-name">${escapeHTML(item.name)}</span><span class="ride-price">${money(item.price)}</span>
+            <span style="display:block;margin-top:7px;font-size:8px;color:#7b8490;font-weight:850;">${escapeHTML(machineHint)}</span>
+            ${selected && singleKey ? `<span class="ride-qty-control" onclick="event.stopPropagation();"><button class="qty-mini" onclick="event.stopPropagation();updateQty('${escapeHTML(singleKey)}',-1)">−</button><span class="qty-number">${qty}</span><button class="qty-mini" onclick="event.stopPropagation();updateQty('${escapeHTML(singleKey)}',1)">+</button></span>` : ''}
+            ${selected && !singleKey ? `<button onclick="event.stopPropagation();renderCartEditor()" style="position:absolute;right:8px;top:8px;border:2px solid #fff;border-radius:8px;background:#1769d1;color:#fff;padding:6px 8px;font-size:9px;font-weight:950;box-shadow:0 2px 8px rgba(23,105,209,.28);">${qty} • SPLIT</button>` : ''}
+          </div>`;
+        }).join('')}</section>
+        ${cartQty === 0 ? `<div class="empty-order">Select a ride to start billing.</div>` : ''}`;
     }
 
     function renderCheckoutDock() {
       if (state.view !== 'pos') return '';
-
       const cartItems = Object.entries(state.cart);
       const subtotal = getCartSubtotal();
       const discountAmt = getDiscountAmount();
       const total = getCartTotal();
       const cartQty = getCartQty();
-
-      if (cartItems.length === 0) {
-        return `
-          <div class="empty-checkout">
-            <div class="empty-checkout-text">
-              <strong>Ready for next customer</strong>
-              <span>Choose a ride to start billing</span>
-            </div>
-            <div class="empty-checkout-total">₹0</div>
-          </div>
-        `;
-      }
-
-      const orderText = cartItems.map(([key, data]) => {
-        const tow = data.towedBy ? ` • ${getMachineLabel(data.towedBy)}` : '';
-        return `${data.qty}× ${data.item.name}${tow}`;
-      }).join('  |  ');
-
-      return `
-        <div class="checkout-panel">
-          <div class="checkout-top">
-            <div class="order-preview">
-              <span class="order-count">${cartQty} ${cartQty === 1 ? 'RIDE' : 'RIDES'}</span>
-              <span class="order-items-text">${escapeHTML(orderText)}</span>
-            </div>
-
-            <div class="total-box">
-              <span class="total-label">${discountAmt ? `Saved ${money(discountAmt)}` : 'Total'}</span>
-              ${discountAmt ? `<span style="display:block;color:#9ca3af;font-size:9px;text-decoration:line-through;">${money(subtotal)}</span>` : ''}
-              <span class="total-value">${money(total)}</span>
-            </div>
-          </div>
-
-          <div class="more-row">
-            <button onclick="toggleMore()" class="more-button">
-              <i class="fa-solid fa-ellipsis"></i> ${state.moreOpen ? 'Hide' : 'More'}
-            </button>
-          </div>
-
-          <div class="checkout-actions ${state.moreOpen ? '' : 'collapsed'}">
-            <button onclick="toggleCustomerModal(true)" class="secondary-action ${state.customer.name || state.customer.phone ? 'has-value' : ''}">
-              <i class="fa-solid fa-user"></i>
-              ${state.customer.name ? escapeHTML(state.customer.name.substring(0, 12)) : 'Customer'}
-            </button>
-
-            <button onclick="toggleDiscountModal(true)" class="secondary-action ${discountAmt > 0 ? 'has-value' : ''}">
-              <i class="fa-solid fa-tag"></i>
-              ${discountAmt ? `-${money(discountAmt)}` : 'Discount'}
-            </button>
-
-            <button onclick="renderCartEditor()" class="secondary-action" style="margin-left:auto;">
-              <i class="fa-solid fa-list-check"></i> Order
-            </button>
-          </div>
-
-          <div class="payment-grid">
-            <button onclick="processCheckout('CASH')" class="pay-button pay-cash" ${state.checkoutLocked ? 'disabled' : ''}>
-              <i class="fa-solid fa-money-bill-wave"></i> CASH
-            </button>
-            <button onclick="processCheckout('ONLINE')" class="pay-button pay-online" ${state.checkoutLocked ? 'disabled' : ''}>
-              <i class="fa-solid fa-qrcode"></i> ONLINE
-            </button>
-            <button onclick="toggleCreditModal(true)" class="pay-button pay-credit" ${state.checkoutLocked ? 'disabled' : ''}>
-              <i class="fa-solid fa-hotel"></i> CREDIT
-            </button>
-          </div>
-        </div>
-      `;
+      if (!cartItems.length) return `<div class="empty-checkout"><div class="empty-checkout-text"><strong>Ready for next customer</strong><span>Choose a ride to start billing</span></div><div class="empty-checkout-total">₹0</div></div>`;
+      const orderText = cartItems.map(([, data]) => `${data.qty}× ${data.item.name}${lineMachine(data) ? ` • ${getMachineLabel(lineMachine(data))}` : ''}`).join('  |  ');
+      return `<div class="checkout-panel"><div class="checkout-top"><div class="order-preview"><span class="order-count">${cartQty} ${cartQty === 1 ? 'RIDE' : 'RIDES'}</span><span class="order-items-text">${escapeHTML(orderText)}</span></div><div class="total-box"><span class="total-label">${discountAmt ? `Saved ${money(discountAmt)}` : 'Total'}</span>${discountAmt ? `<span style="display:block;color:#9ca3af;font-size:9px;text-decoration:line-through;">${money(subtotal)}</span>` : ''}<span class="total-value">${money(total)}</span></div></div>
+        <div class="more-row"><button onclick="toggleMore()" class="more-button"><i class="fa-solid fa-ellipsis"></i> ${state.moreOpen ? 'Hide' : 'More'}</button></div>
+        <div class="checkout-actions ${state.moreOpen ? '' : 'collapsed'}"><button onclick="toggleCustomerModal(true)" class="secondary-action ${state.customer.name || state.customer.phone ? 'has-value' : ''}"><i class="fa-solid fa-user"></i> ${state.customer.name ? escapeHTML(state.customer.name.substring(0, 12)) : 'Customer'}</button><button onclick="toggleDiscountModal(true)" class="secondary-action ${discountAmt > 0 ? 'has-value' : ''}"><i class="fa-solid fa-tag"></i> ${discountAmt ? `-${money(discountAmt)}` : 'Discount'}</button><button onclick="renderCartEditor()" class="secondary-action" style="margin-left:auto;"><i class="fa-solid fa-list-check"></i> Order</button></div>
+        <div class="payment-grid"><button onclick="processCheckout('CASH')" class="pay-button pay-cash" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-money-bill-wave"></i> CASH</button><button onclick="processCheckout('ONLINE')" class="pay-button pay-online" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-qrcode"></i> ONLINE</button><button onclick="toggleCreditModal(true)" class="pay-button pay-credit" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-hotel"></i> CREDIT</button></div></div>`;
     }
 
     window.renderCartEditor = () => {
       const items = Object.entries(state.cart);
-
-      $('modals').innerHTML = `
-        <div class="modal-backdrop" onclick="if(event.target===this)closeCartEditor()">
-          <div class="modal-card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-              <div>
-                <div style="font-size:17px;font-weight:950;">Current Order</div>
-                <div style="font-size:10px;color:#858d96;font-weight:700;margin-top:2px;">
-                  Adjust quantity before payment
-                </div>
-              </div>
-              <button onclick="closeCartEditor()" class="neutral-btn" style="min-height:34px;padding:0 11px;">Close</button>
-            </div>
-
-            ${items.map(([key, data]) => `
-              <div class="surface" style="padding:10px;margin-bottom:7px;">
-                <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
-                  <div style="min-width:0;">
-                    <div style="font-size:13px;font-weight:950;">${escapeHTML(data.item.name)}</div>
-                    <div style="font-size:10px;color:#7c858f;font-weight:700;margin-top:2px;">
-                      ${data.towedBy ? `Tow: ${escapeHTML(getMachineLabel(data.towedBy))}` : 'Direct ride'}
-                    </div>
-                    ${data.towedBy ? `
-                      <div class="tow-transfer">
-                        <span class="tow-transfer-label">Move to:</span>
-                        <button onclick="transferTowable('${escapeHTML(key)}','JETSKI1')" class="${normalizeMachineId(data.towedBy) === 'JETSKI1' ? 'active' : ''}">${escapeHTML(machineName(1))}</button>
-                        <button onclick="transferTowable('${escapeHTML(key)}','JETSKI2')" class="${normalizeMachineId(data.towedBy) === 'JETSKI2' ? 'active' : ''}">${escapeHTML(machineName(2))}</button>
-                        <button onclick="transferTowable('${escapeHTML(key)}','SPEEDBOAT')" class="${normalizeMachineId(data.towedBy) === 'SPEEDBOAT' ? 'active' : ''}">Boat</button>
-                      </div>
-                    ` : ''}
-                  </div>
-
-                  <div style="display:flex;align-items:center;gap:7px;">
-                    <button onclick="updateQty('${key}', -1);renderCartEditor()" class="neutral-btn" style="width:34px;min-height:34px;padding:0;font-size:18px;">−</button>
-                    <strong style="min-width:18px;text-align:center;">${data.qty}</strong>
-                    <button onclick="updateQty('${key}', 1);renderCartEditor()" class="primary-btn" style="width:34px;min-height:34px;padding:0;font-size:18px;">+</button>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-
-            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e1e5e9;padding-top:12px;margin-top:10px;">
-              <strong>Total</strong>
-              <strong style="font-size:22px;color:#14763b;">${money(getCartTotal())}</strong>
-            </div>
-          </div>
-        </div>
-      `;
+      $('modals').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeCartEditor()"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div><div style="font-size:17px;font-weight:950;">Current Order</div><div style="font-size:10px;color:#858d96;font-weight:700;margin-top:2px;">Quantity and exact machine assignment</div></div><button onclick="closeCartEditor()" class="neutral-btn" style="min-height:34px;padding:0 11px;">Close</button></div>
+        ${items.map(([key, data]) => {
+          const assigned = lineMachine(data);
+          const editableMachine = data.item.isTowable || isJetskiRide(data.item);
+          const options = data.item.isTowable ? ['JETSKI1', 'JETSKI2', 'SPEEDBOAT'] : ['JETSKI1', 'JETSKI2'];
+          return `<div class="surface" style="padding:10px;margin-bottom:7px;"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;"><div style="min-width:0;flex:1;"><div style="font-size:13px;font-weight:950;">${escapeHTML(data.item.name)}</div><div style="font-size:10px;color:#1769d1;font-weight:800;margin-top:3px;">${data.item.isTowable ? 'Tow' : 'Machine'}: ${escapeHTML(getMachineLabel(assigned))}</div>${editableMachine ? `<div class="tow-transfer"><span class="tow-transfer-label">Change:</span>${options.map(m => `<button onclick="transferMachine('${escapeHTML(key)}','${m}')" class="${assigned === m ? 'active' : ''}">${escapeHTML(getMachineLabel(m))}</button>`).join('')}</div>` : ''}</div><div style="display:flex;align-items:center;gap:7px;"><button onclick="updateQty('${escapeHTML(key)}',-1);renderCartEditor()" class="neutral-btn" style="width:34px;min-height:34px;padding:0;font-size:18px;">−</button><strong style="min-width:18px;text-align:center;">${data.qty}</strong><button onclick="updateQty('${escapeHTML(key)}',1);renderCartEditor()" class="primary-btn" style="width:34px;min-height:34px;padding:0;font-size:18px;">+</button></div></div></div>`;
+        }).join('')}
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e1e5e9;padding-top:12px;margin-top:10px;"><strong>Total</strong><strong style="font-size:22px;color:#14763b;">${money(getCartTotal())}</strong></div></div></div>`;
     };
-
     window.closeCartEditor = () => render();
 
-    function renderHistory() {
-      const filtered = state.history.filter(tx => transactionUsesMachine(tx, state.historyMachineFilter));
-      const visibleTotal = filtered.filter(t => t.status !== 'VOID').reduce((s,t) => s + Number(t.totalAmount || 0), 0);
-
-      return `
-        ${renderHeader()}
-
-        <div class="screen-heading">
-          <div>
-            <h2>Today's Tickets</h2>
-            <p>${filtered.length} shown • ${state.history.length} total</p>
-          </div>
-          <div style="font-size:18px;font-weight:950;color:#14763b;">${money(visibleTotal)}</div>
-        </div>
-
-        <div class="history-filters">
-          <button onclick="setHistoryMachineFilter('ALL')" class="history-filter ${state.historyMachineFilter === 'ALL' ? 'active' : ''}">ALL</button>
-          <button onclick="setHistoryMachineFilter('JETSKI1')" class="history-filter ${state.historyMachineFilter === 'JETSKI1' ? 'active' : ''}">${escapeHTML(machineName(1))}</button>
-          <button onclick="setHistoryMachineFilter('JETSKI2')" class="history-filter ${state.historyMachineFilter === 'JETSKI2' ? 'active' : ''}">${escapeHTML(machineName(2))}</button>
-          <button onclick="setHistoryMachineFilter('SPEEDBOAT')" class="history-filter ${state.historyMachineFilter === 'SPEEDBOAT' ? 'active' : ''}">SPEED BOAT</button>
-        </div>
-
-        <div class="surface" style="overflow:hidden;margin-bottom:16px;">
-          ${filtered.length === 0
-            ? `<div style="padding:28px 15px;text-align:center;color:#7e8791;font-size:12px;font-weight:700;">No tickets for this machine today.</div>`
-            : filtered.map((tx, index) => {
-                let itemsStr = '';
-                try {
-                  itemsStr = Object.values(JSON.parse(tx.items || '{}')).map(c => `${c.qty}× ${c.item.name}`).join(' • ');
-                } catch { itemsStr = 'Items unavailable'; }
-
-                const machines = getTransactionMachines(tx);
-                return `
-                  <div style="padding:11px;border-bottom:1px solid #e4e7ea;${tx.status === 'VOID' ? 'background:#fff5f5;opacity:.78;' : ''}">
-                    <div style="display:flex;justify-content:space-between;gap:10px;align-items:start;">
-                      <div style="min-width:0;flex:1;">
-                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                          <strong style="font-size:16px;">${money(tx.totalAmount)}</strong>
-                          <span style="font-size:8px;font-weight:900;padding:4px 6px;border-radius:5px;background:#f0f1f3;color:#5c6570;border:1px solid #dfe2e5;">${escapeHTML(tx.paymentMethod)}</span>
-                          ${tx.status === 'VOID' ? `<span style="font-size:8px;font-weight:900;color:#b42318;background:#fee4e2;padding:4px 6px;border-radius:5px;">VOID</span>` : ''}
-                        </div>
-                        <div style="font-size:9px;color:#858d96;font-weight:700;margin-top:3px;">
-                          ${escapeHTML(tx.receiptId)} • ${escapeHTML(new Date(tx.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}))}
-                        </div>
-                        <div style="font-size:10px;color:#3f4852;font-weight:800;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHTML(itemsStr)}</div>
-                        <div class="machine-tags">
-                          ${machines.map(m => `<span class="machine-tag"><i class="fa-solid fa-person-running" style="margin-right:4px;"></i>${escapeHTML(getMachineLabel(m))}</span>`).join('')}
-                        </div>
-                        ${tx.customerName ? `<div style="font-size:9px;color:#1769d1;font-weight:800;margin-top:3px;"><i class="fa-solid fa-user"></i> ${escapeHTML(tx.customerName)}</div>` : ''}
-                      </div>
-                      ${tx.status === 'COMPLETED' && index === 0 ? `<button onclick="voidTransaction(${tx.id})" class="danger-btn" style="min-height:32px;padding:0 9px;font-size:9px;">VOID</button>` : ''}
-                    </div>
-                    ${tx.status === 'COMPLETED' ? `
-                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-                        <button onclick="openPreview(${tx.id}, false)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-file-invoice"></i> Bill</button>
-                        <button onclick="openPreview(${tx.id}, true)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-ticket"></i> KOT</button>
-                      </div>
-                    ` : ''}
-                  </div>
-                `;
-              }).join('')}
-        </div>
-      `;
+    function filteredHistory() {
+      const q = state.historySearch.toLowerCase();
+      return state.history.filter(tx => {
+        const machineOk = transactionUsesMachine(tx, state.historyMachineFilter);
+        const paymentOk = state.historyPaymentFilter === 'ALL' || (state.historyPaymentFilter === 'VOID' ? tx.status === 'VOID' : tx.status !== 'VOID' && tx.paymentMethod === state.historyPaymentFilter);
+        const searchOk = !q || [tx.receiptId, tx.customerName, tx.customerPhone, tx.reference].some(v => String(v || '').toLowerCase().includes(q));
+        return machineOk && paymentOk && searchOk;
+      });
     }
 
-    window.setHistoryMachineFilter = filter => {
-      state.historyMachineFilter = ['ALL','JETSKI1','JETSKI2','SPEEDBOAT'].includes(filter) ? filter : 'ALL';
-      render();
-    };
+    function renderHistory() {
+      const filtered = filteredHistory();
+      const visibleTotal = filtered.filter(t => t.status !== 'VOID').reduce((s, t) => s + Number(t.totalAmount || 0), 0);
+      return `${renderHeader()}<div class="screen-heading"><div><h2>Bill History</h2><p>${periodLabel(state.historyPeriod, state.historyAnchor)} • ${filtered.length} shown</p></div><div style="font-size:18px;font-weight:950;color:#14763b;">${money(visibleTotal)}</div></div>
+        <div class="period-tabs"><button onclick="setHistoryPeriod('today')" class="history-filter ${state.historyPeriod === 'today' ? 'active' : ''}">TODAY</button><button onclick="setHistoryPeriod('yesterday')" class="history-filter ${state.historyPeriod === 'yesterday' ? 'active' : ''}">YESTERDAY</button><button onclick="setHistoryPeriod('month')" class="history-filter ${state.historyPeriod === 'month' ? 'active' : ''}">MONTH</button><button onclick="setHistoryPeriod('fy')" class="history-filter ${state.historyPeriod === 'fy' ? 'active' : ''}">FY</button><button onclick="setHistoryPeriod('custom')" class="history-filter ${state.historyPeriod === 'custom' ? 'active' : ''}">DATE</button></div>
+        ${historyDateControl() ? `<div style="margin-bottom:9px;">${historyDateControl()}</div>` : ''}
+        <div style="display:flex;gap:6px;margin-bottom:8px;"><input id="historySearch" class="form-input" value="${escapeHTML(state.historySearch)}" placeholder="Invoice / customer / phone" style="min-height:39px;font-size:12px;" onkeydown="if(event.key==='Enter')applyHistorySearch()"><button onclick="applyHistorySearch()" class="primary-btn" style="min-height:39px;padding:0 12px;"><i class="fa-solid fa-magnifying-glass"></i></button>${state.historySearch ? `<button onclick="clearHistorySearch()" class="neutral-btn" style="min-height:39px;padding:0 10px;">Clear</button>` : ''}</div>
+        <div class="history-filters"><button onclick="setHistoryMachineFilter('ALL')" class="history-filter ${state.historyMachineFilter === 'ALL' ? 'active' : ''}">ALL</button><button onclick="setHistoryMachineFilter('JETSKI1')" class="history-filter ${state.historyMachineFilter === 'JETSKI1' ? 'active' : ''}">${escapeHTML(machineName(1))}</button><button onclick="setHistoryMachineFilter('JETSKI2')" class="history-filter ${state.historyMachineFilter === 'JETSKI2' ? 'active' : ''}">${escapeHTML(machineName(2))}</button><button onclick="setHistoryMachineFilter('SPEEDBOAT')" class="history-filter ${state.historyMachineFilter === 'SPEEDBOAT' ? 'active' : ''}">BOAT</button></div>
+        <div class="period-tabs" style="grid-template-columns:repeat(5,1fr);margin-bottom:10px;"><button onclick="setHistoryPaymentFilter('ALL')" class="history-filter ${state.historyPaymentFilter === 'ALL' ? 'active' : ''}">ALL</button><button onclick="setHistoryPaymentFilter('CASH')" class="history-filter ${state.historyPaymentFilter === 'CASH' ? 'active' : ''}">CASH</button><button onclick="setHistoryPaymentFilter('ONLINE')" class="history-filter ${state.historyPaymentFilter === 'ONLINE' ? 'active' : ''}">UPI</button><button onclick="setHistoryPaymentFilter('CREDIT')" class="history-filter ${state.historyPaymentFilter === 'CREDIT' ? 'active' : ''}">CREDIT</button><button onclick="setHistoryPaymentFilter('VOID')" class="history-filter ${state.historyPaymentFilter === 'VOID' ? 'active' : ''}">VOID</button></div>
+        <div class="surface" style="overflow:hidden;margin-bottom:16px;">${filtered.length === 0 ? `<div style="padding:28px 15px;text-align:center;color:#7e8791;font-size:12px;font-weight:700;">No bills found for this selection.</div>` : filtered.map((tx, index) => {
+          let itemsStr = ''; try { itemsStr = Object.values(JSON.parse(tx.items || '{}')).map(c => `${c.qty}× ${c.item?.name || 'Item'}`).join(' • '); } catch { itemsStr = 'Items unavailable'; }
+          const machines = getTransactionMachines(tx);
+          return `<div style="padding:11px;border-bottom:1px solid #e4e7ea;${tx.status === 'VOID' ? 'background:#fff5f5;opacity:.78;' : ''}"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start;"><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><strong style="font-size:16px;">${money(tx.totalAmount)}</strong><span style="font-size:8px;font-weight:900;padding:4px 6px;border-radius:5px;background:#f0f1f3;color:#5c6570;border:1px solid #dfe2e5;">${escapeHTML(tx.paymentMethod)}</span>${tx.status === 'VOID' ? `<span style="font-size:8px;font-weight:900;color:#b42318;background:#fee4e2;padding:4px 6px;border-radius:5px;">VOID</span>` : ''}</div><div style="font-size:9px;color:#858d96;font-weight:700;margin-top:3px;">${escapeHTML(tx.receiptId)} • ${escapeHTML(new Date(tx.timestamp).toLocaleString('en-IN'))}</div><div style="font-size:10px;color:#3f4852;font-weight:800;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHTML(itemsStr)}</div><div class="machine-tags">${machines.map(m => `<span class="machine-tag">${escapeHTML(getMachineLabel(m))}</span>`).join('')}</div>${tx.customerName ? `<div style="font-size:9px;color:#1769d1;font-weight:800;margin-top:3px;"><i class="fa-solid fa-user"></i> ${escapeHTML(tx.customerName)}</div>` : ''}</div>${tx.status === 'COMPLETED' && index === 0 && state.historyPeriod === 'today' ? `<button onclick="voidTransaction(${tx.id})" class="danger-btn" style="min-height:32px;padding:0 9px;font-size:9px;">VOID</button>` : ''}</div>${tx.status === 'COMPLETED' ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;"><button onclick="openPreview(${tx.id},false)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-file-invoice"></i> Bill</button><button onclick="openPreview(${tx.id},true)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-ticket"></i> KOT</button><button onclick="printReceiptById(${tx.id},false)" class="neutral-btn" style="min-height:34px;"><i class="fa-solid fa-print"></i> Print</button></div>` : ''}</div>`;
+        }).join('')}</div>`;
+    }
 
     function renderExpenses() {
       const cashExpense = state.expenses.filter(ex => (ex.paymentMethod || 'CASH') === 'CASH').reduce((s, ex) => s + Number(ex.amount || 0), 0);
       const onlineExpense = state.expenses.filter(ex => ex.paymentMethod === 'ONLINE').reduce((s, ex) => s + Number(ex.amount || 0), 0);
-      return `
-        ${renderHeader()}
-
-        <div class="screen-heading">
-          <div>
-            <h2>Expenses</h2>
-            <p>Record cash or UPI expenses</p>
-          </div>
-        </div>
-
-        <div class="surface" style="padding:12px;margin-bottom:12px;">
-          <input id="expDesc" type="text" placeholder="Expense reason (e.g. Fuel)" class="form-input" style="margin-bottom:7px;">
-          <input id="expAmt" type="number" inputmode="decimal" placeholder="Amount (₹)" class="form-input" style="margin-bottom:8px;font-weight:900;">
-
-          <div class="expense-methods">
-            <button onclick="setExpensePaymentMethod('CASH')" class="expense-method ${state.expensePaymentMethod === 'CASH' ? 'active' : ''}"><i class="fa-solid fa-money-bill-wave"></i> CASH</button>
-            <button onclick="setExpensePaymentMethod('ONLINE')" class="expense-method ${state.expensePaymentMethod === 'ONLINE' ? 'active' : ''}"><i class="fa-solid fa-qrcode"></i> UPI</button>
-          </div>
-
-          <button onclick="addExpense()" class="danger-btn" style="width:100%;">Add ${state.expensePaymentMethod === 'ONLINE' ? 'UPI' : 'Cash'} Expense</button>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
-          <div class="surface" style="padding:10px;text-align:center;">
-            <div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#68717c;">Cash Expenses</div>
-            <div style="font-size:18px;font-weight:950;color:#c5261b;margin-top:3px;">${money(cashExpense)}</div>
-          </div>
-          <div class="surface" style="padding:10px;text-align:center;">
-            <div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#1769d1;">UPI Expenses</div>
-            <div style="font-size:18px;font-weight:950;color:#1769d1;margin-top:3px;">${money(onlineExpense)}</div>
-          </div>
-        </div>
-
-        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#727b85;margin:13px 2px 7px;">Today's Deductions</div>
-
-        <div class="surface" style="overflow:hidden;margin-bottom:16px;">
-          ${state.expenses.length === 0
-            ? `<div style="padding:26px;text-align:center;color:#818993;font-size:11px;font-weight:700;">No expenses logged.</div>`
-            : state.expenses.map(ex => {
-                const method = ex.paymentMethod || 'CASH';
-                return `
-                  <div style="padding:11px;border-bottom:1px solid #e4e7ea;display:flex;justify-content:space-between;align-items:center;gap:10px;">
-                    <div style="min-width:0;">
-                      <span style="display:block;font-size:12px;font-weight:850;">${escapeHTML(ex.description)}</span>
-                      <span style="display:block;margin-top:3px;font-size:8px;color:#7c858f;font-weight:800;">${escapeHTML(method === 'ONLINE' ? 'UPI' : 'CASH')} • ${escapeHTML(new Date(ex.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}))}</span>
-                    </div>
-                    <span style="font-size:11px;font-weight:950;color:#c5261b;">-${money(ex.amount)}</span>
-                  </div>
-                `;
-              }).join('')}
-        </div>
-      `;
+      return `${renderHeader()}<div class="screen-heading"><div><h2>Expenses</h2><p>Record and review daily expenses</p></div></div>
+        <div class="surface" style="padding:12px;margin-bottom:12px;"><input id="expDesc" type="text" placeholder="Expense reason (e.g. Fuel)" class="form-input" style="margin-bottom:7px;"><input id="expAmt" type="number" inputmode="decimal" placeholder="Amount (₹)" class="form-input" style="margin-bottom:8px;font-weight:900;"><div class="expense-methods"><button onclick="setExpensePaymentMethod('CASH')" class="expense-method ${state.expensePaymentMethod === 'CASH' ? 'active' : ''}"><i class="fa-solid fa-money-bill-wave"></i> CASH</button><button onclick="setExpensePaymentMethod('ONLINE')" class="expense-method ${state.expensePaymentMethod === 'ONLINE' ? 'active' : ''}"><i class="fa-solid fa-qrcode"></i> UPI</button></div><button onclick="addExpense()" class="danger-btn" style="width:100%;">Add ${state.expensePaymentMethod === 'ONLINE' ? 'UPI' : 'Cash'} Expense</button></div>
+        <div class="surface" style="padding:9px;margin-bottom:10px;"><label style="display:block;font-size:9px;font-weight:900;color:#6c7580;margin-bottom:5px;text-transform:uppercase;">View expenses for</label><input type="date" class="form-input compact-filter-input" value="${localDateKey(state.expenseAnchor)}" onchange="setExpenseDate(this.value)"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;"><div class="surface" style="padding:9px;text-align:center;"><div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#68717c;">Cash</div><div style="font-size:16px;font-weight:950;color:#c5261b;margin-top:3px;">${money(cashExpense)}</div></div><div class="surface" style="padding:9px;text-align:center;"><div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#1769d1;">UPI</div><div style="font-size:16px;font-weight:950;color:#1769d1;margin-top:3px;">${money(onlineExpense)}</div></div><div class="surface" style="padding:9px;text-align:center;"><div style="font-size:8px;font-weight:900;text-transform:uppercase;color:#68717c;">Total</div><div style="font-size:16px;font-weight:950;color:#c5261b;margin-top:3px;">${money(cashExpense + onlineExpense)}</div></div></div>
+        <div class="surface" style="overflow:hidden;margin-bottom:16px;">${state.expenses.length === 0 ? `<div style="padding:26px;text-align:center;color:#818993;font-size:11px;font-weight:700;">No expenses logged for this date.</div>` : state.expenses.map(ex => `<div style="padding:11px;border-bottom:1px solid #e4e7ea;display:flex;justify-content:space-between;align-items:center;gap:10px;"><div style="min-width:0;"><span style="display:block;font-size:12px;font-weight:850;">${escapeHTML(ex.description)}</span><span style="display:block;margin-top:3px;font-size:8px;color:#7c858f;font-weight:800;">${escapeHTML(ex.paymentMethod === 'ONLINE' ? 'UPI' : 'CASH')} • ${escapeHTML(new Date(ex.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</span></div><span style="font-size:11px;font-weight:950;color:#c5261b;">-${money(ex.amount)}</span></div>`).join('')}</div>`;
     }
 
     function renderDashboard() {
-      return `
-        ${renderHeader()}
-
-        <div class="screen-heading">
-          <div>
-            <h2>End of Day</h2>
-            <p>Today's collection summary</p>
-          </div>
-        </div>
-
-        <div class="surface" style="padding:13px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#68717c;margin-bottom:10px;">
-            Cash Drawer
-          </div>
-
-          <div style="display:flex;justify-content:space-between;margin-bottom:9px;font-size:12px;font-weight:800;">
-            <span style="color:#68717c;">Cash received</span>
-            <span>${money(state.stats.cash)}</span>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;margin-bottom:11px;font-size:12px;font-weight:800;">
-            <span style="color:#68717c;">Expenses</span>
-            <span style="color:#c5261b;">-${money(state.stats.cashExpenseTotal)}</span>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;background:#eaf7ef;border:1px solid #c5e7d0;border-radius:8px;padding:10px;">
-            <span style="font-size:10px;font-weight:900;text-transform:uppercase;color:#126d37;">Net cash</span>
-            <span style="font-size:23px;font-weight:950;color:#14763b;">${money(state.stats.netCash)}</span>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
-          <div class="surface" style="padding:13px;text-align:center;">
-            <div style="font-size:9px;font-weight:900;text-transform:uppercase;color:#1769d1;">UPI Collected</div>
-            <div style="font-size:21px;font-weight:950;color:#1769d1;margin-top:3px;">${money(state.stats.online)}</div>
-          </div>
-
-          <div class="surface" style="padding:13px;text-align:center;">
-            <div style="font-size:9px;font-weight:900;text-transform:uppercase;color:#68717c;">Sales Value</div>
-            <div style="font-size:21px;font-weight:950;margin-top:3px;">${money(state.stats.cash + state.stats.online)}</div>
-          </div>
-
-          <div class="surface" style="padding:13px;text-align:center;grid-column:1 / -1;">
-            <div style="font-size:9px;font-weight:900;text-transform:uppercase;color:#1769d1;">Net UPI after UPI expenses</div>
-            <div style="font-size:21px;font-weight:950;color:#1769d1;margin-top:3px;">${money(state.stats.netOnline)}</div>
-          </div>
-        </div>
-
-        <div class="surface" style="padding:13px;margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:900;text-transform:uppercase;color:#b42318;border-bottom:1px solid #f0d2d0;padding-bottom:8px;margin-bottom:9px;">
-            Needs Attention
-          </div>
-
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-            <span style="font-size:11px;font-weight:800;">Credits Pending</span>
-            <strong style="color:#b42318;">${money(state.stats.credit)}</strong>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;">
-            <span style="font-size:11px;font-weight:800;">Voided Tickets</span>
-            <strong style="color:#b42318;">${money(state.stats.voidAmount)}</strong>
-          </div>
-        </div>
-      `;
+      const s = state.stats;
+      return `${renderHeader()}<div class="screen-heading"><div><h2>Sales & EOD</h2><p>${periodLabel(state.reportPeriod, state.reportAnchor)} summary</p></div></div>
+        <div class="period-tabs" style="grid-template-columns:repeat(3,1fr);"><button onclick="setReportPeriod('day')" class="history-filter ${state.reportPeriod === 'day' ? 'active' : ''}">DAY</button><button onclick="setReportPeriod('month')" class="history-filter ${state.reportPeriod === 'month' ? 'active' : ''}">MONTH</button><button onclick="setReportPeriod('fy')" class="history-filter ${state.reportPeriod === 'fy' ? 'active' : ''}">FINANCIAL YEAR</button></div><div style="margin:8px 0 10px;">${reportDateControl()}</div>
+        <div class="surface" style="padding:13px;margin-bottom:10px;"><div class="settings-section-title">Sales</div>${[['Cash Sales',s.cash],['UPI Sales',s.online],['Credit Sales',s.credit]].map(([label,val]) => `<div style="display:flex;justify-content:space-between;margin-bottom:9px;font-size:12px;font-weight:800;"><span style="color:#68717c;">${label}</span><span>${money(val)}</span></div>`).join('')}<div style="display:flex;justify-content:space-between;align-items:center;background:#f0f6ff;border:1px solid #cfe0f7;border-radius:8px;padding:10px;"><span style="font-size:10px;font-weight:900;text-transform:uppercase;color:#1559a8;">Gross Sales</span><span style="font-size:23px;font-weight:950;color:#1769d1;">${money(s.grossSales)}</span></div></div>
+        <div class="surface" style="padding:13px;margin-bottom:10px;"><div class="settings-section-title">Expenses</div><div style="display:flex;justify-content:space-between;margin-bottom:9px;font-size:12px;font-weight:800;"><span style="color:#68717c;">Cash Expenses</span><span style="color:#c5261b;">-${money(s.cashExpenseTotal)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:9px;font-size:12px;font-weight:800;"><span style="color:#68717c;">UPI Expenses</span><span style="color:#c5261b;">-${money(s.onlineExpenseTotal)}</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:9px;font-size:12px;font-weight:950;"><span>Total Expenses</span><span style="color:#c5261b;">-${money(s.expenseTotal)}</span></div></div>
+        <div class="surface" style="padding:13px;margin-bottom:10px;"><div class="settings-section-title">Net Collection</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;"><div style="background:#eaf7ef;border:1px solid #c5e7d0;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:8px;font-weight:900;color:#126d37;text-transform:uppercase;">Net Cash</div><div style="font-size:18px;font-weight:950;color:#14763b;margin-top:3px;">${money(s.netCash)}</div></div><div style="background:#edf5ff;border:1px solid #cfe0f7;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:8px;font-weight:900;color:#1559a8;text-transform:uppercase;">Net UPI</div><div style="font-size:18px;font-weight:950;color:#1769d1;margin-top:3px;">${money(s.netOnline)}</div></div></div><div style="display:flex;justify-content:space-between;align-items:center;background:#17231b;color:#fff;border-radius:8px;padding:11px;"><span style="font-size:10px;font-weight:900;text-transform:uppercase;">Collected after expenses</span><span style="font-size:22px;font-weight:950;">${money(s.netCollected)}</span></div></div>
+        <div class="surface" style="padding:13px;margin-bottom:16px;"><div class="settings-section-title">Attention</div><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="font-size:11px;font-weight:800;">Pending Credit</span><strong style="color:#b42318;">${money(s.credit)}</strong></div><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="font-size:11px;font-weight:800;">Completed Bills</span><strong>${s.completedCount}</strong></div><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:800;">Voided Tickets</span><strong style="color:#b42318;">${s.voidCount} • ${money(s.voidAmount)}</strong></div></div>`;
     }
 
     function renderSettings() {
-      const editingItem = state.editingRideId
-        ? state.menu.find(m => m.id === state.editingRideId)
-        : null;
-
-      return `
-        ${renderHeader()}
-
-        <div class="screen-heading">
-          <div>
-            <h2>Setup</h2>
-            <p>Billing controls, machine names and ride menu</p>
-          </div>
-        </div>
-
-        <div class="surface" style="padding:12px;margin-bottom:12px;">
-          <div class="settings-section-title">Billing</div>
-
-          <label style="display:block;font-size:10px;font-weight:900;color:#4f5862;margin-bottom:6px;">
-            Next invoice number
-          </label>
-          <input
-            id="nextInvoiceNumber"
-            type="number"
-            min="1"
-            step="1"
-            inputmode="numeric"
-            value="${Number(state.settings.nextInvoiceNumber || 1001)}"
-            class="form-input"
-            style="font-weight:950;margin-bottom:7px;">
-          <div class="settings-hint">
-            Example: enter <strong>5001</strong> → the next bill is <strong>INV-5001</strong>, then INV-5002, INV-5003…
-          </div>
-        </div>
-
-        <div class="surface" style="padding:12px;margin-bottom:12px;">
-          <div class="settings-section-title">Jetski names</div>
-          <div class="settings-machine-row">
-            <div>
-              <label style="display:block;font-size:10px;font-weight:900;color:#4f5862;margin-bottom:6px;">Jetski 1</label>
-              <input id="jetskiName1" type="text" maxlength="24" value="${escapeHTML(machineName(1))}" class="form-input" style="font-weight:900;">
-            </div>
-            <div>
-              <label style="display:block;font-size:10px;font-weight:900;color:#4f5862;margin-bottom:6px;">Jetski 2</label>
-              <input id="jetskiName2" type="text" maxlength="24" value="${escapeHTML(machineName(2))}" class="form-input" style="font-weight:900;">
-            </div>
-          </div>
-          <div class="settings-hint">
-            These names are used for internal machine tracking, history filters and KOT/business references. Customer bills do not show machine names.
-          </div>
-
-          <button onclick="savePOSSettings()" class="primary-btn" style="width:100%;margin-top:10px;">
-            <i class="fa-solid fa-floppy-disk"></i> Save Billing & Machine Settings
-          </button>
-        </div>
-
-        <div class="screen-heading" style="margin-top:3px;">
-          <div>
-            <h2 style="font-size:16px;">Ride Menu</h2>
-            <p>Add, edit or remove ride prices</p>
-          </div>
-        </div>
-
-        <div class="surface" style="padding:12px;margin-bottom:13px;">
-          <div style="font-size:12px;font-weight:950;margin-bottom:8px;">
-            ${editingItem ? 'Editing ride' : 'Add new ride'}
-          </div>
-
-          <input
-            id="menuName"
-            type="text"
-            placeholder="Ride name"
-            value="${editingItem ? escapeHTML(editingItem.name) : ''}"
-            class="form-input"
-            style="margin-bottom:7px;">
-
-          <input
-            id="menuPrice"
-            type="number"
-            inputmode="decimal"
-            placeholder="Price (₹)"
-            value="${editingItem ? editingItem.price : ''}"
-            class="form-input"
-            style="margin-bottom:8px;font-weight:900;">
-
-          <label style="display:flex;align-items:center;gap:9px;background:#f5f6f7;border:1px solid #e0e3e6;border-radius:7px;padding:10px;margin-bottom:8px;">
-            <input
-              type="checkbox"
-              id="menuTowable"
-              ${editingItem && editingItem.isTowable ? 'checked' : ''}
-              style="width:19px;height:19px;accent-color:#1769d1;">
-            <span style="font-size:11px;font-weight:850;">Needs Jetski / Boat to tow?</span>
-          </label>
-
-          <div style="display:flex;gap:7px;">
-            ${editingItem ? `
-              <button onclick="cancelEditMenu()" class="neutral-btn" style="flex:0 0 90px;">
-                Cancel
-              </button>
-            ` : ''}
-
-            <button onclick="addOrUpdateMenuItem()" class="primary-btn" style="flex:1;">
-              ${editingItem ? 'Update Ride' : 'Save Ride'}
-            </button>
-          </div>
-        </div>
-
-        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#727b85;margin:13px 2px 7px;">
-          Live Menu
-        </div>
-
-        <div class="surface" style="overflow:hidden;margin-bottom:16px;">
-          ${state.menu.map(item => `
-            <div style="padding:11px;border-bottom:1px solid #e4e7ea;display:flex;justify-content:space-between;align-items:center;gap:10px;">
-              <div style="min-width:0;">
-                <div style="font-size:12px;font-weight:950;">${escapeHTML(item.name)}</div>
-                <div style="font-size:10px;font-weight:900;color:#1769d1;margin-top:2px;">
-                  ${money(item.price)}
-                  ${item.isTowable ? `<span style="margin-left:5px;color:#6c7480;background:#f0f1f3;border:1px solid #dfe2e5;border-radius:4px;padding:2px 4px;font-size:8px;">TOWED</span>` : ''}
-                </div>
-              </div>
-
-              <div style="display:flex;gap:5px;flex-shrink:0;">
-                <button onclick="editMenuItem(${item.id})" class="neutral-btn" style="width:36px;min-height:34px;padding:0;">
-                  <i class="fa-solid fa-pen"></i>
-                </button>
-                <button onclick="deleteMenuItem(${item.id})" class="neutral-btn" style="width:36px;min-height:34px;padding:0;color:#c5261b;background:#fff3f2;border-color:#f0d0cd;">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `;
+      const editingItem = state.editingRideId ? state.menu.find(m => m.id === state.editingRideId) : null;
+      const fy = getFinancialYear();
+      return `${renderHeader()}<div class="screen-heading"><div><h2>Setup</h2><p>Billing, machines, printing, backup and ride menu</p></div></div>
+        <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Billing</div><div style="background:#f4f8ff;border:1px solid #cfe0f7;border-radius:7px;padding:9px;margin-bottom:9px;"><div style="font-size:9px;color:#68717c;font-weight:850;">CURRENT FINANCIAL YEAR</div><div style="font-size:16px;font-weight:950;color:#1769d1;margin-top:2px;">FY ${fy}</div><div style="font-size:9px;color:#68717c;margin-top:2px;">Invoice format: INV/${fy}/00001</div></div><label class="setup-label">Next invoice sequence</label><input id="nextInvoiceNumber" type="number" min="1" step="1" inputmode="numeric" value="${Number(state.settings.nextInvoiceNumber || 1)}" class="form-input" style="font-weight:950;margin-bottom:8px;"><div class="settings-machine-row"><div><label class="setup-label">Jetski 1 name</label><input id="jetskiName1" type="text" maxlength="24" value="${escapeHTML(machineName(1))}" class="form-input" style="font-weight:900;"></div><div><label class="setup-label">Jetski 2 name</label><input id="jetskiName2" type="text" maxlength="24" value="${escapeHTML(machineName(2))}" class="form-input" style="font-weight:900;"></div></div><div class="settings-hint">Sequence resets automatically when the financial year changes on 1 April. Existing bills keep their original numbers.</div><button onclick="saveBillingSettings()" class="primary-btn" style="width:100%;margin-top:10px;"><i class="fa-solid fa-floppy-disk"></i> Save Billing Settings</button></div>
+        <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Thermal Printer</div><label class="setup-label">Paper width</label><select id="receiptPaperPreset" class="form-input" onchange="document.getElementById('customWidthRow').style.display=this.value==='custom'?'block':'none'" style="margin-bottom:8px;"><option value="58" ${state.settings.receiptPaperPreset === '58' ? 'selected' : ''}>58 mm</option><option value="80" ${state.settings.receiptPaperPreset === '80' ? 'selected' : ''}>80 mm</option><option value="112" ${state.settings.receiptPaperPreset === '112' ? 'selected' : ''}>112 mm</option><option value="custom" ${state.settings.receiptPaperPreset === 'custom' ? 'selected' : ''}>Custom width</option></select><div id="customWidthRow" style="display:${state.settings.receiptPaperPreset === 'custom' ? 'block' : 'none'};margin-bottom:8px;"><label class="setup-label">Custom width (40–120 mm)</label><input id="receiptCustomWidth" type="number" min="40" max="120" value="${Number(state.settings.receiptCustomWidth || 80)}" class="form-input"></div><label class="setup-label">Print font</label><select id="receiptFontScale" class="form-input" style="margin-bottom:8px;"><option value="small" ${state.settings.receiptFontScale === 'small' ? 'selected' : ''}>Small</option><option value="normal" ${state.settings.receiptFontScale === 'normal' ? 'selected' : ''}>Normal</option><option value="large" ${state.settings.receiptFontScale === 'large' ? 'selected' : ''}>Large</option></select><label class="setup-label">After payment</label><select id="autoPrint" class="form-input" style="margin-bottom:8px;"><option value="off" ${state.settings.autoPrint === 'off' ? 'selected' : ''}>Do not show print prompt</option><option value="ask" ${state.settings.autoPrint === 'ask' ? 'selected' : ''}>Show Print / KOT prompt</option><option value="auto" ${state.settings.autoPrint === 'auto' ? 'selected' : ''}>Automatically open print dialog</option></select><label style="display:flex;align-items:center;gap:9px;background:#f5f6f7;border:1px solid #e0e3e6;border-radius:7px;padding:10px;"><input id="showReceiptLogo" type="checkbox" ${state.settings.showReceiptLogo ? 'checked' : ''} style="width:19px;height:19px;accent-color:#1769d1;"><span style="font-size:11px;font-weight:850;">Show KAS logo on receipts</span></label><div class="settings-hint">Use your operating system's installed USB/LAN/Bluetooth thermal printer. The print layout uses the selected roll width.</div><button onclick="savePrinterSettings()" class="primary-btn" style="width:100%;margin-top:10px;"><i class="fa-solid fa-print"></i> Save Printer Settings</button></div>
+        <div class="surface" style="padding:12px;margin-bottom:12px;"><div class="settings-section-title">Backup & Restore</div><div class="settings-hint" style="margin-top:0;margin-bottom:9px;">This POS stores data locally in the browser. Export regular backups so bills and expenses can be restored if browser data is cleared or the device changes.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button onclick="exportBackup()" class="neutral-btn"><i class="fa-solid fa-download"></i> Export Backup</button><button onclick="openBackupImport()" class="neutral-btn"><i class="fa-solid fa-upload"></i> Restore Backup</button></div><input id="backupFile" type="file" accept="application/json,.json" style="display:none;" onchange="importBackup(this)"></div>
+        <div class="screen-heading" style="margin-top:3px;"><div><h2 style="font-size:16px;">Ride Menu</h2><p>Add, edit or remove ride prices</p></div></div><div class="surface" style="padding:12px;margin-bottom:13px;"><div style="font-size:12px;font-weight:950;margin-bottom:8px;">${editingItem ? 'Editing ride' : 'Add new ride'}</div><input id="menuName" type="text" placeholder="Ride name" value="${editingItem ? escapeHTML(editingItem.name) : ''}" class="form-input" style="margin-bottom:7px;"><input id="menuPrice" type="number" inputmode="decimal" placeholder="Price (₹)" value="${editingItem ? editingItem.price : ''}" class="form-input" style="margin-bottom:8px;font-weight:900;"><label style="display:flex;align-items:center;gap:9px;background:#f5f6f7;border:1px solid #e0e3e6;border-radius:7px;padding:10px;margin-bottom:8px;"><input type="checkbox" id="menuTowable" ${editingItem && editingItem.isTowable ? 'checked' : ''} style="width:19px;height:19px;accent-color:#1769d1;"><span style="font-size:11px;font-weight:850;">Needs Jetski / Boat to tow?</span></label><div style="display:flex;gap:7px;">${editingItem ? `<button onclick="cancelEditMenu()" class="neutral-btn" style="flex:0 0 90px;">Cancel</button>` : ''}<button onclick="addOrUpdateMenuItem()" class="primary-btn" style="flex:1;">${editingItem ? 'Update Ride' : 'Save Ride'}</button></div></div><div class="surface" style="overflow:hidden;margin-bottom:16px;">${state.menu.map(item => `<div style="padding:11px;border-bottom:1px solid #e4e7ea;display:flex;justify-content:space-between;align-items:center;gap:10px;"><div style="min-width:0;"><div style="font-size:12px;font-weight:950;">${escapeHTML(item.name)}</div><div style="font-size:10px;font-weight:900;color:#1769d1;margin-top:2px;">${money(item.price)} ${item.isTowable ? `<span style="margin-left:5px;color:#6c7480;background:#f0f1f3;border:1px solid #dfe2e5;border-radius:4px;padding:2px 4px;font-size:8px;">TOWED</span>` : ''}</div></div><div style="display:flex;gap:5px;"><button onclick="editMenuItem(${item.id})" class="neutral-btn" style="width:36px;min-height:34px;padding:0;"><i class="fa-solid fa-pen"></i></button><button onclick="deleteMenuItem(${item.id})" class="neutral-btn" style="width:36px;min-height:34px;padding:0;color:#c5261b;background:#fff3f2;border-color:#f0d0cd;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('')}</div>`;
     }
 
     function renderPreviewModal() {
       if (!state.previewTxId) return '';
-
       const tx = state.history.find(t => t.id === state.previewTxId);
       if (!tx) return '';
+      return `<div class="modal-backdrop" style="overflow-y:auto;align-items:flex-start;padding-top:18px;"><div style="width:100%;max-width:430px;"><div style="display:flex;justify-content:space-between;align-items:center;color:#fff;margin-bottom:8px;"><strong style="font-size:14px;">${state.isKOTPreview ? 'KOT Preview' : 'Bill Preview'}</strong><button onclick="closePreview()" style="width:34px;height:34px;border:0;border-radius:50%;background:#242b33;color:#fff;font-size:20px;">×</button></div><div style="background:#e7e9ec;border-radius:8px;padding:8px;box-shadow:0 15px 45px rgba(0,0,0,.35);overflow:auto;max-height:62vh;">${generateReceiptHTML(tx, state.isKOTPreview)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;"><button onclick="printCurrentPreview()" class="primary-btn"><i class="fa-solid fa-print"></i> Print</button><button onclick="triggerDownload(${state.isKOTPreview})" class="neutral-btn" style="background:#fff;"><i class="fa-solid fa-download"></i> PDF</button><button onclick="closePreview()" class="neutral-btn" style="grid-column:1/-1;background:#fff;">Close</button></div></div></div>`;
+    }
 
-      return `
-        <div class="modal-backdrop" style="overflow-y:auto;align-items:flex-start;padding-top:18px;">
-          <div style="width:100%;max-width:390px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;color:#fff;margin-bottom:8px;">
-              <strong style="font-size:14px;">
-                ${state.isKOTPreview ? 'KOT Preview' : 'Bill Preview'}
-              </strong>
-              <button onclick="closePreview()" style="width:34px;height:34px;border:0;border-radius:50%;background:#242b33;color:#fff;font-size:20px;">
-                ×
-              </button>
-            </div>
+    function renderSuccessModal() {
+      if (!state.successTxId || state.settings.autoPrint === 'off') return '';
+      return `<div class="modal-backdrop"><div class="modal-card" style="text-align:center;max-width:340px;"><div style="width:56px;height:56px;border-radius:50%;background:#eaf7ef;color:#159447;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px;"><i class="fa-solid fa-check"></i></div><div style="font-size:19px;font-weight:950;">Payment Successful</div><div style="font-size:10px;color:#7b8490;font-weight:750;margin:5px 0 14px;">Print customer bill or operator KOT now.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button onclick="printReceiptById(${state.successTxId},false)" class="primary-btn"><i class="fa-solid fa-print"></i> Print Bill</button><button onclick="printReceiptById(${state.successTxId},true)" class="neutral-btn"><i class="fa-solid fa-ticket"></i> KOT</button><button onclick="closeSuccess()" class="neutral-btn" style="grid-column:1/-1;">Done</button></div></div></div>`;
+    }
 
-            <div style="background:#e7e9ec;border-radius:8px;padding:8px;box-shadow:0 15px 45px rgba(0,0,0,.35);overflow:auto;max-height:62vh;">
-              ${generateReceiptHTML(tx, state.isKOTPreview)}
-            </div>
-
-            <div style="display:grid;gap:7px;margin-top:9px;">
-              <button onclick="triggerDownload(${state.isKOTPreview})" class="primary-btn" style="width:100%;">
-                <i class="fa-solid fa-download"></i> Download PDF
-              </button>
-
-              <button onclick="printViaBluetooth()" class="neutral-btn" style="width:100%;background:#fff;color:#444;">
-                <i class="fa-solid fa-bluetooth"></i> Print via Bluetooth
-              </button>
-
-              <button onclick="closePreview()" class="neutral-btn" style="width:100%;">
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
+    function renderMachinePickerModal() {
+      if (!state.machinePickerItemId) return '';
+      const item = state.menu.find(m => m.id === state.machinePickerItemId);
+      if (!item) return '';
+      const choices = item.isTowable ? [['JETSKI1', machineName(1)], ['JETSKI2', machineName(2)], ['SPEEDBOAT', 'Speed Boat']] : [['JETSKI1', machineName(1)], ['JETSKI2', machineName(2)]];
+      return `<div class="modal-backdrop" onclick="if(event.target===this)closeMachinePicker()"><div class="modal-card" style="max-width:360px;"><div style="font-size:17px;font-weight:950;">${escapeHTML(item.name)}</div><div style="font-size:10px;color:#7f8790;font-weight:750;margin:4px 0 13px;">${item.isTowable ? 'Which machine will tow this ride?' : 'Which Jetski is being used?'}</div><div class="machine-choice-grid">${choices.map(([id,label]) => `<button onclick="chooseRideMachine('${id}')"><i class="fa-solid ${id === 'SPEEDBOAT' ? 'fa-ship' : 'fa-water'}"></i><strong>${escapeHTML(label)}</strong></button>`).join('')}</div><button onclick="closeMachinePicker()" class="neutral-btn" style="width:100%;margin-top:9px;">Cancel</button></div></div>`;
     }
 
     function renderModalState() {
       let html = '';
-
-      if (state.customerModalOpen) {
-        html += `
-          <div class="modal-backdrop">
-            <div class="modal-card">
-              <div style="font-size:17px;font-weight:950;margin-bottom:3px;">Customer Details</div>
-              <div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Optional — useful for credit or repeat customers.</div>
-
-              <input id="custName" type="text" placeholder="Customer name" value="${escapeHTML(state.customer.name)}" class="form-input" style="margin-bottom:7px;">
-              <input id="custPhone" type="tel" inputmode="tel" placeholder="Phone number" value="${escapeHTML(state.customer.phone)}" class="form-input" style="margin-bottom:12px;">
-
-              <div style="display:flex;gap:7px;">
-                <button onclick="toggleCustomerModal(false)" class="neutral-btn" style="flex:1;">Cancel</button>
-                <button onclick="saveCustomerInfo()" class="primary-btn" style="flex:1;">Save</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      if (state.creditModalOpen) {
-        html += `
-          <div class="modal-backdrop">
-            <div class="modal-card">
-              <div style="font-size:17px;font-weight:950;margin-bottom:3px;">Credit Reference</div>
-              <div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Enter hotel, room number or customer reference.</div>
-
-              <input id="creditInput" type="text" placeholder="Hotel / Room / Name" class="form-input" style="margin-bottom:12px;">
-
-              <div style="display:flex;gap:7px;">
-                <button onclick="toggleCreditModal(false)" class="neutral-btn" style="flex:1;">Cancel</button>
-                <button onclick="processCheckout('CREDIT')" class="pay-button pay-credit" style="flex:1;min-height:43px;">Complete</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      if (state.discountModalOpen) {
-        html += `
-          <div class="modal-backdrop">
-            <div class="modal-card">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-                <div style="font-size:17px;font-weight:950;">Discount</div>
-                <button onclick="clearDiscount()" style="border:0;background:#fff1f0;color:#c5261b;border-radius:5px;padding:5px 7px;font-size:9px;font-weight:900;">Clear</button>
-              </div>
-
-              <div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">
-                Enter a flat rupee amount or percentage.
-              </div>
-
-              <input id="discountInput" type="number" inputmode="decimal" placeholder="Enter amount / %" class="form-input" style="margin-bottom:9px;">
-
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-                <button onclick="applyDiscount('fixed')" class="primary-btn">₹ Flat</button>
-                <button onclick="applyDiscount('percent')" class="primary-btn">% Off</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
+      if (state.customerModalOpen) html += `<div class="modal-backdrop"><div class="modal-card"><div style="font-size:17px;font-weight:950;margin-bottom:3px;">Customer Details</div><div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Optional — useful for credit or repeat customers.</div><input id="custName" type="text" placeholder="Customer name" value="${escapeHTML(state.customer.name)}" class="form-input" style="margin-bottom:7px;"><input id="custPhone" type="tel" inputmode="tel" placeholder="Phone number" value="${escapeHTML(state.customer.phone)}" class="form-input" style="margin-bottom:12px;"><div style="display:flex;gap:7px;"><button onclick="toggleCustomerModal(false)" class="neutral-btn" style="flex:1;">Cancel</button><button onclick="saveCustomerInfo()" class="primary-btn" style="flex:1;">Save</button></div></div></div>`;
+      if (state.creditModalOpen) html += `<div class="modal-backdrop"><div class="modal-card"><div style="font-size:17px;font-weight:950;margin-bottom:3px;">Credit Reference</div><div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Enter hotel, room number or customer reference.</div><input id="creditInput" type="text" placeholder="Hotel / Room / Name" class="form-input" style="margin-bottom:12px;"><div style="display:flex;gap:7px;"><button onclick="toggleCreditModal(false)" class="neutral-btn" style="flex:1;">Cancel</button><button onclick="processCheckout('CREDIT')" class="pay-button pay-credit" style="flex:1;min-height:43px;">Complete</button></div></div></div>`;
+      if (state.discountModalOpen) html += `<div class="modal-backdrop"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;"><div style="font-size:17px;font-weight:950;">Discount</div><button onclick="clearDiscount()" style="border:0;background:#fff1f0;color:#c5261b;border-radius:5px;padding:5px 7px;font-size:9px;font-weight:900;">Clear</button></div><div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Enter a flat rupee amount or percentage.</div><input id="discountInput" type="number" inputmode="decimal" placeholder="Enter amount / %" class="form-input" style="margin-bottom:9px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button onclick="applyDiscount('fixed')" class="primary-btn">₹ Flat</button><button onclick="applyDiscount('percent')" class="primary-btn">% Off</button></div></div></div>`;
+      html += renderMachinePickerModal();
       html += renderPreviewModal();
+      html += renderSuccessModal();
       return html;
     }
 
     function updateFooterHeight() {
       requestAnimationFrame(() => {
         const footer = $('pos-footer');
-        if (!footer) return;
-
-        document.documentElement.style.setProperty(
-          '--footer-height',
-          `${footer.offsetHeight}px`
-        );
+        if (footer) document.documentElement.style.setProperty('--footer-height', `${footer.offsetHeight}px`);
       });
     }
 
     function render() {
       const app = $('app');
-      const checkoutDock = $('checkout-dock');
-      const modals = $('modals');
-
       let appHtml = '';
-
       if (state.view === 'pos') appHtml = renderPOS();
       if (state.view === 'history') appHtml = renderHistory();
       if (state.view === 'expenses') appHtml = renderExpenses();
       if (state.view === 'dashboard') appHtml = renderDashboard();
       if (state.view === 'settings') appHtml = renderSettings();
-
       app.innerHTML = appHtml;
-      checkoutDock.innerHTML = renderCheckoutDock();
-      modals.innerHTML = renderModalState();
-
+      $('checkout-dock').innerHTML = renderCheckoutDock();
+      $('modals').innerHTML = renderModalState();
       updateFooterHeight();
     }
 
+
+
+    /* =========================
+       V4 — REUSABLE TOKEN OPEN BILLS
+       ========================= */
+    const OPEN_BILL_TOKEN_COUNT = 20;
+    state.openBills = [];
+    state.activeOpenBillId = null;
+    state.activeOpenBillToken = null;
+    state.openBillsModalOpen = false;
+    state.saveOpenBillModalOpen = false;
+    state.pendingOpenBillToken = null;
+    state.openBillSearch = '';
+    state.machineTransfer = null;
+
+    let openBillAutosaveTimer = null;
+
+    function formatToken(tokenNumber) {
+      return String(Number(tokenNumber || 0)).padStart(2, '0');
+    }
+
+    async function loadOpenBills() {
+      state.openBills = (await db.openBills.toArray()).sort((a, b) => Number(a.tokenNumber) - Number(b.tokenNumber));
+    }
+
+    function openBillById(id) {
+      return state.openBills.find(b => Number(b.id) === Number(id)) || null;
+    }
+
+    function usedTokenSet() {
+      return new Set(state.openBills.map(b => Number(b.tokenNumber)));
+    }
+
+    function availableTokenNumbers() {
+      const used = usedTokenSet();
+      return Array.from({ length: OPEN_BILL_TOKEN_COUNT }, (_, i) => i + 1).filter(n => !used.has(n));
+    }
+
+    function snapshotOpenBill() {
+      return {
+        items: JSON.stringify(state.cart),
+        customerName: state.customer.name || '',
+        customerPhone: state.customer.phone || '',
+        discount: { ...state.discount },
+        subtotal: getCartSubtotal(),
+        totalAmount: getCartTotal(),
+        rideCount: getCartQty(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    async function persistActiveOpenBill() {
+      if (!state.activeOpenBillId) return;
+      const exists = await db.openBills.get(state.activeOpenBillId);
+      if (!exists) {
+        state.activeOpenBillId = null;
+        state.activeOpenBillToken = null;
+        return;
+      }
+      await db.openBills.update(state.activeOpenBillId, snapshotOpenBill());
+      await loadOpenBills();
+    }
+
+    function scheduleOpenBillAutosave() {
+      if (!state.activeOpenBillId) return;
+      clearTimeout(openBillAutosaveTimer);
+      openBillAutosaveTimer = setTimeout(() => {
+        persistActiveOpenBill().catch(error => console.warn('Open bill autosave failed', error));
+      }, 250);
+    }
+
+    function resetSaleState() {
+      clearTimeout(openBillAutosaveTimer);
+      state.cart = {};
+      state.customer = { name: '', phone: '' };
+      state.discount = { type: 'none', value: 0 };
+      state.machinePickerItemId = null;
+      state.creditModalOpen = false;
+      state.discountModalOpen = false;
+      state.customerModalOpen = false;
+      state.moreOpen = false;
+      state.activeOpenBillId = null;
+      state.activeOpenBillToken = null;
+    }
+
+    window.openOpenBills = async () => {
+      await loadOpenBills();
+      state.openBillSearch = '';
+      state.openBillsModalOpen = true;
+      render();
+    };
+
+    window.closeOpenBills = () => {
+      state.openBillsModalOpen = false;
+      state.openBillSearch = '';
+      render();
+    };
+
+    window.filterOpenBills = value => {
+      state.openBillSearch = String(value || '');
+      render();
+      requestAnimationFrame(() => {
+        const input = $('openBillSearch');
+        if (input) {
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      });
+    };
+
+    window.loadOpenBill = async id => {
+      id = Number(id);
+      if (state.activeOpenBillId === id) {
+        state.openBillsModalOpen = false;
+        render();
+        return;
+      }
+
+      // Never throw away edits from another open token. Save them silently first.
+      if (state.activeOpenBillId) await persistActiveOpenBill();
+      else if (Object.keys(state.cart).length) {
+        const ok = confirm('The current new sale has unsaved rides. Clear it and open this token?');
+        if (!ok) return;
+      }
+
+      const bill = await db.openBills.get(id);
+      if (!bill) {
+        await loadOpenBills();
+        showInlineError('That open bill is no longer available.');
+        render();
+        return;
+      }
+
+      try { state.cart = JSON.parse(bill.items || '{}'); }
+      catch { state.cart = {}; }
+      state.customer = { name: bill.customerName || '', phone: bill.customerPhone || '' };
+      state.discount = bill.discount && typeof bill.discount === 'object' ? { ...bill.discount } : { type: 'none', value: 0 };
+      state.activeOpenBillId = bill.id;
+      state.activeOpenBillToken = Number(bill.tokenNumber);
+      state.openBillsModalOpen = false;
+      state.saveOpenBillModalOpen = false;
+      state.pendingOpenBillToken = null;
+      state.view = 'pos';
+      ['pos', 'history', 'expenses', 'dashboard', 'settings'].forEach(v => $('nav-' + v)?.classList.toggle('active', v === 'pos'));
+      render();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
+
+    window.openSaveOpenBill = async () => {
+      if (!Object.keys(state.cart).length) return showInlineError('Add at least one ride first.');
+
+      // Existing token: one tap saves and frees the POS for the next customer.
+      if (state.activeOpenBillId) {
+        await persistActiveOpenBill();
+        const token = state.activeOpenBillToken;
+        resetSaleState();
+        await loadOpenBills();
+        render();
+        showInlineError(`Token ${formatToken(token)} saved. Ready for next customer.`);
+        return;
+      }
+
+      await loadOpenBills();
+      const available = availableTokenNumbers();
+      if (!available.length) return showInlineError('All reusable tokens are currently in use.');
+      state.pendingOpenBillToken = available[0];
+      state.saveOpenBillModalOpen = true;
+      render();
+    };
+
+    window.closeSaveOpenBill = () => {
+      state.saveOpenBillModalOpen = false;
+      state.pendingOpenBillToken = null;
+      render();
+    };
+
+    window.selectOpenBillToken = token => {
+      token = Number(token);
+      if (!availableTokenNumbers().includes(token)) return;
+      state.pendingOpenBillToken = token;
+      render();
+    };
+
+    window.saveNewOpenBill = async () => {
+      const token = Number(state.pendingOpenBillToken);
+      if (!token || !availableTokenNumbers().includes(token)) return showInlineError('Choose an available token.');
+      if (!Object.keys(state.cart).length) return showInlineError('This bill has no rides.');
+
+      const customerName = $('openBillName')?.value.trim() || state.customer.name || '';
+      const customerPhone = $('openBillPhone')?.value.trim() || state.customer.phone || '';
+      state.customer = { name: customerName, phone: customerPhone };
+      const now = new Date().toISOString();
+
+      try {
+        await db.openBills.add({
+          tokenNumber: token,
+          createdAt: now,
+          ...snapshotOpenBill()
+        });
+        state.saveOpenBillModalOpen = false;
+        state.pendingOpenBillToken = null;
+        resetSaleState();
+        await loadOpenBills();
+        render();
+        showInlineError(`Open bill saved as Token ${formatToken(token)}.`);
+      } catch (error) {
+        console.error(error);
+        await loadOpenBills();
+        showInlineError('That token is already in use. Choose another token.');
+        render();
+      }
+    };
+
+    window.startNewSale = async () => {
+      if (state.activeOpenBillId) await persistActiveOpenBill();
+      else if (Object.keys(state.cart).length && !confirm('Clear the current new sale and start again?')) return;
+      resetSaleState();
+      await loadOpenBills();
+      render();
+    };
+
+    // For machine reassignment, quantities can be split without creating an
+    // operations dashboard. Example: 3 Sleeper on Jetski 1 -> move only 2 to Boat.
+    function applyMachineTransfer(cartKey, targetMachine, qty) {
+      const line = state.cart[cartKey];
+      if (!line) return;
+      const currentMachine = lineMachine(line);
+      const allowed = line.item.isTowable ? ['JETSKI1', 'JETSKI2', 'SPEEDBOAT'] : (isJetskiRide(line.item) ? ['JETSKI1', 'JETSKI2'] : []);
+      if (!allowed.includes(targetMachine) || currentMachine === targetMachine) return;
+
+      const moveQty = Math.min(Number(line.qty || 0), Math.max(1, Number(qty || 1)));
+      const newKey = `${line.item.id}_${targetMachine}_${line.item.isTowable ? 'TOW' : 'DIRECT'}`;
+      const moved = { ...line, qty: moveQty, machineId: targetMachine, towedBy: line.item.isTowable ? targetMachine : null };
+      line.qty -= moveQty;
+      if (line.qty <= 0) delete state.cart[cartKey];
+      if (state.cart[newKey]) state.cart[newKey].qty += moveQty;
+      else state.cart[newKey] = moved;
+      scheduleOpenBillAutosave();
+      state.machineTransfer = null;
+      renderCartEditor();
+    }
+
+    window.transferMachine = (cartKey, targetMachine) => {
+      if (state.checkoutLocked || !state.cart[cartKey]) return;
+      const line = state.cart[cartKey];
+      if (Number(line.qty || 0) <= 1) {
+        applyMachineTransfer(cartKey, targetMachine, 1);
+        return;
+      }
+      state.machineTransfer = { cartKey, targetMachine };
+      render();
+    };
+
+    window.closeMachineTransfer = () => {
+      state.machineTransfer = null;
+      renderCartEditor();
+    };
+
+    window.confirmMachineTransfer = qty => {
+      const move = state.machineTransfer;
+      if (!move) return;
+      applyMachineTransfer(move.cartKey, move.targetMachine, Number(qty));
+    };
+
+    // Auto-save edits when an open token is actively being worked on.
+    const v3AddCartLine = addCartLine;
+    addCartLine = function(item, machineId = null) {
+      v3AddCartLine(item, machineId);
+      scheduleOpenBillAutosave();
+    };
+
+    const v3UpdateQty = window.updateQty;
+    window.updateQty = (cartKey, delta) => {
+      v3UpdateQty(cartKey, delta);
+      scheduleOpenBillAutosave();
+    };
+
+    const v3SaveCustomerInfo = window.saveCustomerInfo;
+    window.saveCustomerInfo = () => {
+      v3SaveCustomerInfo();
+      scheduleOpenBillAutosave();
+    };
+
+    const v3ApplyDiscount = window.applyDiscount;
+    window.applyDiscount = type => {
+      v3ApplyDiscount(type);
+      scheduleOpenBillAutosave();
+    };
+
+    const v3ClearDiscount = window.clearDiscount;
+    window.clearDiscount = () => {
+      v3ClearDiscount();
+      scheduleOpenBillAutosave();
+    };
+
+    // Checkout closes a reusable token atomically only after the invoice saves.
+    window.processCheckout = async method => {
+      if (state.checkoutLocked) return;
+      const total = getCartTotal();
+      const subtotal = getCartSubtotal();
+      if (subtotal <= 0) return;
+
+      let refText = '';
+      if (method === 'CREDIT') {
+        refText = $('creditInput')?.value.trim() || '';
+        if (!refText) {
+          showInlineError('Enter hotel, room or customer reference.');
+          return;
+        }
+      }
+
+      state.checkoutLocked = true;
+      render();
+      const discountAmount = getDiscountAmount();
+      const cartSnapshot = JSON.stringify(state.cart);
+      const machineUsage = [...new Set(Object.values(state.cart).map(lineMachine).filter(Boolean))];
+      const timestamp = new Date().toISOString();
+      const fy = getFinancialYear(new Date(timestamp));
+      const openBillId = state.activeOpenBillId;
+      const openBillToken = state.activeOpenBillToken;
+
+      try {
+        let invoiceNumber = 0;
+        let receiptId = '';
+        let txId = null;
+
+        await db.transaction('rw', db.transactions, db.settings, db.openBills, async () => {
+          const allTransactions = await db.transactions.toArray();
+          const highestStored = allTransactions.reduce((highest, tx) => Math.max(highest, receiptSequence(tx.receiptId, fy)), 0);
+          const savedSettings = await db.settings.get('pos');
+          const sameFY = Number(savedSettings?.invoiceFormatVersion || 0) >= 3 && savedSettings?.invoiceFY === fy;
+          const configuredNext = sameFY ? Number(savedSettings?.nextInvoiceNumber || 1) : 1;
+          invoiceNumber = Math.max(1, configuredNext, highestStored + 1);
+          receiptId = formatInvoiceId(fy, invoiceNumber);
+
+          txId = await db.transactions.add({
+            receiptId,
+            financialYear: fy,
+            invoiceSequence: invoiceNumber,
+            timestamp,
+            totalAmount: total,
+            discountAmount,
+            paymentMethod: method,
+            reference: refText,
+            customerName: state.customer.name,
+            customerPhone: state.customer.phone,
+            items: cartSnapshot,
+            machineUsage,
+            openBillToken: openBillToken || null,
+            status: 'COMPLETED'
+          });
+
+          await db.settings.put({
+            key: 'pos',
+            ...state.settings,
+            invoiceFormatVersion: 3,
+            invoiceFY: fy,
+            nextInvoiceNumber: invoiceNumber + 1
+          });
+
+          if (openBillId) await db.openBills.delete(openBillId);
+        });
+
+        state.highestInvoiceNumber = Math.max(state.highestInvoiceNumber, invoiceNumber);
+        state.settings.invoiceFY = fy;
+        state.settings.nextInvoiceNumber = invoiceNumber + 1;
+        resetSaleState();
+        state.checkoutLocked = false;
+        state.successTxId = txId;
+        await loadOpenBills();
+        await refreshDailyData();
+        render();
+        showPaymentSuccess(total, receiptId, method);
+
+        if (state.settings.autoPrint === 'auto') setTimeout(() => printReceiptById(txId, false), 200);
+      } catch (error) {
+        console.error(error);
+        state.checkoutLocked = false;
+        render();
+        showInlineError('Payment could not be saved. Please try again.');
+      }
+    };
+
+    function renderOpenBillToolbar() {
+      const active = openBillById(state.activeOpenBillId);
+      const token = state.activeOpenBillToken || active?.tokenNumber;
+      const customerLabel = state.customer.name || (state.customer.phone ? `Phone ${state.customer.phone}` : 'Customer can add more rides');
+      return `<div class="open-bill-toolbar">
+        <div class="sale-mode-card ${token ? 'open' : ''}">
+          <div class="sale-mode-icon"><i class="fa-solid ${token ? 'fa-ticket' : 'fa-cart-shopping'}"></i></div>
+          <div class="sale-mode-copy">
+            <strong>${token ? `TOKEN ${escapeHTML(formatToken(token))} • OPEN BILL` : 'NEW SALE'}</strong>
+            <span>${token ? escapeHTML(customerLabel) : 'Pay now or save with a reusable token'}</span>
+          </div>
+        </div>
+        <button onclick="openOpenBills()" class="open-bills-button"><i class="fa-solid fa-layer-group"></i> OPEN BILLS <span class="open-bills-badge">${state.openBills.length}</span></button>
+      </div>`;
+    }
+
+    renderPOS = function() {
+      const cartQty = getCartQty();
+      return `${renderHeader()}
+        ${renderOpenBillToolbar()}
+        <div class="surface" style="padding:9px 11px;margin-bottom:10px;display:flex;align-items:center;gap:8px;background:#f7f9fc;">
+          <i class="fa-solid fa-circle-info" style="color:#1769d1;"></i>
+          <div style="font-size:9px;line-height:1.35;color:#596674;font-weight:750;">For Jetski/towed rides, choose the machine being used. You can change or split it later from <strong>Order</strong>.</div>
+        </div>
+        <div class="section-title-row"><span class="section-title">Select ride</span><span class="section-hint">${cartQty ? `${cartQty} selected` : 'Tap to add'}</span></div>
+        <section class="ride-grid">${state.menu.map(item => {
+          const matchingKeys = Object.keys(state.cart).filter(key => state.cart[key].item.id === item.id);
+          const qty = matchingKeys.reduce((sum, key) => sum + state.cart[key].qty, 0);
+          const selected = qty > 0;
+          const singleKey = matchingKeys.length === 1 ? matchingKeys[0] : null;
+          const machineHint = item.isTowable ? 'Choose tow machine' : (isJetskiRide(item) ? 'Choose Jetski' : (isSpeedboatRide(item) ? 'Speed Boat' : 'Direct ride'));
+          return `<div class="ride-button ${selected ? 'selected' : ''}" role="button" tabindex="0" onclick="handleTap(${item.id})">
+            ${item.isTowable ? `<span class="tow-icon"><i class="fa-solid fa-link"></i></span>` : ''}
+            <span class="ride-name">${escapeHTML(item.name)}</span><span class="ride-price">${money(item.price)}</span>
+            <span style="display:block;margin-top:7px;font-size:8px;color:#7b8490;font-weight:850;">${escapeHTML(machineHint)}</span>
+            ${selected && singleKey ? `<span class="ride-qty-control" onclick="event.stopPropagation();"><button class="qty-mini" onclick="event.stopPropagation();updateQty('${escapeHTML(singleKey)}',-1)">−</button><span class="qty-number">${qty}</span><button class="qty-mini" onclick="event.stopPropagation();updateQty('${escapeHTML(singleKey)}',1)">+</button></span>` : ''}
+            ${selected && !singleKey ? `<button onclick="event.stopPropagation();renderCartEditor()" style="position:absolute;right:8px;top:8px;border:2px solid #fff;border-radius:8px;background:#1769d1;color:#fff;padding:6px 8px;font-size:9px;font-weight:950;box-shadow:0 2px 8px rgba(23,105,209,.28);">${qty} • SPLIT</button>` : ''}
+          </div>`;
+        }).join('')}</section>
+        ${cartQty === 0 ? `<div class="empty-order">Select a ride to start billing.</div>` : ''}`;
+    };
+
+    renderCheckoutDock = function() {
+      if (state.view !== 'pos') return '';
+      const cartItems = Object.entries(state.cart);
+      const subtotal = getCartSubtotal();
+      const discountAmt = getDiscountAmount();
+      const total = getCartTotal();
+      const cartQty = getCartQty();
+      if (!cartItems.length) return `<div class="empty-checkout"><div class="empty-checkout-text"><strong>Ready for next customer</strong><span>${state.openBills.length ? `${state.openBills.length} open bill${state.openBills.length === 1 ? '' : 's'} available from the top` : 'Choose a ride to start billing'}</span></div><div class="empty-checkout-total">₹0</div></div>`;
+      const orderText = cartItems.map(([, data]) => `${data.qty}× ${data.item.name}${lineMachine(data) ? ` • ${getMachineLabel(lineMachine(data))}` : ''}`).join('  |  ');
+      const token = state.activeOpenBillToken;
+      return `<div class="checkout-panel"><div class="checkout-top"><div class="order-preview"><span class="order-count">${cartQty} ${cartQty === 1 ? 'RIDE' : 'RIDES'}</span><span class="order-items-text">${escapeHTML(orderText)}</span></div><div class="total-box"><span class="total-label">${discountAmt ? `Saved ${money(discountAmt)}` : 'Total'}</span>${discountAmt ? `<span style="display:block;color:#9ca3af;font-size:9px;text-decoration:line-through;">${money(subtotal)}</span>` : ''}<span class="total-value">${money(total)}</span></div></div>
+        <button onclick="openSaveOpenBill()" class="open-bill-save ${token ? 'active' : ''}"><i class="fa-solid fa-ticket"></i> ${token ? `SAVE & EXIT • TOKEN ${formatToken(token)}` : 'SAVE AS OPEN BILL'}</button>
+        <div class="more-row"><button onclick="toggleMore()" class="more-button"><i class="fa-solid fa-ellipsis"></i> ${state.moreOpen ? 'Hide' : 'More'}</button></div>
+        <div class="checkout-actions ${state.moreOpen ? '' : 'collapsed'}"><button onclick="toggleCustomerModal(true)" class="secondary-action ${state.customer.name || state.customer.phone ? 'has-value' : ''}"><i class="fa-solid fa-user"></i> ${state.customer.name ? escapeHTML(state.customer.name.substring(0, 12)) : 'Customer'}</button><button onclick="toggleDiscountModal(true)" class="secondary-action ${discountAmt > 0 ? 'has-value' : ''}"><i class="fa-solid fa-tag"></i> ${discountAmt ? `-${money(discountAmt)}` : 'Discount'}</button><button onclick="renderCartEditor()" class="secondary-action" style="margin-left:auto;"><i class="fa-solid fa-list-check"></i> Order</button></div>
+        <div class="payment-grid"><button onclick="processCheckout('CASH')" class="pay-button pay-cash" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-money-bill-wave"></i> CASH</button><button onclick="processCheckout('ONLINE')" class="pay-button pay-online" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-qrcode"></i> ONLINE</button><button onclick="toggleCreditModal(true)" class="pay-button pay-credit" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-hotel"></i> CREDIT</button></div></div>`;
+    };
+
+    function renderOpenBillsModal() {
+      if (!state.openBillsModalOpen) return '';
+      const q = state.openBillSearch.trim().toLowerCase();
+      const bills = state.openBills.filter(b => {
+        if (!q) return true;
+        return formatToken(b.tokenNumber).includes(q) || String(b.customerName || '').toLowerCase().includes(q) || String(b.customerPhone || '').toLowerCase().includes(q);
+      });
+
+      return `<div class="modal-backdrop" onclick="if(event.target===this)closeOpenBills()"><div class="modal-card" style="max-width:430px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;"><div><div style="font-size:18px;font-weight:950;">Open Bills</div><div style="font-size:9px;color:#818a94;font-weight:750;margin-top:3px;">Ask for the customer's reusable token number.</div></div><button onclick="closeOpenBills()" class="neutral-btn" style="min-height:34px;padding:0 11px;">Close</button></div>
+        <input id="openBillSearch" value="${escapeHTML(state.openBillSearch)}" oninput="filterOpenBills(this.value)" type="search" inputmode="search" placeholder="Token, name or phone" class="form-input" style="margin-top:10px;">
+        ${bills.length ? `<div class="open-bill-list">${bills.map(b => {
+          const updated = b.updatedAt ? new Date(b.updatedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+          const label = b.customerName || b.customerPhone || 'No customer details';
+          return `<button onclick="loadOpenBill(${b.id})" class="open-bill-card ${Number(state.activeOpenBillId) === Number(b.id) ? 'current' : ''}"><div class="token-kicker">TOKEN</div><div class="token-number">${formatToken(b.tokenNumber)}</div><div style="font-size:12px;font-weight:950;margin-top:7px;">${money(b.totalAmount)}</div><div class="open-bill-meta">${escapeHTML(label)}</div><div class="open-bill-meta">${Number(b.rideCount || 0)} rides${updated ? ` • ${escapeHTML(updated)}` : ''}</div></button>`;
+        }).join('')}</div>` : `<div style="padding:28px 10px;text-align:center;color:#7f8790;font-size:11px;font-weight:750;">${state.openBills.length ? 'No open bill matches your search.' : 'No open bills right now.'}</div>`}
+        ${state.activeOpenBillId ? `<button onclick="startNewSale();closeOpenBills()" class="neutral-btn" style="width:100%;margin-top:10px;"><i class="fa-solid fa-cart-plus"></i> Save current token & start new sale</button>` : ''}
+      </div></div>`;
+    }
+
+    function renderSaveOpenBillModal() {
+      if (!state.saveOpenBillModalOpen) return '';
+      const used = usedTokenSet();
+      const selected = Number(state.pendingOpenBillToken);
+      return `<div class="modal-backdrop" onclick="if(event.target===this)closeSaveOpenBill()"><div class="modal-card" style="max-width:400px;">
+        <div style="font-size:18px;font-weight:950;">Save Open Bill</div>
+        <div style="font-size:10px;color:#747e89;font-weight:750;line-height:1.4;margin-top:4px;">Give the customer the same physical token you select below. They only need to show this number when adding more rides.</div>
+        <div class="token-grid">${Array.from({length: OPEN_BILL_TOKEN_COUNT}, (_, i) => i + 1).map(n => `<button ${used.has(n) ? 'disabled' : ''} onclick="selectOpenBillToken(${n})" class="token-choice ${used.has(n) ? 'used' : ''} ${selected === n ? 'selected' : ''}">${formatToken(n)}</button>`).join('')}</div>
+        <div style="font-size:9px;font-weight:950;color:#67717c;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;">Optional customer detail</div>
+        <input id="openBillName" type="text" placeholder="Name / hotel / room" value="${escapeHTML(state.customer.name)}" class="form-input" style="margin-bottom:7px;">
+        <input id="openBillPhone" type="tel" inputmode="tel" placeholder="Phone (optional)" value="${escapeHTML(state.customer.phone)}" class="form-input" style="margin-bottom:10px;">
+        <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:7px;"><button onclick="closeSaveOpenBill()" class="neutral-btn">Cancel</button><button onclick="saveNewOpenBill()" class="primary-btn"><i class="fa-solid fa-ticket"></i> SAVE TOKEN ${selected ? formatToken(selected) : '--'}</button></div>
+      </div></div>`;
+    }
+
+    function renderMachineTransferModal() {
+      if (!state.machineTransfer) return '';
+      const line = state.cart[state.machineTransfer.cartKey];
+      if (!line) return '';
+      const qty = Number(line.qty || 0);
+      const choices = Array.from({length: Math.min(Math.max(qty - 1, 1), 4)}, (_, i) => i + 1);
+      return `<div class="modal-backdrop" onclick="if(event.target===this)closeMachineTransfer()"><div class="modal-card" style="max-width:350px;">
+        <div style="font-size:17px;font-weight:950;">Move ${escapeHTML(line.item.name)}</div>
+        <div style="font-size:10px;color:#7b8490;font-weight:750;margin:4px 0 12px;">How many should move to <strong>${escapeHTML(getMachineLabel(state.machineTransfer.targetMachine))}</strong>?</div>
+        <div style="display:grid;grid-template-columns:repeat(${Math.min(choices.length + (qty > 1 ? 1 : 0), 5)},1fr);gap:7px;">${choices.map(n => `<button onclick="confirmMachineTransfer(${n})" class="neutral-btn" style="font-size:14px;">${n}</button>`).join('')}${qty > 1 ? `<button onclick="confirmMachineTransfer(${qty})" class="primary-btn">ALL ${qty}</button>` : ''}</div>
+        <button onclick="closeMachineTransfer()" class="neutral-btn" style="width:100%;margin-top:9px;">Cancel</button>
+      </div></div>`;
+    }
+
+    const v3RenderModalState = renderModalState;
+    renderModalState = function() {
+      return v3RenderModalState() + renderOpenBillsModal() + renderSaveOpenBillModal() + renderMachineTransferModal();
+    };
+
+    // Include open tabs in backups while still accepting older V3 backups.
+    window.exportBackup = async () => {
+      const backup = {
+        exportedAt: new Date().toISOString(),
+        app: 'KAS POS',
+        version: 4,
+        transactions: await db.transactions.toArray(),
+        expenses: await db.expenses.toArray(),
+        menu: await db.menu.toArray(),
+        settings: await db.settings.toArray(),
+        openBills: await db.openBills.toArray()
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `KAS_POS_Backup_${localDateKey()}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    window.importBackup = async input => {
+      const file = input?.files?.[0];
+      if (!file) return;
+      if (!confirm('Restore this backup? Current local POS data will be replaced.')) { input.value = ''; return; }
+      try {
+        const data = JSON.parse(await file.text());
+        if (!Array.isArray(data.transactions) || !Array.isArray(data.expenses) || !Array.isArray(data.menu)) throw new Error('Invalid backup');
+        await db.transaction('rw', db.transactions, db.expenses, db.menu, db.settings, db.openBills, async () => {
+          await Promise.all([db.transactions.clear(), db.expenses.clear(), db.menu.clear(), db.settings.clear(), db.openBills.clear()]);
+          if (data.transactions.length) await db.transactions.bulkAdd(data.transactions);
+          if (data.expenses.length) await db.expenses.bulkAdd(data.expenses);
+          if (data.menu.length) await db.menu.bulkAdd(data.menu);
+          if (Array.isArray(data.settings) && data.settings.length) await db.settings.bulkPut(data.settings);
+          if (Array.isArray(data.openBills) && data.openBills.length) await db.openBills.bulkAdd(data.openBills);
+        });
+        await loadAppSettings();
+        await loadInvoiceSequence();
+        await loadMenuData();
+        await loadHistoryData();
+        await loadExpenseData();
+        await loadOpenBills();
+        resetSaleState();
+        render();
+        showInlineError('Backup restored successfully.');
+      } catch (error) {
+        console.error(error);
+        showInlineError('Invalid or unreadable backup file.');
+      } finally {
+        input.value = '';
+      }
+    };
+
+    // Extend the original boot sequence with reusable open bills.
+    const v3Boot = boot;
+    boot = async function() {
+      await v3Boot();
+      await loadOpenBills();
+      render();
+    };
+
     window.addEventListener('resize', updateFooterHeight);
     window.addEventListener('orientationchange', () => setTimeout(updateFooterHeight, 100));
-
     boot();
   </script>
+
 </body>
 </html>
