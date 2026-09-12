@@ -1441,6 +1441,7 @@
       customerModalOpen: false,
       creditModalOpen: false,
       discountModalOpen: false,
+      groupRateModalOpen: false,
       machinePickerItemId: null,
       successTxId: null,
       moreOpen: false,
@@ -1731,8 +1732,51 @@
       render();
     }
 
+    function lineStandardPrice(line) {
+      return Math.max(0, Number(line?.item?.price || 0));
+    }
+
+    function lineSellingPrice(line) {
+      const standard = lineStandardPrice(line);
+      const custom = Number(line?.sellingPrice);
+      return Number.isFinite(custom) && custom >= 0 ? custom : standard;
+    }
+
+    // Subtotal after negotiated Group Rate, before any additional bill discount.
     function getCartSubtotal() {
-      return Object.values(state.cart).reduce((sum, c) => sum + Number(c.item.price || 0) * Number(c.qty || 0), 0);
+      return Object.values(state.cart).reduce((sum, c) => sum + lineSellingPrice(c) * Number(c.qty || 0), 0);
+    }
+
+    function getCartRegularSubtotal() {
+      return Object.values(state.cart).reduce((sum, c) => sum + lineStandardPrice(c) * Number(c.qty || 0), 0);
+    }
+
+    function getGroupRateSavings() {
+      return Math.max(0, getCartRegularSubtotal() - getCartSubtotal());
+    }
+
+    function hasGroupRate() {
+      return Object.values(state.cart).some(line => Math.abs(lineSellingPrice(line) - lineStandardPrice(line)) > 0.0001);
+    }
+
+    function getAgreedRateForItem(itemId) {
+      const lines = Object.values(state.cart).filter(line => Number(line?.item?.id) === Number(itemId));
+      if (!lines.length) return null;
+      const custom = lines.find(line => Number.isFinite(Number(line.sellingPrice)) && Number(line.sellingPrice) >= 0);
+      return custom ? lineSellingPrice(custom) : lineSellingPrice(lines[0]);
+    }
+
+    function getCartItemGroups() {
+      const groups = new Map();
+      Object.values(state.cart).forEach(line => {
+        const item = line.item || {};
+        const key = String(item.id ?? item.name ?? 'item');
+        if (!groups.has(key)) groups.set(key, { item, qty: 0, rate: lineSellingPrice(line) });
+        const group = groups.get(key);
+        group.qty += Number(line.qty || 0);
+        group.rate = lineSellingPrice(line);
+      });
+      return [...groups.values()];
     }
 
     function getDiscountAmount() {
@@ -1761,7 +1805,16 @@
       if (state.cart[cartKey]) {
         state.cart[cartKey].qty += 1;
       } else {
-        state.cart[cartKey] = { item, qty: 1, machineId: normalizedMachine, towedBy };
+        // If this customer already has a negotiated rate for the same ride,
+        // new quantities inherit it even when assigned to another machine.
+        const agreedRate = getAgreedRateForItem(item.id);
+        state.cart[cartKey] = {
+          item,
+          qty: 1,
+          machineId: normalizedMachine,
+          towedBy,
+          ...(agreedRate !== null ? { sellingPrice: agreedRate } : {})
+        };
       }
       render();
     }
@@ -1822,7 +1875,66 @@
     window.toggleCustomerModal = isOpen => { state.customerModalOpen = isOpen; render(); };
     window.toggleCreditModal = isOpen => { state.creditModalOpen = isOpen; render(); };
     window.toggleDiscountModal = isOpen => { state.discountModalOpen = isOpen; render(); };
+    window.toggleGroupRateModal = isOpen => { state.groupRateModalOpen = isOpen; render(); };
     window.toggleMore = () => { state.moreOpen = !state.moreOpen; render(); };
+
+    window.updateGroupRatePreview = () => {
+      let regular = 0;
+      let packageTotal = 0;
+      getCartItemGroups().forEach(group => {
+        const standard = Math.max(0, Number(group.item?.price || 0));
+        const input = $(`groupRate_${group.item.id}`);
+        const typed = input ? Number(input.value) : group.rate;
+        const rate = Number.isFinite(typed) && typed >= 0 ? typed : group.rate;
+        regular += standard * Number(group.qty || 0);
+        packageTotal += rate * Number(group.qty || 0);
+      });
+      const saving = Math.max(0, regular - packageTotal);
+      if ($('groupRateRegularTotal')) $('groupRateRegularTotal').textContent = money(regular);
+      if ($('groupRatePackageTotal')) $('groupRatePackageTotal').textContent = money(packageTotal);
+      if ($('groupRateSaving')) $('groupRateSaving').textContent = money(saving);
+    };
+
+    window.applyGroupRates = () => {
+      const groups = getCartItemGroups();
+      if (!groups.length) return;
+      const rates = new Map();
+      for (const group of groups) {
+        const standard = Math.max(0, Number(group.item?.price || 0));
+        const input = $(`groupRate_${group.item.id}`);
+        const value = Number(input?.value);
+        if (!Number.isFinite(value) || value < 0) {
+          showInlineError(`Enter a valid rate for ${group.item?.name || 'ride'}.`);
+          return;
+        }
+        if (value > standard) {
+          showInlineError(`${group.item?.name || 'Ride'} rate cannot exceed regular ${money(standard)}.`);
+          return;
+        }
+        rates.set(Number(group.item.id), value);
+      }
+
+      Object.values(state.cart).forEach(line => {
+        const rate = rates.get(Number(line.item?.id));
+        if (rate === undefined) return;
+        if (Math.abs(rate - lineStandardPrice(line)) < 0.0001) delete line.sellingPrice;
+        else line.sellingPrice = rate;
+      });
+
+      state.groupRateModalOpen = false;
+      scheduleOpenBillAutosave?.();
+      render();
+      const saving = getGroupRateSavings();
+      showInlineError(saving > 0 ? `Group Rate applied. Saving ${money(saving)}.` : 'Regular rates restored.');
+    };
+
+    window.clearGroupRates = () => {
+      Object.values(state.cart).forEach(line => delete line.sellingPrice);
+      state.groupRateModalOpen = false;
+      scheduleOpenBillAutosave?.();
+      render();
+      showInlineError('Group Rate cleared. Regular prices restored.');
+    };
 
     window.saveCustomerInfo = () => {
       state.customer = { name: $('custName')?.value.trim() || '', phone: $('custPhone')?.value.trim() || '' };
@@ -1904,6 +2016,9 @@
             timestamp,
             totalAmount: total,
             discountAmount,
+            groupRateSavings: getGroupRateSavings(),
+            regularSubtotal: getCartRegularSubtotal(),
+            groupSubtotal: getCartSubtotal(),
             paymentMethod: method,
             reference: refText,
             customerName: state.customer.name,
@@ -2185,9 +2300,15 @@
       let items = {};
       try { items = JSON.parse(tx.items || '{}'); } catch {}
       const rawLines = Object.values(items);
+      const unitPrice = c => {
+        const custom = Number(c?.sellingPrice);
+        const standard = Math.max(0, Number(c?.item?.price || 0));
+        return Number.isFinite(custom) && custom >= 0 ? custom : standard;
+      };
       const customerLines = Object.values(rawLines.reduce((groups, c) => {
-        const key = `${c.item?.id || c.item?.name}_${c.item?.price}`;
-        if (!groups[key]) groups[key] = { item: c.item, qty: 0 };
+        const rate = unitPrice(c);
+        const key = `${c.item?.id || c.item?.name}_${rate}`;
+        if (!groups[key]) groups[key] = { item: c.item, qty: 0, sellingPrice: rate };
         groups[key].qty += Number(c.qty || 0);
         return groups;
       }, {}));
@@ -2199,13 +2320,18 @@
 
       const itemsHtml = displayLines.map(c => {
         const assigned = c.towedBy || c.machineId;
+        const rate = unitPrice(c);
+        const standard = Math.max(0, Number(c.item?.price || 0));
+        const customRate = Math.abs(rate - standard) > 0.0001;
         return `<div style="display:flex;justify-content:space-between;gap:7px;margin-bottom:5px;font-size:${11 * scale}px;line-height:1.25;border-bottom:1px dashed #ccc;padding-bottom:4px;">
-          <div style="flex:1;padding-right:4px;"><span style="font-weight:bold;">${escapeHTML(c.qty)}x ${escapeHTML(c.item?.name || 'Item')}</span>${isKOT && assigned ? `<br><span style="font-size:${9 * scale}px;">${c.towedBy ? 'Tow' : 'Machine'}: ${escapeHTML(getMachineLabel(assigned))}</span>` : ''}</div>
-          ${!isKOT ? `<div style="font-weight:bold;text-align:right;min-width:48px;">${money(Number(c.item?.price || 0) * Number(c.qty || 0))}</div>` : ''}
+          <div style="flex:1;padding-right:4px;"><span style="font-weight:bold;">${escapeHTML(c.qty)}x ${escapeHTML(c.item?.name || 'Item')}</span>${!isKOT ? `<br><span style="font-size:${8.5 * scale}px;">@ ${money(rate)} each${customRate ? ' • Group Rate' : ''}</span>` : ''}${isKOT && assigned ? `<br><span style="font-size:${9 * scale}px;">${c.towedBy ? 'Tow' : 'Machine'}: ${escapeHTML(getMachineLabel(assigned))}</span>` : ''}</div>
+          ${!isKOT ? `<div style="font-weight:bold;text-align:right;min-width:48px;">${money(rate * Number(c.qty || 0))}</div>` : ''}
         </div>`;
       }).join('');
 
-      const subtotal = rawLines.reduce((sum, c) => sum + Number(c.item?.price || 0) * Number(c.qty || 0), 0);
+      const regularSubtotal = rawLines.reduce((sum, c) => sum + Math.max(0, Number(c.item?.price || 0)) * Number(c.qty || 0), 0);
+      const groupSubtotal = rawLines.reduce((sum, c) => sum + unitPrice(c) * Number(c.qty || 0), 0);
+      const groupRateSavings = Math.max(0, regularSubtotal - groupSubtotal);
       return `<div class="receipt-container" id="printable-receipt" style="width:${forPrint ? width + 'mm' : Math.min(pxWidth, 420) + 'px'};max-width:100%;margin:0 auto;background:#fff;padding:${Math.max(8, 12 * scale)}px;font-family:'Courier New',Courier,monospace;color:#000;box-sizing:border-box;">
         <div style="text-align:center;padding-bottom:8px;border-bottom:2px solid #000;">
           ${logo}
@@ -2218,8 +2344,9 @@
         ${(tx.customerName || tx.customerPhone) ? `<div style="margin:8px 0;font-size:${10 * scale}px;border-bottom:1px dotted #000;padding-bottom:6px;">${tx.customerName ? `<div><strong>Customer:</strong> ${escapeHTML(tx.customerName)}</div>` : ''}${tx.customerPhone ? `<div><strong>Phone:</strong> ${escapeHTML(tx.customerPhone)}</div>` : ''}</div>` : ''}
         <div style="margin-top:9px;">${itemsHtml}</div>
         ${!isKOT ? `<div style="border-top:1px dashed #000;margin:8px 0;"></div>
-          <div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Subtotal</span><span>${money(subtotal)}</span></div>
-          ${Number(tx.discountAmount) > 0 ? `<div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Discount</span><span>-${money(tx.discountAmount)}</span></div>` : ''}
+          ${groupRateSavings > 0 ? `<div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Regular total</span><span>${money(regularSubtotal)}</span></div><div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Group Rate saving</span><span>-${money(groupRateSavings)}</span></div>` : ''}
+          <div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>${groupRateSavings > 0 ? 'Group subtotal' : 'Subtotal'}</span><span>${money(groupSubtotal)}</span></div>
+          ${Number(tx.discountAmount) > 0 ? `<div style="display:flex;justify-content:space-between;gap:8px;font-size:${10 * scale}px;line-height:1.25;margin-bottom:4px;"><span>Additional discount</span><span>-${money(tx.discountAmount)}</span></div>` : ''}
           <div style="border-top:2px solid #000;border-bottom:2px solid #000;padding:6px 0;margin-top:5px;display:flex;justify-content:space-between;font-size:${15 * scale}px;font-weight:bold;"><span>TOTAL</span><span>${money(tx.totalAmount)}</span></div>
           <div style="font-size:${9 * scale}px;text-align:right;margin-top:5px;font-weight:bold;">Payment: ${escapeHTML(tx.paymentMethod)}</div>` : `<div style="border-top:2px solid #000;padding-top:6px;text-align:center;font-size:${11 * scale}px;font-weight:bold;">OPERATOR COPY</div>`}
         ${tx.reference ? `<div style="text-align:center;font-size:${9 * scale}px;margin-top:8px;padding:4px;border:1px dashed #000;">Ref: ${escapeHTML(tx.reference)}</div>` : ''}
@@ -2273,7 +2400,133 @@
       document.body.appendChild(frame);
       const doc = frame.contentWindow.document;
       doc.open();
-      doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHTML(tx.receiptId)}</title><style>@page{size:${width}mm auto;margin:0}html,body{margin:0;padding:0;background:#fff}*{box-sizing:border-box}img{max-width:100%}</style></head><body>${html}</body></html>`);
+      doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHTML(tx.receiptId)}</title><style>@page{size:${width}mm auto;margin:0}html,body{margin:0;padding:0;background:#fff}*{box-sizing:border-box}img{max-width:100%}
+
+    /* V6 — negotiated Group Rate / Package pricing */
+    .checkout-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .checkout-actions .secondary-action {
+      width: 100%;
+      min-height: 38px;
+      margin-left: 0 !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .group-rate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid #86b7f0;
+      background: #eaf3ff;
+      color: #0b57d0;
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 9px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .group-rate-list {
+      display: grid;
+      gap: 8px;
+      margin: 11px 0;
+    }
+
+    .group-rate-row {
+      border: 2px solid #d4dbe4;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .group-rate-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .group-rate-name {
+      font-size: 14px;
+      font-weight: 950;
+      color: #111827;
+    }
+
+    .group-rate-meta {
+      margin-top: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #4b5563;
+    }
+
+    .group-rate-input-wrap {
+      display: grid;
+      grid-template-columns: auto minmax(90px, 120px);
+      align-items: center;
+      gap: 7px;
+    }
+
+    .group-rate-input-wrap span {
+      font-size: 11px;
+      font-weight: 900;
+      color: #374151;
+    }
+
+    .group-rate-input {
+      width: 100%;
+      min-height: 44px;
+      border: 2px solid #94a3b8;
+      border-radius: 8px;
+      padding: 0 9px;
+      font-size: 17px;
+      font-weight: 950;
+      color: #111827;
+      background: #fff;
+      text-align: right;
+      outline: none;
+    }
+
+    .group-rate-input:focus {
+      border-color: #0b57d0;
+      box-shadow: 0 0 0 3px rgba(11,87,208,.13);
+    }
+
+    .group-rate-summary {
+      border: 2px solid #b7c9e8;
+      background: #f3f7fd;
+      border-radius: 10px;
+      padding: 10px 11px;
+      margin: 10px 0;
+    }
+
+    .group-rate-summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 850;
+      margin-bottom: 6px;
+    }
+
+    .group-rate-summary-line:last-child { margin-bottom: 0; }
+    .group-rate-saving { color: #08783e; font-weight: 950; }
+
+    body.outdoor-high-contrast .group-rate-row {
+      border-color: #94a3b8;
+    }
+
+    body.outdoor-high-contrast .group-rate-badge {
+      border-color: #0b57d0;
+      color: #0b57d0;
+      background: #e8f1ff;
+    }
+</style></head><body>${html}</body></html>`);
       doc.close();
       frame.onload = () => setTimeout(() => {
         try { frame.contentWindow.focus(); frame.contentWindow.print(); }
@@ -2487,6 +2740,28 @@
       if (state.customerModalOpen) html += `<div class="modal-backdrop"><div class="modal-card"><div style="font-size:17px;font-weight:950;margin-bottom:3px;">Customer Details</div><div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Optional — useful for credit or repeat customers.</div><input id="custName" type="text" placeholder="Customer name" value="${escapeHTML(state.customer.name)}" class="form-input" style="margin-bottom:7px;"><input id="custPhone" type="tel" inputmode="tel" placeholder="Phone number" value="${escapeHTML(state.customer.phone)}" class="form-input" style="margin-bottom:12px;"><div style="display:flex;gap:7px;"><button onclick="toggleCustomerModal(false)" class="neutral-btn" style="flex:1;">Cancel</button><button onclick="saveCustomerInfo()" class="primary-btn" style="flex:1;">Save</button></div></div></div>`;
       if (state.creditModalOpen) html += `<div class="modal-backdrop"><div class="modal-card"><div style="font-size:17px;font-weight:950;margin-bottom:3px;">Credit Reference</div><div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Enter hotel, room number or customer reference.</div><input id="creditInput" type="text" placeholder="Hotel / Room / Name" class="form-input" style="margin-bottom:12px;"><div style="display:flex;gap:7px;"><button onclick="toggleCreditModal(false)" class="neutral-btn" style="flex:1;">Cancel</button><button onclick="processCheckout('CREDIT')" class="pay-button pay-credit" style="flex:1;min-height:43px;">Complete</button></div></div></div>`;
       if (state.discountModalOpen) html += `<div class="modal-backdrop"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;"><div style="font-size:17px;font-weight:950;">Discount</div><button onclick="clearDiscount()" style="border:0;background:#fff1f0;color:#c5261b;border-radius:5px;padding:5px 7px;font-size:9px;font-weight:900;">Clear</button></div><div style="font-size:10px;color:#858d96;font-weight:700;margin-bottom:13px;">Enter a flat rupee amount or percentage.</div><input id="discountInput" type="number" inputmode="decimal" placeholder="Enter amount / %" class="form-input" style="margin-bottom:9px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button onclick="applyDiscount('fixed')" class="primary-btn">₹ Flat</button><button onclick="applyDiscount('percent')" class="primary-btn">% Off</button></div></div></div>`;
+      if (state.groupRateModalOpen) {
+        const groups = getCartItemGroups();
+        const regular = getCartRegularSubtotal();
+        const packageTotal = getCartSubtotal();
+        html += `<div class="modal-backdrop" onclick="if(event.target===this)toggleGroupRateModal(false)"><div class="modal-card" style="max-width:430px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+            <div><div style="font-size:18px;font-weight:950;">Group Rate</div><div style="font-size:10px;color:#4b5563;font-weight:750;line-height:1.4;margin-top:3px;">Enter the agreed per-ride rate for this customer. Your normal menu prices stay unchanged.</div></div>
+            <button onclick="toggleGroupRateModal(false)" class="neutral-btn" style="min-height:34px;padding:0 11px;">Close</button>
+          </div>
+          <div class="group-rate-list">${groups.map(group => {
+            const standard = Math.max(0, Number(group.item?.price || 0));
+            const current = Number.isFinite(Number(group.rate)) ? Number(group.rate) : standard;
+            return `<div class="group-rate-row"><div class="group-rate-row-head"><div><div class="group-rate-name">${escapeHTML(group.item?.name || 'Ride')}</div><div class="group-rate-meta">${Number(group.qty || 0)} ride${Number(group.qty || 0) === 1 ? '' : 's'} • Regular ${money(standard)} each</div></div>${Math.abs(current-standard) > .0001 ? `<span class="group-rate-badge">SPECIAL RATE</span>` : ''}</div><div class="group-rate-input-wrap"><span>Agreed rate ₹</span><input id="groupRate_${escapeHTML(group.item.id)}" class="group-rate-input" type="number" min="0" max="${standard}" step="1" inputmode="decimal" value="${current}" onfocus="this.select()" oninput="updateGroupRatePreview()"></div></div>`;
+          }).join('')}</div>
+          <div class="group-rate-summary">
+            <div class="group-rate-summary-line"><span>Regular total</span><strong id="groupRateRegularTotal">${money(regular)}</strong></div>
+            <div class="group-rate-summary-line"><span>Group Rate total</span><strong id="groupRatePackageTotal">${money(packageTotal)}</strong></div>
+            <div class="group-rate-summary-line group-rate-saving"><span>Customer saving</span><strong id="groupRateSaving">${money(Math.max(0, regular-packageTotal))}</strong></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:7px;"><button onclick="clearGroupRates()" class="neutral-btn">Regular Rates</button><button onclick="applyGroupRates()" class="primary-btn"><i class="fa-solid fa-tags"></i> Apply Group Rate</button></div>
+        </div></div>`;
+      }
       html += renderMachinePickerModal();
       html += renderPreviewModal();
       html += renderSuccessModal();
@@ -2558,6 +2833,8 @@
         customerName: state.customer.name || '',
         customerPhone: state.customer.phone || '',
         discount: { ...state.discount },
+        regularSubtotal: getCartRegularSubtotal(),
+        groupRateSavings: getGroupRateSavings(),
         subtotal: getCartSubtotal(),
         totalAmount: getCartTotal(),
         rideCount: getCartQty(),
@@ -2593,6 +2870,7 @@
       state.machinePickerItemId = null;
       state.creditModalOpen = false;
       state.discountModalOpen = false;
+      state.groupRateModalOpen = false;
       state.customerModalOpen = false;
       state.moreOpen = false;
       state.activeOpenBillId = null;
@@ -2655,6 +2933,7 @@
       state.activeOpenBillToken = Number(bill.tokenNumber);
       state.openBillsModalOpen = false;
       state.saveOpenBillModalOpen = false;
+      state.groupRateModalOpen = false;
       state.pendingOpenBillToken = null;
       state.view = 'pos';
       ['pos', 'history', 'expenses', 'dashboard', 'settings'].forEach(v => $('nav-' + v)?.classList.toggle('active', v === 'pos'));
@@ -2856,6 +3135,9 @@
             timestamp,
             totalAmount: total,
             discountAmount,
+            groupRateSavings: getGroupRateSavings(),
+            regularSubtotal: getCartRegularSubtotal(),
+            groupSubtotal: getCartSubtotal(),
             paymentMethod: method,
             reference: refText,
             customerName: state.customer.name,
@@ -2930,7 +3212,7 @@
           const machineHint = item.isTowable ? 'Choose tow machine' : (isJetskiRide(item) ? 'Choose Jetski' : (isSpeedboatRide(item) ? 'Speed Boat' : 'Direct ride'));
           return `<div class="ride-button ${selected ? 'selected' : ''}" role="button" tabindex="0" onclick="handleTap(${item.id})">
             ${item.isTowable ? `<span class="tow-icon"><i class="fa-solid fa-link"></i></span>` : ''}
-            <span class="ride-name">${escapeHTML(item.name)}</span><span class="ride-price">${money(item.price)}</span>
+            <span class="ride-name">${escapeHTML(item.name)}</span>${(() => { const agreed = selected ? getAgreedRateForItem(item.id) : null; const custom = agreed !== null && Math.abs(Number(agreed)-Number(item.price)) > .0001; return custom ? `<span class="ride-price"><span style="font-size:10px;color:#64748b;text-decoration:line-through;margin-right:4px;">${money(item.price)}</span>${money(agreed)}</span>` : `<span class="ride-price">${money(item.price)}</span>`; })()}
             <span style="display:block;margin-top:7px;font-size:8px;color:#7b8490;font-weight:850;">${escapeHTML(machineHint)}</span>
             ${selected && singleKey ? `<span class="ride-qty-control" onclick="event.stopPropagation();"><button class="qty-mini" onclick="event.stopPropagation();updateQty('${escapeHTML(singleKey)}',-1)">−</button><span class="qty-number">${qty}</span><button class="qty-mini" onclick="event.stopPropagation();updateQty('${escapeHTML(singleKey)}',1)">+</button></span>` : ''}
             ${selected && !singleKey ? `<button onclick="event.stopPropagation();renderCartEditor()" style="position:absolute;right:8px;top:8px;border:2px solid #fff;border-radius:8px;background:#1769d1;color:#fff;padding:6px 8px;font-size:9px;font-weight:950;box-shadow:0 2px 8px rgba(23,105,209,.28);">${qty} • SPLIT</button>` : ''}
@@ -2942,18 +3224,45 @@
     renderCheckoutDock = function() {
       if (state.view !== 'pos') return '';
       const cartItems = Object.entries(state.cart);
+      const regularSubtotal = getCartRegularSubtotal();
       const subtotal = getCartSubtotal();
+      const groupSaving = getGroupRateSavings();
       const discountAmt = getDiscountAmount();
       const total = getCartTotal();
+      const totalSaving = groupSaving + discountAmt;
       const cartQty = getCartQty();
       if (!cartItems.length) return `<div class="empty-checkout"><div class="empty-checkout-text"><strong>Ready for next customer</strong><span>${state.openBills.length ? `${state.openBills.length} open bill${state.openBills.length === 1 ? '' : 's'} available from the top` : 'Choose a ride to start billing'}</span></div><div class="empty-checkout-total">₹0</div></div>`;
       const orderText = cartItems.map(([, data]) => `${data.qty}× ${data.item.name}${lineMachine(data) ? ` • ${getMachineLabel(lineMachine(data))}` : ''}`).join('  |  ');
       const token = state.activeOpenBillToken;
-      return `<div class="checkout-panel"><div class="checkout-top"><div class="order-preview"><span class="order-count">${cartQty} ${cartQty === 1 ? 'RIDE' : 'RIDES'}</span><span class="order-items-text">${escapeHTML(orderText)}</span></div><div class="total-box"><span class="total-label">${discountAmt ? `Saved ${money(discountAmt)}` : 'Total'}</span>${discountAmt ? `<span style="display:block;color:#9ca3af;font-size:9px;text-decoration:line-through;">${money(subtotal)}</span>` : ''}<span class="total-value">${money(total)}</span></div></div>
+      return `<div class="checkout-panel"><div class="checkout-top"><div class="order-preview"><span class="order-count">${cartQty} ${cartQty === 1 ? 'RIDE' : 'RIDES'}</span><span class="order-items-text">${escapeHTML(orderText)}</span></div><div class="total-box"><span class="total-label">${totalSaving > 0 ? `Saved ${money(totalSaving)}` : 'Total'}</span>${totalSaving > 0 ? `<span style="display:block;color:#667085;font-size:9px;text-decoration:line-through;font-weight:850;">${money(regularSubtotal)}</span>` : ''}<span class="total-value">${money(total)}</span></div></div>
         <button onclick="openSaveOpenBill()" class="open-bill-save ${token ? 'active' : ''}"><i class="fa-solid fa-ticket"></i> ${token ? `SAVE & EXIT • TOKEN ${formatToken(token)}` : 'SAVE AS OPEN BILL'}</button>
         <div class="more-row"><button onclick="toggleMore()" class="more-button"><i class="fa-solid fa-ellipsis"></i> ${state.moreOpen ? 'Hide' : 'More'}</button></div>
-        <div class="checkout-actions ${state.moreOpen ? '' : 'collapsed'}"><button onclick="toggleCustomerModal(true)" class="secondary-action ${state.customer.name || state.customer.phone ? 'has-value' : ''}"><i class="fa-solid fa-user"></i> ${state.customer.name ? escapeHTML(state.customer.name.substring(0, 12)) : 'Customer'}</button><button onclick="toggleDiscountModal(true)" class="secondary-action ${discountAmt > 0 ? 'has-value' : ''}"><i class="fa-solid fa-tag"></i> ${discountAmt ? `-${money(discountAmt)}` : 'Discount'}</button><button onclick="renderCartEditor()" class="secondary-action" style="margin-left:auto;"><i class="fa-solid fa-list-check"></i> Order</button></div>
+        <div class="checkout-actions ${state.moreOpen ? '' : 'collapsed'}"><button onclick="toggleCustomerModal(true)" class="secondary-action ${state.customer.name || state.customer.phone ? 'has-value' : ''}"><i class="fa-solid fa-user"></i> ${state.customer.name ? escapeHTML(state.customer.name.substring(0, 12)) : 'Customer'}</button><button onclick="toggleGroupRateModal(true)" class="secondary-action ${groupSaving > 0 ? 'has-value' : ''}"><i class="fa-solid fa-tags"></i> ${groupSaving > 0 ? `Group -${money(groupSaving)}` : 'Group Rate'}</button><button onclick="toggleDiscountModal(true)" class="secondary-action ${discountAmt > 0 ? 'has-value' : ''}"><i class="fa-solid fa-tag"></i> ${discountAmt ? `Extra -${money(discountAmt)}` : 'Discount'}</button><button onclick="renderCartEditor()" class="secondary-action"><i class="fa-solid fa-list-check"></i> Order</button></div>
         <div class="payment-grid"><button onclick="processCheckout('CASH')" class="pay-button pay-cash" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-money-bill-wave"></i> CASH</button><button onclick="processCheckout('ONLINE')" class="pay-button pay-online" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-qrcode"></i> ONLINE</button><button onclick="toggleCreditModal(true)" class="pay-button pay-credit" ${state.checkoutLocked ? 'disabled' : ''}><i class="fa-solid fa-hotel"></i> CREDIT</button></div></div>`;
+    };
+
+
+    // V6 order editor: show negotiated price without complicating machine reassignment.
+    window.renderCartEditor = () => {
+      const items = Object.entries(state.cart);
+      const groupSaving = getGroupRateSavings();
+      $('modals').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeCartEditor()"><div class="modal-card" style="max-width:420px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;"><div><div style="font-size:17px;font-weight:950;">Current Order</div><div style="font-size:10px;color:#4b5563;font-weight:750;margin-top:2px;">Adjust quantity or machine before payment</div></div><button onclick="closeCartEditor()" class="neutral-btn" style="min-height:34px;padding:0 11px;">Close</button></div>
+        ${groupSaving > 0 ? `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border:2px solid #86b7f0;background:#eaf3ff;border-radius:9px;padding:8px 9px;margin-bottom:9px;"><div><strong style="font-size:11px;color:#0b57d0;">GROUP RATE ACTIVE</strong><div style="font-size:9px;color:#334155;font-weight:750;margin-top:2px;">Saving ${money(groupSaving)} before any extra discount</div></div><button onclick="closeCartEditor();toggleGroupRateModal(true)" class="neutral-btn" style="min-height:32px;">Edit Rates</button></div>` : ''}
+        ${items.map(([key, data]) => {
+          const assigned = lineMachine(data);
+          const editableMachine = data.item.isTowable || isJetskiRide(data.item);
+          const options = data.item.isTowable ? ['JETSKI1','JETSKI2','SPEEDBOAT'] : (isJetskiRide(data.item) ? ['JETSKI1','JETSKI2'] : []);
+          const standard = lineStandardPrice(data);
+          const selling = lineSellingPrice(data);
+          const custom = Math.abs(standard-selling) > .0001;
+          return `<div class="surface" style="padding:10px;margin-bottom:7px;border-width:2px;"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;"><div style="min-width:0;flex:1;"><div style="font-size:14px;font-weight:950;">${escapeHTML(data.item.name)}</div><div style="font-size:10px;color:#0b57d0;font-weight:900;margin-top:3px;">${custom ? `<span style="text-decoration:line-through;color:#64748b;">${money(standard)}</span> <strong>${money(selling)} / ride</strong>` : `${money(selling)} / ride`}</div>${assigned ? `<div style="font-size:10px;color:#334155;font-weight:800;margin-top:3px;">${data.item.isTowable ? 'Tow' : 'Machine'}: ${escapeHTML(getMachineLabel(assigned))}</div>` : ''}${editableMachine ? `<div class="tow-transfer"><span class="tow-transfer-label">Change:</span>${options.map(m => `<button onclick="transferMachine('${escapeHTML(key)}','${m}')" class="${assigned === m ? 'active' : ''}">${escapeHTML(getMachineLabel(m))}</button>`).join('')}</div>` : ''}</div><div style="display:flex;align-items:center;gap:7px;"><button onclick="updateQty('${escapeHTML(key)}',-1);renderCartEditor()" class="neutral-btn" style="width:36px;min-height:36px;padding:0;font-size:18px;">−</button><strong style="min-width:20px;text-align:center;font-size:14px;">${data.qty}</strong><button onclick="updateQty('${escapeHTML(key)}',1);renderCartEditor()" class="primary-btn" style="width:36px;min-height:36px;padding:0;font-size:18px;">+</button></div></div></div>`;
+        }).join('')}
+        <div style="border-top:2px solid #cbd5e1;padding-top:10px;margin-top:10px;">
+          ${groupSaving > 0 ? `<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:850;color:#475569;margin-bottom:5px;"><span>Regular total</span><span style="text-decoration:line-through;">${money(getCartRegularSubtotal())}</span></div><div style="display:flex;justify-content:space-between;font-size:10px;font-weight:900;color:#08783e;margin-bottom:5px;"><span>Group Rate saving</span><span>-${money(groupSaving)}</span></div>` : ''}
+          <div style="display:flex;justify-content:space-between;align-items:center;"><strong>Total</strong><strong style="font-size:22px;color:#08783e;">${money(getCartTotal())}</strong></div>
+        </div>
+      </div></div>`;
     };
 
     function renderOpenBillsModal() {
@@ -3015,7 +3324,7 @@
       const backup = {
         exportedAt: new Date().toISOString(),
         app: 'KAS POS',
-        version: 4,
+        version: 6,
         transactions: await db.transactions.toArray(),
         expenses: await db.expenses.toArray(),
         menu: await db.menu.toArray(),
